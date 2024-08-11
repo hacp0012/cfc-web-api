@@ -1,0 +1,6 @@
+SMS OTP
+- apI url
+- sender name
+- api key
+- api password
+
