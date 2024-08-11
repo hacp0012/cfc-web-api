@@ -17,9 +17,20 @@ class SysdatasSeeader extends Seeder
     DB::table('sysdatas')->insert([
       'label' => "Country phone codes",
       'type'  => 'ARRAY',
-      'key'   => 'phone_code',
+      'key'   => 'phone_codes',
       'data'  => Json::encode([
         ['code' => '243', 'country' => 'CD', 'country_name' => 'DRC'],
+      ]),
+    ]);
+
+    DB::table('sysdatas')->insert([
+      'label' => "Roles of users",
+      'type'  => 'ARRAY',
+      'key'   => 'users_roles',
+      'data'  => Json::encode([
+        ['state' => "ACTIVE", 'name' => "Utilisateur standard",       'role' => "STANDARD_USER",          'can' => []],
+        ['state' => "ACTIVE", 'name' => "Chargé de communication",    'role' => "COMMUNICATION_MANAGER",  'can' => []],
+        ['state' => "ACTIVE", 'name' => "Responsable Évangélisation", 'role' => "EVANGELISM_MANAGER",     'can' => []],
       ]),
     ]);
   }

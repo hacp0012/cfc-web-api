@@ -17,7 +17,10 @@ class SysdataHandlerClass
 
   public function miscDatas()
   {
-    return SysdataHandlerClass::getArray('phone_code');
+    return [
+      'phone_codes' => SysdataHandlerClass::getArray('phone_codes'),
+      'roles'      => SysdataHandlerClass::getArray('users_roles'),
+    ];
   }
 
   static public function get(string $dataType, string $key) : mixed
