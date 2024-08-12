@@ -17,7 +17,7 @@ return new class extends Migration
 
       $table->string('otp');
       $table->string('ref')->nullable()->comment("Owner reference. can be phone number or ...");
-      $table->text('data')->default('{}');
+      $table->json('data')->nullable(); //->default('{}');
 
       $table->bigInteger('expire_at')->comment("Expiration dalay in seconds.");
 

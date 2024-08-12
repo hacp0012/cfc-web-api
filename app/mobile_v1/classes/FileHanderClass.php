@@ -87,7 +87,7 @@ class FileHanderClass
     if ($_medias != null) {
       # Geting data
       $ownerGroup = $_medias->owner_group;
-      $documentOldName = $_medias->document;
+      $documentOldName = $_medias->hashed_name;
       $contentGroup = $_medias->content_group;
 
       # Stop if content group not match.
@@ -105,7 +105,7 @@ class FileHanderClass
       # Registered
       $public_id = Str::random(63);
 
-      $_medias->public_id = $public_id;
+      $_medias->pid = $public_id;
 
       $_medias->hashed_name = $documentNewName;
 
@@ -192,7 +192,7 @@ class FileHanderClass
     return $documents->first();
   }
 
-  public static function validateDocument(string $type, Request $request, string $name): UploadedFile|string|null
+  public static function validateFile(string $type, Request $request, string $name): UploadedFile|null
   {
     if (isset(FileHanderClass::TYPE_PATH[$type]) == false) return null;
 

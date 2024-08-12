@@ -22,7 +22,7 @@ return new class extends Migration
 
       $table->string('key')->nullable();
 
-      $table->json('datas')->default('{}');
+      $table->json('datas')->nullable(); //->default('{}');
       $table->string('expiration')->nullable()->comment("Life time");
 
       $table->timestamps();

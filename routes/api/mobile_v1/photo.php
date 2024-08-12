@@ -5,9 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("photo")->group(function () {
-  Route::get('get/{scale}/{pid}/{default?}', fn (int $scale, string $pid, string $default = null) => PhotoHandler::getAsResponse(
+  Route::get('get/{scale}/{pid}/{default?}', fn (string $scale, string $pid, string $default = null) => PhotoHandler::getAsResponse(
     public_id: $pid,
-    scale: $scale,
+    scale: (int) $scale,
     default: $default,
   ))->name('get');
 

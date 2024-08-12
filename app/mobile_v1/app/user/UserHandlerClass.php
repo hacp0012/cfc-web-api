@@ -8,6 +8,7 @@ use App\Models\Couple;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
+use Illuminate\Http\Request;
 
 class UserHandlerClass
 {
@@ -51,9 +52,9 @@ class UserHandlerClass
     // Photo :
     $photo = FileHanderClass::get(
       type: FileHanderClass::TYPE['IMAGE'],
-      owner: $user->id,
+      owner: $this->userId,
       ownerGroup: Constants::GROUPS_USER,
-      contentGroup: 'USER_PROFILE',
+      contentGroup: 'PHOTO_PROFILE',
     );
 
     // Datas :
@@ -93,5 +94,46 @@ class UserHandlerClass
     }
 
     return null;
+  }
+
+  public function updateOrStorePhoto(Request $request): string|null
+  {
+    $validatedFile = FileHanderClass::validateFile(FileHanderClass::TYPE['IMAGE'], $request, Constants::IMAGE_UPLOAD_NAME);
+    $newUploadedPhotoPID = null;
+
+    // Uploading.
+    if ($validatedFile) {
+      $reesult = FileHanderClass::get(
+        type: FileHanderClass::TYPE['IMAGE'],
+        owner: $this->userId,
+        ownerGroup: Constants::GROUPS_USER,
+        contentGroup: 'PHOTO_PROFILE',
+      );
+
+      # Store.
+      if ($reesult->isEmpty()) {
+        FileHanderClass::store(
+          document: $validatedFile,
+          type: FileHanderClass::TYPE['IMAGE'],
+          owner: $this->userId,
+          ownerGroup: Constants::GROUPS_USER,
+          contentGroup: 'PHOTO_PROFILE',
+          public_id: $newUploadedPhotoPID,
+        );
+
+        # Update (replace).
+      } else {
+        $oldPhoto = $reesult->first();
+
+        FileHanderClass::replace(
+          document: $validatedFile,
+          type: FileHanderClass::TYPE['IMAGE'],
+          id: $oldPhoto->id,
+          new_public_id: $newUploadedPhotoPID,
+        );
+      }
+    }
+
+    return $newUploadedPhotoPID;
   }
 }

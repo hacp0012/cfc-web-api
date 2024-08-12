@@ -20,7 +20,7 @@ return new class extends Migration
       $table->uuid('epoue')->nullable();
       $table->uuid('epouse')->nullable();
 
-      $table->json('enfants')->default('[]')->comment("nom, genre, d_naissance, id, uuid, photo_pid");
+      $table->json('enfants')->nullable()/* ->default('[]') */->comment("nom, genre, d_naissance, id, uuid, photo_pid");
 
       $table->date('d_mariage')->nullable();
       $table->string('adresse')->nullable();

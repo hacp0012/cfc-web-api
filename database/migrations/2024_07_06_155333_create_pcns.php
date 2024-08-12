@@ -17,7 +17,7 @@ return new class extends Migration
       $table->uuid('parent')->nullable();
 
       $table->string('nom');
-      $table->enum('type', ['POOL', 'COM', 'NA'])->comment("POOL | COM | AN");
+      $table->enum('type', ['POOL', 'COM', 'NA'])->comment("POOL | COM | NA");
       $table->string('photo')->nullable();
       $table->string('adresse')->nullable();
       $table->text('label')->nullable();

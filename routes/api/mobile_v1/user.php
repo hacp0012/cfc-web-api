@@ -9,5 +9,9 @@ Route::middleware(SanctumCustomMiddleware::class)->prefix("user")->group(functio
     Route::post('update', [UserHandlerRouteClass::class, 'updatePhoneNumber']);
   });
 
+  // User data:
   Route::post('update/infos', [UserHandlerRouteClass::class, 'updateUserInfos']);
+
+  // Update photo:
+  Route::post('update/photo', [UserHandlerRouteClass::class, 'uploadPhoto']);
 });

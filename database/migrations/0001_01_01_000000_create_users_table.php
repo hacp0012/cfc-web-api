@@ -20,7 +20,7 @@ return new class extends Migration
 
       $table->json('role')
         ->nullable()
-        ->default(Json::encode(['state' => null, 'nom' => null, 'role' => null, 'can'=> []]))
+        // ->default(Json::encode(['state' => null, 'nom' => null, 'role' => null, 'can'=> []]))
         ->comment("Le role qu'il joue au sein de la communaute. (role: null|ACTIVE|INVALIDATE) si INVALIDATE : donc en attente de la validation admin.");
 
       $table->string('name')->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
       $table->uuid('parent')->nullable()->comment("Parent de l'utilisateur");
       $table->uuid('couple')->nullable()->comment("Couple dans lequel l'utilisateur est l'epoue ou l'epouse.");
 
-      $table->json('telephone')->nullable()->default('[]')->comment("[243, 987654321]");
+      $table->json('telephone')->nullable()/* ->default('[]') */->comment("[243, 987654321]");
       $table->string('password')->nullable();
 
       $table->string('email')->unique()->nullable();

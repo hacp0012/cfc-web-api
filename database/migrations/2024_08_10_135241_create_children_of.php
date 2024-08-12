@@ -21,7 +21,7 @@ return new class extends Migration
       $table->uuid('couple');
       $table->uuid('child')->nullable()->comment("A child uuid");
 
-      $table->json('data')->default('{}')->comment("Child data : nom, genre, d_naissance, photo_pid");
+      $table->json('data')->nullable()/* ->default('{}') */->comment("Child data : nom, genre, d_naissance, photo_pid");
 
       $table->timestamps();
     });

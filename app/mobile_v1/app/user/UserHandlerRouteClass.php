@@ -3,6 +3,7 @@
 namespace App\mobile_v1\app\user;
 
 use App\mobile_v1\app\user\UserHandlerClass;
+use App\mobile_v1\classes\FileHanderClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -55,6 +56,20 @@ class UserHandlerRouteClass
       oldPhoneNumber: $validated['old_phone_number'],
     );
 
-    return ['state'=> $state ? 'SUCCESS' : 'FAILED'];
+    return ['state' => $state ? 'SUCCESS' : 'FAILED'];
+  }
+
+  public function uploadPhoto(Request $request): array
+  {
+    $user = $request->user();
+
+    $userHandler = new UserHandlerClass($user->id);
+
+    $storePhotoPid = $userHandler->updateOrStorePhoto($request);
+
+    return [
+      'state' => $storePhotoPid ? 'STORED' : 'FAILED',
+      'pid' => $storePhotoPid,
+    ];
   }
 }

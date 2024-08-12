@@ -24,13 +24,12 @@ class PhotoHandler
   static function getAsResponse(string $public_id, int $scale = 100, ?string $default = null): Response
   {
     // $media = Media::wherePublic_id($public_id)->first();
-    $media = File::firstWhere(['content_group' => FileHanderClass::TYPE['IMAGE'], 'pid' => $public_id]);
+    $media = File::firstWhere('pid', $public_id);
 
+    // dd($media);
     $imagePath = null;
-    // $useMask = null;
-
     if ($media) {
-      $imagePath = FileHanderClass::TYPE_PATH[$media->type] . '/' . $media->file_name;
+      $imagePath = FileHanderClass::TYPE_PATH[$media->type] . '/' . $media->hashed_name;
     } else {
       $imagePath = 'public/defaults/logos/logo.png';
 

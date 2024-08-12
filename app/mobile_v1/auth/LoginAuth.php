@@ -66,13 +66,12 @@ class LoginAuth
       type: FileHanderClass::TYPE['IMAGE'],
       owner: $user->id,
       ownerGroup: Constants::GROUPS_USER,
-      contentGroup: 'USER_PROFILE',
+      contentGroup: 'PHOTO_PROFILE',
     );
 
     // Datas :
     $data = [
       'role'                    => $user->role,
-      'can'                     => $user->can,
       'name'                    => $user->name,
       'fullname'                => $user->fullname,
       'civility'                => $user->civility,
