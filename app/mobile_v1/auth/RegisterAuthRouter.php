@@ -43,7 +43,7 @@ class RegisterAuthRouter
       'phone_code'      => "required|numeric",
       'phone_number'    => "required|string",
       'is_parent'       => "required|bool",
-      'family_name'       => "nullable|string",
+      'family_name'     => "nullable|string",
       'family_id'       => "nullable|string",
       'already_member'  => "required|boolean",
       'pool'            => "nullable|uuid",

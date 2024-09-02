@@ -28,9 +28,9 @@ class SysdatasSeeader extends Seeder
       'type'  => 'ARRAY',
       'key'   => 'users_roles',
       'data'  => Json::encode([
-        ['state' => "ACTIVE", 'name' => "Utilisateur standard",       'role' => "STANDARD_USER",          'can' => []],
-        ['state' => "ACTIVE", 'name' => "Chargé de communication",    'role' => "COMMUNICATION_MANAGER",  'can' => []],
-        ['state' => "ACTIVE", 'name' => "Responsable Évangélisation", 'role' => "EVANGELISM_MANAGER",     'can' => []],
+        ['state' => "ACTIVE", 'name' => "Utilisateur standard",        'level' => null, 'role' => "STANDARD_USER",          'can' => []],
+        ['state' => "ACTIVE", 'name' => "Chargé de communication",     'level' => null, 'role' => "COMMUNICATION_MANAGER",  'can' => []],
+        ['state' => "ACTIVE", 'name' => "Responsable Évangélisation",  'level' => null, 'role' => "EVANGELISM_MANAGER",     'can' => []],
       ]),
     ]);
   }

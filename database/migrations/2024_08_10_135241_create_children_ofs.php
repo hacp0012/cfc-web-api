@@ -11,7 +11,7 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('children_of', function (Blueprint $table) {
+    Schema::create('children_ofs', function (Blueprint $table) {
       $table->comment("Children of couples.");
       $table->uuid('id')->primary();
 
@@ -21,7 +21,7 @@ return new class extends Migration
       $table->uuid('couple');
       $table->uuid('child')->nullable()->comment("A child uuid");
 
-      $table->json('data')->nullable()/* ->default('{}') */->comment("Child data : nom, genre, d_naissance, photo_pid");
+      $table->json('data')->nullable()/* ->default('{}') */->comment("Child data : nom, genre, d_naissance, is_maried, photo_pid");
 
       $table->timestamps();
     });

@@ -19,9 +19,9 @@ Route::name('photo.')->prefix('photo/request')->group(function () {
       public_id: $pid,
       scale: $scale,
       default: $request->input('default'),
-      useThisMask: $request->input('mask'),
-      addUnpaidMask: $request->boolean('paid_mask', true),
-      licence_key: $request->input('licence'),
+      // useThisMask: $request->input('mask'),
+      // addUnpaidMask: $request->boolean('paid_mask', true),
+      // licence_key: $request->input('licence'),
     );
   })->name('get');
 

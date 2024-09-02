@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,11 +16,17 @@ return new class extends Migration
       $table->uuid('id')->primary();
 
       $table->enum('state', ['INVALIDE', 'VALIDATED'])->default('INVALIDE');
+      $table->enum('child_state', ['COMFIRMED', 'UNCOMFIRMED'])->default('COMFIRMED');
+      $table->enum('child_can_be_maried', ['YES', 'NO'])->default('YES');
 
       $table->json('role')
         ->nullable()
-        // ->default(Json::encode(['state' => null, 'nom' => null, 'role' => null, 'can'=> []]))
-        ->comment("Le role qu'il joue au sein de la communaute. (role: null|ACTIVE|INVALIDATE) si INVALIDATE : donc en attente de la validation admin.");
+        // * ->default(Json::encode(['state' => null, 'name' => null, 'level' => null, 'role' => null, 'can'=> []]))
+        ->comment(
+          "Le role qu'il joue au sein de la communaute. " .
+            "(state: null|ACTIVE|INVALIDATE) si INVALIDATE : donc en attente de la validation admin. " .
+            "La liste des roles est dans la table `sysdatas`"
+        );
 
       $table->string('name')->nullable();
       $table->string('fullname')->nullable();
@@ -33,7 +38,7 @@ return new class extends Migration
       $table->uuid('pool')->nullable();
       $table->uuid('com_loc')->nullable();
       $table->uuid('noyau_af')->nullable();
-      $table->string('pcn_in_waiting_validation')->nullable()->comment("{} : The PCN wait until admin validate it.");
+      $table->string('pcn_in_waiting_validation')->nullable()->comment("{pool, com_loc, noyau_af} : The PCN wait until admin validate it.");
 
       $table->uuid('parain')->nullable()->comment("Le parain de l'enfant");
       $table->uuid('parent')->nullable()->comment("Parent de l'utilisateur");

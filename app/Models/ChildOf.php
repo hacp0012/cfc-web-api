@@ -10,7 +10,7 @@ class ChildOf extends Model
 {
   use HasFactory, HasUuids;
 
-  // protected string $table = "children_of";
+  protected $table = "children_ofs";
 
   protected $fillable = ['data', 'couple', 'type', 'parent_type', 'child'];
 

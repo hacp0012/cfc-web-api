@@ -15,10 +15,10 @@ use Illuminate\Validation\Rules\File;
 class FileHanderClass
 {
   /** @var array{VIDEO:string,IMAGE:string,USER:string,AUDIO:string,DOCUMENT:string} */
-  const TYPE = ['VIDEO' => 'VIDEO', 'IMAGE' => 'IMAGE', 'DOCUMENT' => 'DOCUMENT', 'USER' => 'USER', 'AUDIO'=> 'AUDIO'];
+  const TYPE = ['VIDEO' => 'VIDEO', 'IMAGE' => 'IMAGE', 'DOCUMENT' => 'DOCUMENT', 'USER' => 'USER', 'AUDIO' => 'AUDIO'];
 
   /** @var array{VIDEO:string,IMAGE:string,DOCUMENT:string,FILE:string} */
-  const TYPE_PATH = ['VIDEO' => 'public/videos', 'IMAGE' => 'public/photos', 'DOCUMENT' => 'public/documents', 'USER' => 'public/users', 'AUDIO'=> 'public/audios'];
+  const TYPE_PATH = ['VIDEO' => 'public/videos', 'IMAGE' => 'public/photos', 'DOCUMENT' => 'public/documents', 'USER' => 'public/users', 'AUDIO' => 'public/audios'];
 
   /**
    * @return bool if `content_group` & `owner_group` not match, false will be returned.
@@ -175,7 +175,8 @@ class FileHanderClass
   public static function get(string $type, string $owner, string $ownerGroup, ?string $contentGroup = null): Collection
   {
     $query = [
-      'owner' => $owner, 'type' => $type,
+      'owner' => $owner,
+      'type' => $type,
       'owner_group' => $ownerGroup,
     ];
 
@@ -192,6 +193,7 @@ class FileHanderClass
     return $documents->first();
   }
 
+  /** @deprecated Use `validate` instead */
   public static function validateFile(string $type, Request $request, string $name): UploadedFile|null
   {
     if (isset(FileHanderClass::TYPE_PATH[$type]) == false) return null;
@@ -199,9 +201,9 @@ class FileHanderClass
     if ($request->hasFile($name)) {
       // TODO: add more Videos and Audio mimes types and remove un suporteds Documents formats.
       $rules = match ($type) {
-        'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3'])],
+        'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
         'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
-        'DOCUMENT' => [File::types(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
+        'DOCUMENT' => [File::types([/* 'application/pdf',  */'plain/text', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
 
         default => [],
       };
@@ -216,7 +218,9 @@ class FileHanderClass
       # Validate.
       $validate = Validator::validate([$name => $request->file($name)], [
         $name => [
-          'required', 'file', ...$rules,
+          'required',
+          'file',
+          ...$rules,
           // File::types($mimeType),
           // File::image()
           //   ->min(1024)
@@ -227,5 +231,45 @@ class FileHanderClass
 
       return $validate[$name];
     } else return null;
+  }
+
+  /** Validate file */
+  public static function validate(string $type, UploadedFile $uploadedFile): UploadedFile|null
+  {
+    if (isset(FileHanderClass::TYPE_PATH[$type]) == false) return null;
+
+    // if ($request->hasFile($name)) {
+    // TODO: add more Videos and Audio mimes types and remove un suporteds Documents formats.
+    $rules = match ($type) {
+      'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
+      'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
+      'DOCUMENT' => [File::types([/* 'application/pdf',  */'plain/text', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
+
+      default => [],
+    };
+
+    # Cancel if size is great than 18Mb.
+    if ($type == 'VIDEO' && $uploadedFile->getSize() > (1024 * 18000)) return null;
+    # Cancel if size is great than 9Mb.
+    if ($type == 'AUDIO' && $uploadedFile->getSize() > (1024 * 9000)) return null;
+    # Cancel if size is great than 5.4Mb.
+    if ($type == 'DOCUMENT' && $uploadedFile->getSize() > (1024 * 5400)) return null;
+
+    # Validate.
+    $validate = Validator::validate(['file' => $uploadedFile], [
+      'file' => [
+        'required',
+        'file',
+        ...$rules,
+        // File::types($mimeType),
+        // File::image()
+        //   ->min(1024)
+        //   ->max(12 * 1024)
+        //   ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
+      ],
+    ]);
+
+    return $validate['file'];
+    // } else return null;
   }
 }

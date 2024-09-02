@@ -2,8 +2,12 @@
 
 namespace App\mobile_v1\auth;
 
+use App\mobile_v1\app\family\FamilyChildren;
+use App\mobile_v1\app\family\FamilyCouple;
+use App\mobile_v1\handlers\NotificationHandler;
 use App\mobile_v1\handlers\OtpHandler;
 use App\Models\User;
+use App\Notifications\Wellcome;
 use Illuminate\Database\Eloquent\Casts\Json;
 use InnerOtpHandler\Notifier;
 
@@ -40,7 +44,6 @@ class RegisterAuth
     return ['state' => 'FAILED'];
   }
 
-  // TODO: implement couple support.
   /** @return array [otp_expire_at, user_id, state:ERROR|SUCCESS] */
   public function register(
     string $nom,
@@ -61,11 +64,13 @@ class RegisterAuth
       return ['state' => 'ERROR'];
 
     $data = [
-      'name' => $nom,
-      'fullname' => $nomComplet,
-      'civility' => $civility,
+      'child_state' => $isParent ? 'COMFIRMED' : 'UNCOMFIRMED',
+      'child_can_be_maried' => $isParent == false ? 'NO' : 'YES',
+      'name'        => $nom,
+      'fullname'    => $nomComplet,
+      'civility'    => $civility,
       'd_naissance' => $dBrith,
-      'telephone' => [$phoneCode, $phoneNumber],
+      'telephone'   => [$phoneCode, $phoneNumber],
     ];
 
     if ($alreadyMember) $data['pcn_in_waiting_validation'] = Json::encode([
@@ -76,6 +81,19 @@ class RegisterAuth
 
     // REGISTER : -------------------------------------------- >
     $newUser = User::create($data);
+
+    // CREATE OR SEND VALIDABLE FOR FAMILY HANDLER ----------- >
+    $this->familialHandler($newUser->id, $isParent, $familyName, $familyId);
+
+    { // Send notification to him.
+      $user = User::find($newUser->id);
+
+      if ($user) {
+        NotificationHandler::send(title: $user->fullname, body: "Shalom ". $user->name .", nous sommes ravis de vous compter parmi nous. Nous vous accueillons sur la plate-forme Famille Chrétienne avec tout l'amour du Christ. \n\Bienvenu parmi nous.")
+          ->flash(Wellcome::class)
+          ->to($user);
+      }
+    }
 
     // SEND OTP : -------------------------------------------- >
     $expireAt = time() + (60 * 3); // expire in 3Munites.
@@ -91,7 +109,36 @@ class RegisterAuth
       at: $phoneCode . $phoneNumber,
     );
 
-    return ['state' => 'SUCCESS', 'otp_expire_at' => $expireAt, '_otp'=> $generateOtp->otp, 'user_id' => $newUser->id];
+    return ['state' => 'SUCCESS', 'otp_expire_at' => $expireAt, '_otp' => $generateOtp->otp, 'user_id' => $newUser->id];
+  }
+
+  private function familialHandler($userId, bool $isParent, ?string $familyName, ?string $familyId): bool
+  {
+    if ($isParent) {
+      if ($familyId) {
+        // Send a validable to the selected couple.
+        $family = new FamilyCouple($userId);
+
+        $state = $family->sendInvitationToPartner($familyId);
+
+        return $state;
+      } elseif ($familyName) {
+        // Create new incomplet couple.
+        $coupleHandler = new FamilyCouple($userId);
+
+        $coupleId = $coupleHandler->createNewIncompletCouple($familyName);
+
+        if ($coupleId) return true;
+        else return false;
+      } else return false;
+    } else {
+      // Send a validable to the selected family (couple).
+      $family = new FamilyChildren(userId: $userId);
+
+      $state = $family->sendInvitationToParent($familyId);
+
+      return $state;
+    }
   }
 
   /** Unregister a user.
@@ -101,7 +148,20 @@ class RegisterAuth
   {
     $user = User::firstWhere('id', $userId);
 
+    // TODO: finalize user UNREGISTER implementation.
+    // FELETE USER ACCOUNT.
     $state = $user->delete();
+    // DELETE SANCTUM TOKENS.
+    // DELETE VIRTUAL CHILDREN.
+    // DELETE TEACHINGS.
+    // DELETE VALIDABLES.
+    // DELETE USER DATAS.
+    // DELETE REACTIONS.
+    // DELETE NOTIFICATIONS.
+    // DELETE FILES : PHOTOS|DOCUMENTS.
+    // DELETE COUPLE.
+    // DELETE COMMENTS.
+    // DELETE COMMUNCATIONS.
 
     return $state ? true : false;
   }

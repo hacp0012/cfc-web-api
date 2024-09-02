@@ -41,6 +41,8 @@ class User extends Authenticatable
     'email',
     'email_verified_at',
     'password',
+    'child_can_be_maried',
+    'child_state',
   ];
 
   /**

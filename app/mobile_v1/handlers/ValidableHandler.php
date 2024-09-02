@@ -5,12 +5,14 @@ namespace App\mobile_v1\handlers;
 use App\mobile_v1\app\user\UserHandlerClass;
 use App\Models\Validable;
 use InnerValidableHandler\Notify;
+use InnerValidableHandler\Rejector;
 use InnerValidableHandler\Validator;
 
 class ValidableHandler
 {
-  const TYPE_COUPLE_BIND  = 'JOIN_COUPLE_INVITATION';
-  const TYPE_CHILD_BIND   = 'CHILD_JOIN_INVITATION';
+  const TYPE_COUPLE_BIND        = 'JOIN_COUPLE_INVITATION';
+  const TYPE_CHILD_BIND         = 'CHILD_JOIN_INVITATION';
+  const TYPE_CHILD_CAN_MARIED   = 'CHILD_CAN_BE_MARIED';
 
   /**
    * Create a new class instance.
@@ -44,6 +46,7 @@ class ValidableHandler
   /** Get a list of all validable notifications of a user.
    * Some notificatitons are avalable for both member of
    * a couple.
+   * @return array<string,array>
    */
   function getAllOut(string $receiver): array
   {
@@ -59,6 +62,21 @@ class ValidableHandler
 
     // end.
     return ['user' => $forUser, 'couple' => $forCouple];
+  }
+
+  /** @return int 0 or 1+ */
+  public function checkIfHas(string $receiverId): int
+  {
+    $result = $this->getAllOut(receiver: $receiverId);
+
+    $forUser = $result['user'];
+    $forCouple = $result['couple'];
+
+    if (count($forUser) || count($forCouple)) {
+      return count($forCouple) + count($forUser);
+    } else {
+      return 0;
+    }
   }
 
   /** Get all validables sents */
@@ -81,14 +99,26 @@ class ValidableHandler
   /** Rejecte a validable notification. */
   function reject(string $validableId): bool
   {
-    $state = Validable::whereId($validableId)->delete();
+    /** @var \App\Models\Validable|null */
+    $validable = Validable::firstWhere('id', $validableId);
 
-    return $state;
+    if ($validable) {
+      $validator = new Rejector(validable: $validable);
+
+      $state = $validator->reject();
+
+      if ($state) $validable->delete();
+
+      return $state;
+    }
+
+    return false;
   }
 
   /** Mark as validated. */
-  function validate(string $validableId)
+  function validate(string $validableId): bool
   {
+    /** @var \App\Models\Validable|null */
     $validable = Validable::firstWhere('id', $validableId);
 
     if ($validable) {
@@ -97,9 +127,9 @@ class ValidableHandler
       $state = $validator->validate();
 
       if ($state) {
-        $this->reject(validableId: $validableId);
+        $removeState = Validable::where('id', $validableId)->delete();
 
-        return $state;
+        return $removeState;
       }
     }
 
@@ -109,7 +139,10 @@ class ValidableHandler
 
 namespace InnerValidableHandler;
 
+use App\mobile_v1\app\family\FamilyChildren;
+use App\mobile_v1\app\family\FamilyCouple;
 use App\mobile_v1\handlers\ValidableHandler;
+use App\Models\Validable;
 
 class Notify
 {
@@ -122,18 +155,22 @@ class Notify
 
   public function send(string $type): bool
   {
-    return false;
+    return true;
   }
 }
 
 class Validator
 {
-  public function __construct(private mixed $validable) {}
+  public function __construct(private Validable $validable) {}
 
   public function validate(): bool
   {
     switch ($this->validable->type) {
       case ValidableHandler::TYPE_CHILD_BIND:
+        return $this->_typeChilBind();
+        break;
+
+      case ValidableHandler::TYPE_CHILD_CAN_MARIED:
         return $this->_typeChilBind();
         break;
 
@@ -147,11 +184,81 @@ class Validator
 
   private function _typeCoupleBind(): bool
   {
-    return false;
+    $user = request()->user();
+
+    $family = new FamilyCouple(userId: $user->id);
+
+    $validationState = $family->acceptPartner($this->validable->sender);
+
+    return $validationState;
   }
 
   private function _typeChilBind(): bool
   {
+    $user = request()->user();
+
+    $childrenHander = new FamilyChildren(userId: $user->id);
+
+    $state = false;
+
+    // default accept as parent.
+    if ($this->validable->type == ValidableHandler::TYPE_CHILD_BIND) {
+      $state = $childrenHander->acceptChild(childId: $this->validable->sender);
+    } elseif ($this->validable->type == ValidableHandler::TYPE_CHILD_CAN_MARIED) {
+      $state = $childrenHander->acceptChildCanBeMaried(childId: $this->validable->sender);
+    }
+
+    return $state;
+  }
+}
+
+class Rejector
+{
+  public function __construct(private Validable $validable) {}
+
+  public function reject(): bool
+  {
+    switch ($this->validable->type) {
+      case ValidableHandler::TYPE_CHILD_BIND:
+        return $this->_typeChilBind();
+        break;
+
+      case ValidableHandler::TYPE_CHILD_CAN_MARIED:
+        return $this->_typeChilBind();
+        break;
+
+      case ValidableHandler::TYPE_COUPLE_BIND:
+        return $this->_typeCoupleBind();
+        break;
+    }
+
     return false;
+  }
+
+  // When rejected: The child account is deleted if there are not validated yet.
+  private function _typeChilBind(): bool
+  {
+    $user = request()->user();
+
+    $childrenHander = new FamilyChildren(userId: $user->id);
+
+    if ($this->validable->type == ValidableHandler::TYPE_CHILD_BIND) {
+      $state = $childrenHander->revoqueInvitationToParent($this->validable->id);
+    } elseif ($this->validable->type == ValidableHandler::TYPE_CHILD_CAN_MARIED) {
+      $state = $childrenHander->revoqueCanBeMariedInvitation($this->validable->id);
+    }
+
+    return $state;
+  }
+
+  private function _typeCoupleBind(): bool
+  {
+    $user = request()->user();
+
+    $couplenHandler = new FamilyCouple(userId: $user->id);
+
+    $state = $couplenHandler->revoqueInvitationToPartner();
+
+    return $state;
   }
 }

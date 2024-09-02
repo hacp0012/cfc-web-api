@@ -2,10 +2,13 @@
 
 namespace App\mobile_v1\app\family;
 
+use App\mobile_v1\app\user\UserHandlerClass;
 use App\mobile_v1\handlers\ValidableHandler;
 use App\Models\Couple;
 use App\Models\User;
+use App\Models\Validable;
 use Illuminate\Database\Eloquent\Casts\Json;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class FamilyCouple
@@ -49,9 +52,9 @@ class FamilyCouple
 
     if ($where == 'child') {
       /** @var Collection */
-      $results = Couple::where('epouse', '<>', null)
+      $results = Couple::/* where('epouse', '<>', null)
         ->where('epoue', '<>', null)
-        ->where('nom', 'LIKE', "%$name%")
+        -> */where('nom', 'LIKE', "%$name%")
         ->get(['id', 'nom', 'epoue', 'epouse', 'd_mariage', 'phone', 'adresse']);
     } else {
       # Parent search.
@@ -63,15 +66,17 @@ class FamilyCouple
   }
 
   /** Update some couple informations. */
-  function updateInfos(string $name = null, string $mariageDate = null, string $address = null, string $phoneCode = null, string $phoneNumber = null): bool
+  function updateInfos(string $name = null, string $mariageDate = null, string $address = null, string $phoneNumber = null): bool
   {
     $data = [];
 
+    $date = Carbon::parse($mariageDate);
+
     // Control data.
     if ($name) $data['nom']                         = $name;
-    if ($mariageDate) $data['d_mariage']            = $mariageDate;
+    if ($mariageDate) $data['d_mariage']            = $mariageDate ? $date->toDateString() : null;
     if ($address) $data['adresse']                  = $address;
-    if ($phoneCode && $phoneNumber) $data['phone']  = Json::decode([$phoneCode, $phoneNumber]);
+    if ($phoneNumber) $data['phone']                = $phoneNumber;
 
     // Storing.
     if (count($data) && $this->couple) {
@@ -149,10 +154,19 @@ class FamilyCouple
   /** Revoque or cancel an invitation. */
   function revoqueInvitationToPartner(): bool
   {
-    $validable = new ValidableHandler;
-    $state = $validable->reject(ValidableHandler::TYPE_COUPLE_BIND, ['partner_id' => $this->user->id]);
+    // $validable = new ValidableHandler;
 
-    return $state;
+    // Get user validable.
+    // $userValidable = Validable::firstWhere(['type' => ValidableHandler::TYPE_COUPLE_BIND, 'sender' => $this->user->id]);
+
+    // if ($userValidable) {
+      // $state = $validable->reject(validableId: $userValidable->id);
+
+      // return $state;
+    // }
+    // return false;
+
+    return true;
   }
 
   /** Get couple information (small infos) */
@@ -161,11 +175,50 @@ class FamilyCouple
     if ($this->couple) {
       $only = ['nom', 'epoue', 'epouse', 'd_mariage', 'adresse', 'phone', 'photo', 'enfants', 'created_at'];
 
-      $data = $this->couple->only($only)->all();
+      $data = collect($this->couple)->only($only)->all();
+
+      // Fitch left partner.
+      $hand = $this->user->civility == 'F' ? 'epouse' : 'epoue';
+      if ($data[$hand]) {
+        $partner = UserHandlerClass::getSimpleUserData((string) $data[$hand]);
+
+        $data[$hand] = $partner;
+      }
 
       return collect($data);
     }
 
     return null;
+  }
+
+  function createNewIncompletCouple(string $name): ?string
+  {
+    // Data.
+    $data = [
+      'nom' => $name,
+      // 'epoue',
+      // 'epouse',
+      // 'd_mariage',
+    ];
+
+    // Get user civility.
+    $hand = $this->user->civility == 'F' ? 'epoue' : 'epouse';
+
+    $data[$hand] = $this->user->id;
+
+    // Create couple.
+    $newCouleId = Couple::create($data);
+
+    // Return.
+    return $newCouleId;
+  }
+
+  function checkIfHasSentInvitationRequest(): bool
+  {
+    $validable = Validable::firstWhere(['sender'=> $this->user->id, 'type'=> ValidableHandler::TYPE_COUPLE_BIND]);
+
+    if ($validable) return true;
+
+    return false;
   }
 }

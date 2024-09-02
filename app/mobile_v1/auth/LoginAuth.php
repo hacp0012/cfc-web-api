@@ -2,13 +2,10 @@
 
 namespace App\mobile_v1\auth;
 
-use App\mobile_v1\classes\Constants;
-use App\mobile_v1\classes\FileHanderClass;
-use App\mobile_v1\handlers\PhotoHandler;
+use App\mobile_v1\app\user\UserHandlerClass;
+use App\mobile_v1\handlers\NotificationHandler;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use App\Notifications\Wellcome;
 
 class LoginAuth
 {
@@ -42,6 +39,11 @@ class LoginAuth
         // CREATE SANCTUM TOKEN {#f9f, 1}
         $token = $user->createToken($infos);
 
+        // Send notification.
+        NotificationHandler::send(title: $user->fullname, body: "Shalom " . $user->name . ", nous sommes ravis de vous revoir. \n\nBienvenue !")
+          ->flash(Wellcome::class)
+          ->to($user);
+
         return [
           'state' => 'LOGED', // ! --> LOGED
           'token' => $token->plainTextToken,
@@ -57,36 +59,13 @@ class LoginAuth
   }
 
   /** Get user datas for mobile loading. */
-  public function getUserData(): array
+  public function getUserData(): ?array
   {
     $user = request()->user();
 
-    // Photo :
-    $photo = FileHanderClass::get(
-      type: FileHanderClass::TYPE['IMAGE'],
-      owner: $user->id,
-      ownerGroup: Constants::GROUPS_USER,
-      contentGroup: 'PHOTO_PROFILE',
-    );
+    $userHandler = new UserHandlerClass(userId: $user->id);
 
-    // Datas :
-    $data = [
-      'role'                    => $user->role,
-      'name'                    => $user->name,
-      'fullname'                => $user->fullname,
-      'civility'                => $user->civility,
-      'd_naissance'             => $user->d_naissance,
-      'genre'                   => $user->genre,
-      'pool'                    => $user->pool,
-      'com_loc'                 => $user->com_loc,
-      'noyau_af'                => $user->noyau_af,
-      'pcn_in_waiting_validation' => $user->pcn_in_waiting_validation,
-      'telephone'                 => $user->telephone,
-
-      'photo'                     => null,
-    ];
-
-    if ($photo->first()) $data['photo'] = $photo->first()->pid;
+    $data = $userHandler->getUserData();
 
     return $data;
   }

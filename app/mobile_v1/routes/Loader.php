@@ -9,12 +9,10 @@ class Loader
   /**
    * Create a new class instance.
    */
-  public function __construct()
-  {
-    //
-  }
+  public function __construct() {}
 
-  public function load() {
+  public function load()
+  {
     return Pcn::all();
     // return [];
   }

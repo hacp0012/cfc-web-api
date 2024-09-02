@@ -1,0 +1,121 @@
+<?php
+
+namespace App\Quest;
+
+use Illuminate\Database\Eloquent\Casts\Json;
+use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
+use ReflectionClass;
+
+class QuestConsole
+{
+  /**
+   * Create a new class instance.
+   */
+  public function __construct() {}
+
+  function generateId(int $length = 36): string
+  {
+    $generatedId = Str::random($length);
+
+    return $generatedId;
+  }
+
+  function generateUuid(): string
+  {
+    $generatedId = (string) Uuid::uuid4();
+
+    return $generatedId;
+  }
+
+  function trackId(string $id): array
+  {
+    $routesRegister = new QuestRoutes;
+
+    $_className = null;
+    $_classNamespace = null;
+    $_methodName = null;
+    $_methodParams = null;
+    $_filePath = null;
+    $_methodIsPublic = true;
+    $_attribut = null;
+
+    // loop in classes.
+    foreach ($routesRegister->routes as $class) {
+      try {
+        $classReflexion = new ReflectionClass($class);
+      } catch (\Exception $e) {
+        throw new \Exception("The provided quest class '$class' not exist. " /* . $e->__toString() */);
+      }
+
+      // loop in methods.
+      $methods = $classReflexion->getMethods();
+
+      $noMatched = false;
+      if (count($methods)) {
+        foreach ($methods as $method) {
+
+          // get attributs.
+          $attributs = $method->getAttributes(QuestSpaw::class);
+
+          // If not attribut found.
+          if (count($attributs) == 0) continue;
+
+          // get attribut instance.
+          $attributInst = $attributs[0]->newInstance();
+
+          // ID .
+          if ($attributInst->ref == $id) {
+            //
+            $_classNamespace = $class;
+            $_className = $classReflexion->getName();
+            $_methodName = $method->getName();
+            $_methodParams = $method->__toString();
+            $_methodIsPublic = $method->isPublic();
+            $_filePath = $classReflexion->getFileName();
+
+            $atArgs = [];
+            foreach ($method->getAttributes(QuestSpaw::class)[0]->getArguments() as $key => $value) {
+              if ($value instanceof QuestSpawMethod) $atArgs[$key] = $value->name;
+              elseif ($key == 'ref') continue;
+              elseif ($key == 'alias') {
+                $t = json_encode($value);
+                $t = str_replace(':', ' -> ', $t);
+                $t = str_replace('"', '', $t);
+                $t = str_replace('{', '(', $t);
+                $t = str_replace('}', ')', $t);
+
+                $atArgs[$key] = $t;
+              } else $atArgs[$key] = $value;
+            }
+            $_attribut = count($atArgs) > 0 ? json_encode($atArgs) : null;
+
+            $noMatched = false;
+            break;
+          } else $noMatched = true;
+        }
+      }
+
+      if ($noMatched) {
+        return ['status' => 'UNMATCHED'];
+      } else {
+        return [
+          'status' => 'MACTHED',
+          'class_name' => $_className,
+          'class_namespace' => $_classNamespace,
+          'method_name' => $_methodName,
+          'method_params' => $_methodParams,
+          'method_is_public' => $_methodIsPublic,
+          'file_path' => $_filePath,
+          'attribut' => $_attribut,
+        ];
+      }
+    }
+
+    if (count($routesRegister->routes) == 0) {
+      return ['status' => 'EMPTY_PATHS'];
+    }
+
+    return ['status' => 'NOPE'];
+  }
+}

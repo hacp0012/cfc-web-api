@@ -9,10 +9,7 @@ class LoginAuthRouter
   /**
    * Create a new class instance.
    */
-  public function __construct()
-  {
-    //
-  }
+  public function __construct() {}
 
   public function checkState(Request $request)
   {
@@ -30,7 +27,7 @@ class LoginAuthRouter
       return $state;
     }
 
-    return ['state'=> 'ERROR'];
+    return ['state' => 'ERROR'];
   }
 
   public function login(Request $request)

@@ -6,18 +6,19 @@ use App\mobile_v1\classes\Constants;
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Couple;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 
 class UserHandlerClass
 {
+  /** @var \App\Models\User|null */
+  public ?User $user = null;
   /**
    * Create a new class instance.
    */
   public function __construct(protected string $userId)
   {
-    //
+    $this->user = User::firstWhere('id', $userId);
   }
 
   public function updateInfos(string $name, string $fullname, string $brithData, string $civility): bool
@@ -59,6 +60,47 @@ class UserHandlerClass
 
     // Datas :
     $data = [
+      'child_can_be_maried'     => $user->child_can_be_maried,
+      'child_state'             => $user->child_state,
+      'role'                    => $user->role,
+      'name'                    => $user->name,
+      'fullname'                => $user->fullname,
+      'civility'                => $user->civility,
+      'd_naissance'             => $user->d_naissance,
+      'genre'                   => $user->genre,
+      'pool'                    => $user->pool,
+      'com_loc'                 => $user->com_loc,
+      'noyau_af'                => $user->noyau_af,
+      'pcn_in_waiting_validation' => $user->pcn_in_waiting_validation,
+      'telephone'                 => $user->telephone,
+
+      'photo'                     => null,
+    ];
+
+    if ($photo->first()) $data['photo'] = $photo->first()->pid;
+
+    return $data;
+  }
+
+  /** Get simplifeds user datas.
+   * Via userID or constructor userID.
+  */
+  public static function getSimpleUserData(string $userId): ?array
+  {
+    $user = User::firstWhere('id', $userId);
+    if ($user == null) return null;
+
+    // Photo :
+    $photo = FileHanderClass::get(
+      type: FileHanderClass::TYPE['IMAGE'],
+      owner: $userId,
+      ownerGroup: Constants::GROUPS_USER,
+      contentGroup: 'PHOTO_PROFILE',
+    );
+
+    // Datas :
+    $data = [
+      'id'                      => $user->id,
       'role'                    => $user->role,
       'name'                    => $user->name,
       'fullname'                => $user->fullname,
@@ -80,7 +122,7 @@ class UserHandlerClass
   }
 
   /** Initialize properties. */
-  public function getUserCouple(): ?array
+  public function getUserCouple(): ?Couple
   {
     $user = User::whereId($this->userId)->first();
 
@@ -135,5 +177,32 @@ class UserHandlerClass
     }
 
     return $newUploadedPhotoPID;
+  }
+
+  public function updateOrSendPcnSubscription(string $pool, string $comLoc, string $noyauAf): bool
+  {
+    $newData = ['pool' => $pool, 'com_loc' => $comLoc, 'noyau_af' => $noyauAf];
+
+    if ($this->user) {
+      $this->user->pcn_in_waiting_validation = $newData;
+      return $this->user->save();
+    }
+
+    return false;;
+  }
+
+  public function updateRole(string $level, string $role): bool
+  {
+    $data = [
+      'state' => 'INWAIT',
+      'name' => null,
+      'level' => $level,
+      'role' => $role,
+      'can' => [/* A remplir par l'admin */]
+    ];
+
+    $this->user->role = $data;
+
+    return $this->user->save();
   }
 }

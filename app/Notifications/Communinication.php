@@ -14,10 +14,7 @@ class Communinication extends Notification
   /**
    * Create a new notification instance.
    */
-  public function __construct()
-  {
-    //
-  }
+  public function __construct(private array $notification) {}
 
   /**
    * Get the notification's delivery channels.
@@ -50,5 +47,17 @@ class Communinication extends Notification
     return [
       //
     ];
+  }
+
+  /**
+   * Get the array representation of the notification.
+   *
+   * @return array<string, mixed>
+   */
+  public function toDatabase(object $notifiable): array
+  {
+    $this->notification['group'] = 'COMMUNICATION';
+
+    return $this->notification;
   }
 }
