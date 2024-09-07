@@ -71,6 +71,12 @@ class RegisterAuth
       'civility'    => $civility,
       'd_naissance' => $dBrith,
       'telephone'   => [$phoneCode, $phoneNumber],
+
+      // TODO: This role, pool, ..., is juste for debug. {#f00, 4}
+      'role' => ['state' => "ACTIVE", 'name' => "Chargé de communication",     'level' => 'pool', 'role' => "COMMUNICATION_MANAGER",  'can' => []],
+      'pool' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
+      'com_loc' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
+      'noyau_af' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
     ];
 
     if ($alreadyMember) $data['pcn_in_waiting_validation'] = Json::encode([

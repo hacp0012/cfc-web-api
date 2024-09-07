@@ -15,12 +15,23 @@ return new class extends Migration
       $table->comment("");
       $table->uuid('id')->primary();
 
-      $table->string('pcn');
-      $table->string('visibilite')->comment('[pcn]');
-      $table->string('etat');
-      $table->string('communiquer');
-      $table->string('attached_files');
-      $table->string('publier_par');
+      $table->uuid('published_by')->comment("User (Publisher) UUID");
+
+      $table->enum('state', ['PUBLIC', 'PRIVATE', 'PROTECTED'])->default('PUBLIC')->nullable()->comment("Teaching state.");
+      $table->enum('status', ['REALIZED', 'INWAIT', 'NONE'])->default('NONE')->comment("Status de realisation.");
+      $table->string('visibility')->comment('[level, level_id] - Ex. [level:pool, level_id:pool_id]');
+
+      $table->text('title');
+      // $table->text('date')->nullable()->comment('Teaching date');
+      // $table->text('verse')->nullable()->comment('Teaching bible reference');
+      // $table->text('predicator')->nullable()->comment('Teaching predicator');
+      $table->text('text')->nullable()->comment('Teaching description');
+
+      $table->text('picture')->nullable()->comment('pid');
+      // $table->text('audio')->nullable()->comment('pid');
+      $table->text('document')->nullable()->comment("public_id");
+
+      $table->softDeletes();
 
       $table->timestamps();
     });

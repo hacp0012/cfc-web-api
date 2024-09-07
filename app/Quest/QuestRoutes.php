@@ -2,8 +2,6 @@
 
 namespace App\Quest;
 
-use App\quest\demo\QuestTest;
-
 /** Quest routes register. */
 class QuestRoutes
 {
@@ -13,9 +11,13 @@ class QuestRoutes
   public function __construct() {}
 
   /**
-   * Routes list.
+   * The Global Routes list.
+   *
+   * Accessible in all quest request.
    *
    * @var array<int, string> $routes An array of spawned class's
    */
-  public array $routes = [QuestTest::class];
+  public array $routes = [
+    // Spaweds classe names here...
+  ];
 }

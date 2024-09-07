@@ -12,12 +12,13 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('reactions', function (Blueprint $table) {
-      $table->comment("");
+      $table->comment("Likes and Views");
       $table->uuid('id')->primary();
 
-      $table->string('type')->comment("likes | views");
-      $table->string('for')->comment("file | enseignement | comment");
-      $table->string('for_id');
+      $table->enum('type', ['LIKE', 'VIEW']);
+      $table->tinyText('for')->comment("Model namespace");
+      $table->uuid('for_id');
+      $table->uuid('by')->nullable()->comment("The user uuid.");
 
       $table->timestamps();
     });

@@ -48,7 +48,7 @@ class FamilyCouple
    */
   static function findLeftCoupleBy(string $civility, string $name, string $where): Collection
   {
-    $partnerhand = $civility == 'F' ? 'epouse' : 'epoue';
+    $partnerhand = $civility == 'F' ? 'epoue' : 'epouse';
 
     if ($where == 'child') {
       /** @var Collection */

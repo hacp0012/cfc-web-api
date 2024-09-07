@@ -22,7 +22,7 @@ class TeachingPostHandler
     // User :
     $user = request()->user();
 
-    $carbon = new Carbon($date);
+    $carbon = new Carbon(str_replace('/', '-', $date));
     $formatedDate = $carbon->toISOString();
 
     // Get user role.
@@ -137,7 +137,7 @@ class TeachingPostHandler
     $teaching = Enseignement::find($teaching_id);
 
     if ($teaching) {
-      $validatedFile = FileHanderClass::validate(FileHanderClass::TYPE['IMAGE'], $document);
+      $validatedFile = FileHanderClass::validate(FileHanderClass::TYPE['DOCUMENT'], $document);
 
       if ($validatedFile) {
         $documentPid = null;

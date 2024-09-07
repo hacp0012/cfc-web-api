@@ -2,7 +2,7 @@
 
 namespace App\Quest;
 
-use App\quest\QuestSpawMethod;
+use App\Quest\QuestSpawMethod;
 use Attribute;
 
 /** The Spaw Attribut.

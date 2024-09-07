@@ -243,7 +243,7 @@ class FileHanderClass
     $rules = match ($type) {
       'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
       'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
-      'DOCUMENT' => [File::types([/* 'application/pdf',  */'plain/text', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
+      'DOCUMENT' => [File::types([/* 'application/pdf',  */'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
 
       default => [],
     };

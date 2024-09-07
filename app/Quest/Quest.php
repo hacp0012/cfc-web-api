@@ -6,13 +6,16 @@ use App\quest\QuestSpawClass;
 use App\quest\QuestSpawMethod;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Json;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Reflection;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use Illuminate\Http\UploadedFile;
-
+use Illuminate\Routing\Route as RoutingRoute;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /** Quest core handler.
  *
@@ -30,8 +33,43 @@ class Quest
   const supportedFilesPocketTypes   = [UploadedFile::class, 'mixed'];
   const allowedMethodModifiers      = ['static', 'public'];
 
+  // QUEST ROUTE -->-------------------------------------------------------------- :
+  // Quest::spaw('ref', middlware: []);
 
-  // METHODS ----------------------------------------------------------- :
+  /**
+   * Quest Router `QuesetRouter` short hand.
+   *
+   * @param string $uri
+   * ⚠️ At any end of `uri` a `{quest_ref}` route parameter are append. Dont append it twice.
+   *
+   * @param array<int, string> $routes An array of spawned class's. But class's listed
+   * here are not visible by the Ref-Tracker in console. Because it's private and if
+   * is provided, the base quest routes are not accessible.
+   *
+   * @param array|string|null $middleware It very recomanded to declare your middlewares here
+   * wetherway at the top level `->middlware(_)`.
+   */
+  static function spawn(string $uri = 'quest', array|string|null $middleware = null, array $routes = []): RoutingRoute
+  {
+    if (Str::endsWith($uri, '/')) $uri = Str::replaceEnd('/', '', $uri);
+
+    $GLOBALS['TDWVaumvcm2BdMsdfP'] = $middleware;
+    $GLOBALS['IYG83YWUbjNeosI3Xv'] = $routes;
+
+    $router = Route::any(uri: $uri . '/{quest_ref}', action: function (string $quest_ref, Request $request) {
+      global $IYG83YWUbjNeosI3Xv, $TDWVaumvcm2BdMsdfP;
+
+      $questRouter = new QuestRouter(questRef: $quest_ref, routes: $IYG83YWUbjNeosI3Xv, middleware: $TDWVaumvcm2BdMsdfP);
+
+      return $questRouter->spawn();
+    });
+
+    if ($middleware) $router->middleware($middleware);
+
+    return $router;
+  }
+
+  // METHODS  ROUTER-->----------------------------------------------------------- :
   function router(string $questId, array $classes, array|string|null $parentMiddleware = null): mixed
   {
     // loop in classes.
@@ -61,7 +99,7 @@ class Quest
           if ($this->controlQuestId(questId: $questId, attribut: $attributInst) == false) continue;
 
           // Contol middleware.
-          if ($attributInst->middleware != null) {
+          if ($attributInst->middleware !== null) {
             if ($this->controlMiddleware($parentMiddleware, $attributInst->middleware) == false) return new QuestReturnVoid;
           }
 
@@ -112,7 +150,7 @@ class Quest
     // $arguments = $attribut->getArguments();
 
     // if ($arguments['id'] == $questId) {
-    if ($attribut->ref == $questId) {
+    if (strcmp($attribut->ref, $questId) == 0) {
       // * ID'S ARE MATCHED * //
       return true;
     } else {
@@ -132,16 +170,6 @@ class Quest
     if ($request->files->count()) $params = array_merge($params, $request->files->all());
 
     return $params;
-  }
-
-  /** Get modifier [only public are authorized].
-   *
-   * @param \ReflectionMethod $method
-   */
-  private function getMethodModifier($method): string
-  {
-    $modifier = implode(' ', Reflection::getModifierNames($method->getModifiers()));
-    return $modifier;
   }
 
   /** Control modifier [only public are authorized].
@@ -172,7 +200,7 @@ class Quest
       $foundedAttribut = $attribut;
     }
 
-    if ($foundedAttribut != null) {
+    if ($foundedAttribut !== null) {
       $this->spawTypeCheker($method, $attribut);
 
       $filePocketName = $attribut->getArguments();
@@ -329,7 +357,7 @@ class Quest
       foreach ($types as $type) {
         $typeName = $type?->getName() ?? 'mixed';
 
-        if ($type->allowsNull() && $value == null) $casted = null;
+        if ($type->allowsNull() && $value === null) $casted = null;
         else {
           $isOfThisType = match ($typeName) {
             'int' => is_numeric($value) ? (is_string($value) && str_contains($value, '.') ? false : true) : true,
@@ -355,7 +383,7 @@ class Quest
           }
         }
 
-        if ($type->allowsNull() == false && $casted == null) throw new \Exception(
+        if ($type->allowsNull() === false && $casted === null) throw new \Exception(
           "The spaw parameter '_paramName_' dont allow Null value. Expected type '$typeName', provided value : " . Json::encode($value),
         );
       }
@@ -370,7 +398,7 @@ class Quest
    */
   private function compareParameters(?array $intention, $params, string $filePocket = null, $attribut = null): void
   {
-    assert($attribut != null, "The attribut parameter must not be null.");
+    assert($attribut !== null, "The attribut parameter must not be null.");
 
     // loop in params.
     foreach ($params as $param) {
@@ -379,13 +407,13 @@ class Quest
       if ($type instanceof ReflectionNamedType) $type = $type->getName();
 
       // Check in intion.
-      if ($intention == null) throw new Exception("Your quest has no parameter where " . count($params) . " parameter's are excepted.");
+      if ($intention === null) throw new Exception("Your quest has no parameter where " . count($params) . " parameter's are excepted.");
 
       $paramName = $this->getAliasName($param->getName(), $attribut);
 
       $intentionPropertyValue = isset($intention[$paramName]) ? $intention[$paramName] : null;
 
-      if ($intentionPropertyValue != null) {
+      if ($intentionPropertyValue !== null) {
         // check intention type.
         // $intentionType = $this->typeChecker($intentionPropertyValue);
 
@@ -393,11 +421,11 @@ class Quest
         //   throw new \Exception("The intention quest parameter '$paramName' has diferent parameter type with spaw method parameter '$$paramName'. Expected type '$type' found '$intentionType'");
         // }
       } else {
-        $exceptionMessage = "The aimed parameter '$paramName' are not optional";
+        $exceptionMessage = "The aimed parameter '$paramName' are not optional ";
 
         if ($filePocket) $filePocket = $this->getAliasName($filePocket, $attribut);
 
-        if ($paramName != $filePocket) {
+        if ($paramName !== $filePocket) {
           try {
             $param->getDefaultValue();
 
@@ -428,11 +456,11 @@ class Quest
 
     $classInstance = null;
 
-    if ($constructionParam != null) {
+    if ($constructionParam !== null) {
       $classConstructor = $class->getConstructor();
       $classParams = $classConstructor->getParameters();
 
-      if (count($classParams) != count($constructionParam ?? [])) {
+      if (count($classParams) !== count($constructionParam ?? [])) {
         throw new \Exception("The quest guid can't construct the class '" . $class->getName() . "', beacause parameters provided in QuestSpawClass are too less or to much.");
       }
 

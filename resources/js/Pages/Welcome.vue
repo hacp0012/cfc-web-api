@@ -33,11 +33,11 @@ function handleImageError() {
 <template>
   <Head title="Welcome" />
   <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-    <img
+    <!-- <img
       id="background"
       class="absolute -left-20 top-0 max-w-[877px]"
       src="https://laravel.com/assets/img/welcome/background.svg"
-    />
+    /> -->
     <div
       class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white"
     >
@@ -97,17 +97,17 @@ function handleImageError() {
                 id="screenshot-container"
                 class="relative flex w-full flex-1 items-stretch"
               >
-                <img
+                <!-- <img
                   src="https://laravel.com/assets/img/welcome/docs-light.svg"
                   alt="Laravel documentation screenshot"
                   class="aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                   @error="handleImageError"
-                />
-                <img
+                /> -->
+                <!-- <img
                   src="https://laravel.com/assets/img/welcome/docs-dark.svg"
                   alt="Laravel documentation screenshot"
                   class="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
-                />
+                /> -->
                 <div
                   class="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"
                 ></div>

@@ -39,7 +39,7 @@ class RegisterAuthRouter
       'name'            => "required|string",
       'fullname'        => "required|string",
       'civility'        => "required|string",
-      'd_brith'         => "required|date",
+      'd_brith'         => "required|string",
       'phone_code'      => "required|numeric",
       'phone_number'    => "required|string",
       'is_parent'       => "required|bool",
@@ -53,7 +53,7 @@ class RegisterAuthRouter
 
     $reg = new RegisterAuth;
 
-    $brithDate = new Carbon($validateds['d_brith']);
+    $brithDate = new Carbon(str_replace('/', '-', $validateds['d_brith']));
 
     $result = $reg->register(
       nom: $validateds['name'],

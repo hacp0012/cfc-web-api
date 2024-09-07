@@ -30,7 +30,7 @@ class QuestConsole
 
   function trackId(string $id): array
   {
-    $routesRegister = new QuestRoutes;
+    $routes = QuestRouter::routesList();
 
     $_className = null;
     $_classNamespace = null;
@@ -41,7 +41,12 @@ class QuestConsole
     $_attribut = null;
 
     // loop in classes.
-    foreach ($routesRegister->routes as $class) {
+    $noMatched = false;
+
+    // if (count($routesRegister->routes) == 0) return ['status' => 'EMPTY_PATHS'];
+    if (count($routes) == 0) $noMatched = true;
+
+    foreach ($routes as $class) {
       try {
         $classReflexion = new ReflectionClass($class);
       } catch (\Exception $e) {
@@ -51,7 +56,6 @@ class QuestConsole
       // loop in methods.
       $methods = $classReflexion->getMethods();
 
-      $noMatched = false;
       if (count($methods)) {
         foreach ($methods as $method) {
 
@@ -65,7 +69,7 @@ class QuestConsole
           $attributInst = $attributs[0]->newInstance();
 
           // ID .
-          if ($attributInst->ref == $id) {
+          if (strcmp($attributInst->ref, $id) == 0) {
             //
             $_classNamespace = $class;
             $_className = $classReflexion->getName();
@@ -96,26 +100,19 @@ class QuestConsole
         }
       }
 
-      if ($noMatched) {
-        return ['status' => 'UNMATCHED'];
-      } else {
-        return [
-          'status' => 'MACTHED',
-          'class_name' => $_className,
-          'class_namespace' => $_classNamespace,
-          'method_name' => $_methodName,
-          'method_params' => $_methodParams,
-          'method_is_public' => $_methodIsPublic,
-          'file_path' => $_filePath,
-          'attribut' => $_attribut,
-        ];
-      }
+      if ($noMatched == false) break;
     }
 
-    if (count($routesRegister->routes) == 0) {
-      return ['status' => 'EMPTY_PATHS'];
-    }
-
-    return ['status' => 'NOPE'];
+    if ($noMatched) return ['status' => 'UNMATCHED'];
+    else return [
+      'status' => 'MACTHED',
+      'class_name' => $_className,
+      'class_namespace' => $_classNamespace,
+      'method_name' => $_methodName,
+      'method_params' => $_methodParams,
+      'method_is_public' => $_methodIsPublic,
+      'file_path' => $_filePath,
+      'attribut' => $_attribut,
+    ];
   }
 }

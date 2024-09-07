@@ -161,7 +161,7 @@ class FamilyRouteCtrl
       'genre'       => "required|string",
     ]);
 
-    $date = new Carbon($request->input('d_naissance', ''));
+    $date = new Carbon(str_replace('/', '-', $request->input('d_naissance', '')));
 
     $updateState = $family->updateChild(childId: $request->input('child_id', '---'), data: [
       'nom'           => $validated['nom'],
@@ -180,7 +180,7 @@ class FamilyRouteCtrl
 
     $family = new FamilyChildren($user->id);
 
-    $date = new Carbon($request->input('d_naissance'));
+    $date = new Carbon(str_replace('/', '-', $request->input('d_naissance')));
 
     $request->validate([
       'nom'         => "required|string",

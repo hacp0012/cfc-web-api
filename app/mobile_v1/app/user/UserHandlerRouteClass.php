@@ -30,7 +30,7 @@ class UserHandlerRouteClass
       'civility'    => "required|string|max:1",
     ]);
 
-    $brithDate = new Carbon($validated['brith_date']);
+    $brithDate = new Carbon(str_replace('/', '-',$validated['brith_date']));
 
     $state = (new UserHandlerClass(userId: $user->id))->updateInfos(
       name: $validated['name'],

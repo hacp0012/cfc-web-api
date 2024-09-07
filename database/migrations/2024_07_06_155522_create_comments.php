@@ -12,14 +12,15 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('comments', function (Blueprint $table) {
-      $table->comment("");
+      $table->comment("Commentaires");
       $table->uuid('id')->primary();
 
-      $table->string('for_user');
-      $table->string('type')->comment("communiquer | ensignement");
-      $table->string('for_id');
-      $table->string('comment');
-      $table->string('parent');
+      $table->uuid('user');
+      $table->tinyText('for')->comment("Model namespace");
+      $table->uuid('for_id');
+
+      $table->foreignUuid('parent')->nullable()->constrained(table: 'comments')->cascadeOnDelete();
+      $table->text('comment');
 
       $table->timestamps();
     });

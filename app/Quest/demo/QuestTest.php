@@ -7,6 +7,8 @@ use App\Quest\QuestSpaw;
 use App\quest\QuestSpawClass;
 use App\Quest\QuestSpawMethod;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 
 #[QuestSpawClass()]
 class QuestTest
@@ -15,7 +17,6 @@ class QuestTest
    * Create a new class instance of Quest Guru.
    */
   public function __construct() {}
-
 
   # -------------------------------------------------------------------------------------------:
   #[QuestSpaw(ref: '9ef4f696-9bdd-4b31-8aba-d626799b2299', method: QuestSpawMethod::GET)]
@@ -53,5 +54,22 @@ class QuestTest
     //* -> $guidPicture
 
     return $moon + $sunRise;
+  }
+}
+
+class Forest
+{
+  #[QuestSpaw(ref: 'NAhLlRZW3g3Fbh30dZ')]
+  function tree(string $color): int
+  {
+    return $this->fruits();
+  }
+
+  function fruits(): int
+  {
+    Route::get('/', fn() => view('home'));
+    Quest::spawn(uri: 'quest', routes: [Forest::class]);
+    route('quest', ['quest_ref' => 'RrOWXRfKOjauvSpc7y', 'count' => 9,]);
+    return 18;
   }
 }

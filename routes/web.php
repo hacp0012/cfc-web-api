@@ -6,15 +6,22 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-  return Inertia::render('Welcome', [
-      'canLogin' => Route::has('login'),
-      'canRegister' => Route::has('register'),
-      'laravelVersion' => Application::VERSION,
-      'phpVersion' => PHP_VERSION,
-  ]);
+  // return Inertia::render('Welcome', [
+  //     'canLogin' => Route::has('login'),
+  //     'canRegister' => Route::has('register'),
+  //     'laravelVersion' => Application::VERSION,
+  //     'phpVersion' => PHP_VERSION,
+  // ]);
+  // return Inertia::render('Home/Login');
+  return Inertia::render('Home/Home');
 });
 
-require __DIR__ . '/quest.php';
+// Route::get('/login/test', function () {
+//   return Inertia::render('Home/Home');
+// });
+Route::inertia('/temp/login', 'Home/Login');
+
+// require __DIR__ . '/quest.php';
 
 // Route::get('/dashboard', function () {
 //   return Inertia::render('Dashboard');
