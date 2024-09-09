@@ -95,7 +95,7 @@ class RegisterAuth
       $user = User::find($newUser->id);
 
       if ($user) {
-        NotificationHandler::send(title: $user->fullname, body: "Shalom ". $user->name .", nous sommes ravis de vous compter parmi nous. Nous vous accueillons sur la plate-forme Famille Chrétienne avec tout l'amour du Christ. \n\Bienvenu parmi nous.")
+        NotificationHandler::send(title: $user->fullname, body: "Amen ". $user->name .", nous sommes ravis de vous compter parmi nous. Nous vous accueillons sur la plate-forme Famille Chrétienne avec tout l'amour du Christ. \n\Bienvenu parmi nous.")
           ->flash(Wellcome::class)
           ->to($user);
       }

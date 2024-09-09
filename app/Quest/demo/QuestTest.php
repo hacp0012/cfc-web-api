@@ -3,12 +3,12 @@
 namespace App\quest\demo;
 
 use App\Quest\Quest;
+use App\Quest\QuestRouter;
 use App\Quest\QuestSpaw;
 use App\quest\QuestSpawClass;
 use App\Quest\QuestSpawMethod;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
-use Illuminate\View\View;
 
 #[QuestSpawClass()]
 class QuestTest
@@ -28,12 +28,12 @@ class QuestTest
   #[QuestSpaw(ref: 'RdVWAQFS7FSFZeYMkp', filePocket: 'document')]
   public function fileTest(UploadedFile $document, int $age)
   {
-    dd($document);
+    // dd($document);
   }
 
 
   # -------------------------------------------------------------------------------------------:
-  #[QuestSpaw(ref: 'KsREAZ8dUZDIyzByU9')]
+  #[QuestSpaw(ref: 'KsREAZ8dUZDIyzByU9', middleware: 'guest')]
   function myQuestTest(int $start, float $infinityEnd): array
   {
     return [$start, $infinityEnd];

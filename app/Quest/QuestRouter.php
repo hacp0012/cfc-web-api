@@ -2,6 +2,8 @@
 
 namespace App\Quest;
 
+use Illuminate\Support\Facades\Log;
+
 class QuestRouter extends QuestRoutes
 {
   /**
@@ -12,21 +14,20 @@ class QuestRouter extends QuestRoutes
    * here are not visible by the Ref-Tracker in console. The Class referenced here are private to this route.
    * If `$routes` is not empty, only the global routes `$routes` a accessible. The base routes quest are not quested.
    *
-   * @param array|string|null $middleware It very recomanded to declare your middlewares here
-   * wetherway at the top level `->middlware(_)`.
+   * __Routes precedence__ :
+   * 1. Local routes : defined in spawed $routes parameter.
+   * 2. Global Base routes : defined in your routes/quest.php.
+   * 3. Defaults Global routes : default quest routes.
    */
-  public function __construct(protected string $questRef, array $routes = [], protected array|string|null $middleware = null)
+  public function __construct(protected string $questRef, array $routes = [])
   {
     parent::__construct();
-
-    $this->routes = array_merge($this->routes, $routes);
-
-    // Make $routes private and ignore quest routes.
-    if (count($routes) > 0) return;
 
     QuestRouter::createRouteFile();
 
     $this->routes = QuestRouter::routesList();
+
+    $this->routes = array_merge($routes, $this->routes);
   }
 
   /**
@@ -37,7 +38,7 @@ class QuestRouter extends QuestRoutes
   {
     $quest = new Quest;
 
-    $questResult = $quest->router(questId: $this->questRef, classes: $this->routes, parentMiddleware: $this->middleware);
+    $questResult = $quest->router(questId: $this->questRef, classes: $this->routes);
 
     if (($questResult instanceof QuestReturnVoid) == false) return $questResult;
   }
@@ -49,7 +50,8 @@ class QuestRouter extends QuestRoutes
 
     if (is_file($routeQuestFile) == false) file_put_contents(
       $routeQuestFile,
-      "<?php\n\n" .
+      file_get_contents('./publishables/quest_routes.php') ??
+        "<?php\n\n" .
         "return [\n" .
         " // Spawed classes names here ...\n" .
         "];\n\n",
@@ -68,7 +70,7 @@ class QuestRouter extends QuestRoutes
     if (is_file($routeQuestFile)) {
       $questRoutes = fn(): array => include $routeQuestFile;
 
-      $routesList = array_merge($routes->routes, $questRoutes());
+      $routesList = array_merge($questRoutes(), $routes->routes);
     }
 
     return $routesList;

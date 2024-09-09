@@ -4,6 +4,7 @@ namespace App\Quest;
 
 use App\quest\QuestSpawClass;
 use App\quest\QuestSpawMethod;
+use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
@@ -14,8 +15,10 @@ use ReflectionNamedType;
 use ReflectionUnionType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route as RoutingRoute;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use stdClass;
 
 /** Quest core handler.
  *
@@ -42,35 +45,46 @@ class Quest
    * @param string $uri
    * ⚠️ At any end of `uri` a `{quest_ref}` route parameter are append. Dont append it twice.
    *
-   * @param array<int, string> $routes An array of spawned class's. But class's listed
-   * here are not visible by the Ref-Tracker in console. Because it's private and if
-   * is provided, the base quest routes are not accessible.
+   * @param array<int, string> $routes An array of spawned class's.
    *
-   * @param array|string|null $middleware It very recomanded to declare your middlewares here
-   * wetherway at the top level `->middlware(_)`.
+   * __Routes precedence__ :
+   * 1. Local routes : defined in spawed $routes parameter.
+   * 2. Global Base routes : defined in your routes/quest.php.
+   * 3. Defaults Global routes : default quest routes.
    */
-  static function spawn(string $uri = 'quest', array|string|null $middleware = null, array $routes = []): RoutingRoute
+  static function spawn(string $uri = 'quest', array $routes = []): RoutingRoute
   {
-    if (Str::endsWith($uri, '/')) $uri = Str::replaceEnd('/', '', $uri);
+    # TRACKER :
+    { # For console track ref -->:
+      $vars = isset($GLOBALS[QuestConsole::GLOBAL_TEMP_LIST]) ? $GLOBALS[QuestConsole::GLOBAL_TEMP_LIST] : [];
 
-    $GLOBALS['TDWVaumvcm2BdMsdfP'] = $middleware;
-    $GLOBALS['IYG83YWUbjNeosI3Xv'] = $routes;
+      $GLOBALS[QuestConsole::GLOBAL_TEMP_LIST] = array_merge($routes, $vars);
+    }
 
-    $router = Route::any(uri: $uri . '/{quest_ref}', action: function (string $quest_ref, Request $request) {
-      global $IYG83YWUbjNeosI3Xv, $TDWVaumvcm2BdMsdfP;
+    // Bind routes to Route action closure {#fff, 11}
+    $anonymClass = new class ($routes) {
+      function __construct(protected array $routes) {}
+    };
 
-      $questRouter = new QuestRouter(questRef: $quest_ref, routes: $IYG83YWUbjNeosI3Xv, middleware: $TDWVaumvcm2BdMsdfP);
+    $closure = function (string $quest_ref) {
+      $questRouter = new QuestRouter(questRef: $quest_ref, routes: $this->{'routes'});
 
       return $questRouter->spawn();
-    });
+    };
 
-    if ($middleware) $router->middleware($middleware);
+    $bindedClosure = Closure::bind($closure, $anonymClass, $anonymClass);
 
+    # ROUTER :
+    if (Str::endsWith($uri, '/')) $uri = Str::replaceEnd('/', '', $uri);
+
+    $router = Route::any(uri: $uri . '/{quest_ref}', action: $bindedClosure);
+
+    # END :
     return $router;
   }
 
   // METHODS  ROUTER-->----------------------------------------------------------- :
-  function router(string $questId, array $classes, array|string|null $parentMiddleware = null): mixed
+  function router(string $questId, array $classes): mixed
   {
     // loop in classes.
     foreach ($classes as $class) {
@@ -100,7 +114,7 @@ class Quest
 
           // Contol middleware.
           if ($attributInst->middleware !== null) {
-            if ($this->controlMiddleware($parentMiddleware, $attributInst->middleware) == false) return new QuestReturnVoid;
+            if ($this->controlMiddleware($attributInst->middleware) == false) return new QuestReturnVoid;
           }
 
           // control : Request method | Method avalable.
@@ -125,8 +139,10 @@ class Quest
    * @param array|string|null $attribut
    * @param array|string|null $middlewares
    */
-  private function controlMiddleware($middlewares, $attributMiddleware): bool
+  private function controlMiddleware($attributMiddleware): bool
   {
+    $middlewares = Route::current()->middleware();
+
     if (is_array($middlewares)) {
       if (is_array($attributMiddleware)) {
         foreach ($attributMiddleware as $atMid) {
@@ -147,9 +163,8 @@ class Quest
    */
   private function controlQuestId(string $questId, $attribut): bool
   {
-    // $arguments = $attribut->getArguments();
 
-    // if ($arguments['id'] == $questId) {
+    // Log::debug("--> $questId | " . $attribut->ref);
     if (strcmp($attribut->ref, $questId) == 0) {
       // * ID'S ARE MATCHED * //
       return true;

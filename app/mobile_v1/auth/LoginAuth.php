@@ -40,7 +40,7 @@ class LoginAuth
         $token = $user->createToken($infos);
 
         // Send notification.
-        NotificationHandler::send(title: $user->fullname, body: "Shalom " . $user->name . ", nous sommes ravis de vous revoir. \n\nBienvenue !")
+        NotificationHandler::send(title: $user->fullname, body: "Amen " . $user->name . ", nous sommes ravis de vous revoir. \n\nBienvenue !")
           ->flash(Wellcome::class)
           ->to($user);
 

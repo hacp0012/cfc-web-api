@@ -5,6 +5,7 @@ use App\mobile_v1\routes\Loader;
 use App\Models\User;
 use App\Notifications\Teaching;
 use App\Notifications\Wellcome;
+use App\quest\demo\QuestTest;
 use App\Quest\Quest;
 use App\Quest\QuestRouter;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->prefix('test')->group(function () {
   // Route::any('quest/{quest_ref}', fn(string $quest_ref) => (new QuestRouter(questRef: $quest_ref))->spawn());
-  Quest::spawn();
+  Quest::spawn(routes: [QuestTest::class])->middleware('guest');
 
   Route::get('', function () {
     return ["Aliquip amet exercitation incididunt incididunt adipisicing et mollit Lorem esse consectetur."];

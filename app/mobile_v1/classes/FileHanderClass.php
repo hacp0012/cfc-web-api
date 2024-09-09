@@ -144,7 +144,7 @@ class FileHanderClass
     return $state;
   }
 
-  function destroy(?string $id = null, string $publicId = null): bool
+  static function destroy(?string $id = null, string $publicId = null): bool
   {
     if ($id == null && $publicId == null) return false;
 

@@ -2,13 +2,15 @@
 
 namespace App\Quest;
 
-use Illuminate\Database\Eloquent\Casts\Json;
+use Illuminate\Routing\Router;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
 class QuestConsole
 {
+  const GLOBAL_TEMP_LIST = 'QUEST_GLOBAL_TEMP_LIST_goObnj6crvx4YFQK6hbgoStEsIQrxrdM7CsA';
+
   /**
    * Create a new class instance.
    */
@@ -31,6 +33,10 @@ class QuestConsole
   function trackId(string $id): array
   {
     $routes = QuestRouter::routesList();
+
+    $inBaseRouteRoutes = $this->getClassFromRoutes();
+
+    $routes = array_merge($routes, $inBaseRouteRoutes);
 
     $_className = null;
     $_classNamespace = null;
@@ -114,5 +120,20 @@ class QuestConsole
       'file_path' => $_filePath,
       'attribut' => $_attribut,
     ];
+  }
+
+  private function getClassFromRoutes(): array
+  {
+    $GLOBALS[QuestConsole::GLOBAL_TEMP_LIST] = [];
+
+    $routes = config('quest.base_routes', []);
+
+    foreach($routes as $route) include $route;
+
+    $return = $GLOBALS[QuestConsole::GLOBAL_TEMP_LIST];
+
+    unset($GLOBALS[QuestConsole::GLOBAL_TEMP_LIST]);
+
+    return $return;
   }
 }
