@@ -110,11 +110,16 @@ Commençons par définir nôtre route avec Quest :
 
 ```php
 # Dans votre fichier route
+use Princ\Quest\Quest;
 
 Route::get('/', fn() => view('home')); // Exemple ...
 
 Quest::spawn(uri: 'quest', routes: [Forest::class]);
 ```
+
+> __`Princ\Quest`__ est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
+
+> Puis il y a le namespace __`Princ\Quest\Attributs`__, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
 
 Vous pouvez ajouter des middlewares et autres car la fonction `spaw` de Quest renvoi un objer de type `Illuminate\Routing\Route` donc il supporte tout les autres méthodes de la facade Route.
 

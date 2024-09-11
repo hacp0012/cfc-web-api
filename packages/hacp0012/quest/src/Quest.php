@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Princ\Quest\Attributs\QuestSpaw;
 use Princ\Quest\Attributs\QuestSpawClass;
+use Princ\Quest\core\QuestConsole;
+use Princ\Quest\core\QuestReturnVoid;
 use ReflectionIntersectionType;
 
 /** Quest core handler.

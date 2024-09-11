@@ -3,7 +3,7 @@
 namespace Princ\Quest\Commands;
 
 use Illuminate\Console\Command;
-use Princ\Quest\QuestConsole;
+use Princ\Quest\core\QuestConsole;
 
 class QuestTrackId extends Command
 {

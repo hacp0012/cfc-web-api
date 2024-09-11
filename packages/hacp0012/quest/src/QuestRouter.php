@@ -2,6 +2,7 @@
 
 namespace Princ\Quest;
 
+use Princ\Quest\core\QuestReturnVoid;
 use Princ\Quest\core\QuestRoutes;
 
 class QuestRouter extends QuestRoutes

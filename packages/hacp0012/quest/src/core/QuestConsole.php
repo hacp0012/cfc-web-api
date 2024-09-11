@@ -1,10 +1,12 @@
 <?php
 
-namespace Princ\Quest;
+namespace Princ\Quest\core;
 
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use Princ\Quest\Attributs\QuestSpaw;
+use Princ\Quest\QuestRouter;
+use Princ\Quest\QuestSpawMethod;
 use ReflectionClass;
 
 class QuestConsole
