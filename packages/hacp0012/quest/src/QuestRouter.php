@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Quest;
+namespace Princ\Quest;
 
-use Illuminate\Support\Facades\Log;
+use Princ\Quest\core\QuestRoutes;
 
 class QuestRouter extends QuestRoutes
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Quest;
+namespace Princ\Quest\core;
 
 /** Quest routes register. */
 class QuestRoutes

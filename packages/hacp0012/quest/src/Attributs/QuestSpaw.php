@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Quest;
+namespace Princ\Quest\Attributs;
 
-use App\Quest\QuestSpawMethod;
 use Attribute;
+use Princ\Quest\QuestSpawMethod;
 
 /** The Spaw Attribut.
  *

@@ -6,11 +6,10 @@ use App\Models\User;
 use App\Notifications\Teaching;
 use App\Notifications\Wellcome;
 use App\quest\demo\QuestTest;
-use App\Quest\Quest;
-use App\Quest\QuestRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Princ\Quest\Quest;
 
 Route::middleware('guest')->prefix('test')->group(function () {
   // Route::any('quest/{quest_ref}', fn(string $quest_ref) => (new QuestRouter(questRef: $quest_ref))->spawn());

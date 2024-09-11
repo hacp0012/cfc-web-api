@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\teaching;
 
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Enseignement;
-use App\Quest\QuestSpaw;
+use Princ\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 

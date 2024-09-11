@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Quest;
+namespace Princ\Quest;
 
-use App\quest\QuestSpawClass;
-use App\quest\QuestSpawMethod;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Json;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Reflection;
 use ReflectionClass;
@@ -15,10 +12,12 @@ use ReflectionNamedType;
 use ReflectionUnionType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route as RoutingRoute;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use stdClass;
+use Princ\Quest\Attributs\QuestSpaw;
+use Princ\Quest\Attributs\QuestSpawClass;
+use ReflectionIntersectionType;
 
 /** Quest core handler.
  *
@@ -62,7 +61,7 @@ class Quest
     }
 
     // Bind routes to Route action closure {#fff, 11}
-    $anonymClass = new class ($routes) {
+    $anonymClass = new class($routes) {
       function __construct(protected array $routes) {}
     };
 
@@ -163,7 +162,6 @@ class Quest
    */
   private function controlQuestId(string $questId, $attribut): bool
   {
-
     // Log::debug("--> $questId | " . $attribut->ref);
     if (strcmp($attribut->ref, $questId) == 0) {
       // * ID'S ARE MATCHED * //
@@ -291,12 +289,17 @@ class Quest
         }
       } else {
         foreach ($types as $type) {
-          $isIncorrectType = true;
-          if (in_array($type?->{'getName'}() ?? 'mixed', Quest::supportedSpawTypes)) $isIncorrectType = false;
+          if ($type?->{'getName'}() && in_array($type?->{'getName'}(), Quest::supportedSpawTypes) === false && App::bound($type?->{'getName'}())) {
+            // Do nothing.
+          } else {
+            $isIncorrectType = true;
+            if (in_array($type?->{'getName'}() ?? 'mixed', Quest::supportedSpawTypes)) $isIncorrectType = false;
 
-          if ($isIncorrectType) throw new \Exception(
-            "The spaw quest parameter has a unsupported Type '" . $type->{'getName'}() . "'. Expected [" . implode(', ', Quest::supportedSpawTypes) . "] as types.",
-          );
+            if ($isIncorrectType) throw new \Exception(
+              "The spaw quest parameter has an unsupported Type '" . $type->{'getName'}() . "'. Expected [" . implode(', ', Quest::supportedSpawTypes) . "] as types. " .
+                "Or a class that is bound in Service Container",
+            );
+          }
         }
       }
     }
@@ -322,12 +325,48 @@ class Quest
 
       $paramName = $this->getAliasName($param->getName(), $attribut);
 
+      $isAutoConstructable = false;
+      $autoConstructName = null;
+      foreach ($types as $mType) {
+        if ($mType instanceof ReflectionNamedType) {
+          $typeName = $mType->getName();
+          // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+          if (App::bound($typeName)) {
+            $isAutoConstructable = true;
+            $autoConstructName = $typeName;
+            break;
+          }
+        } elseif ($mType instanceof ReflectionUnionType) {
+          foreach ($mType->getTypes() as $unionType) {
+            $typeName = $unionType->getName();
+            // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+            if (App::bound($typeName)) {
+              $isAutoConstructable = true;
+              $autoConstructName = $typeName;
+              break;
+            }
+          }
+        } elseif ($mType instanceof ReflectionIntersectionType) {
+          foreach ($mType->getTypes() as $intercectionType) {
+            $typeName = $intercectionType->{'getName'}();
+            // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+            if (App::bound($typeName)) {
+              $isAutoConstructable = true;
+              $autoConstructName = $typeName;
+              break;
+            }
+          }
+        }
+      }
+
       if ($filePocketName) $filePocketName = $this->getAliasName($filePocketName, $attribut);
 
       if ($paramName == $filePocketName) {
-        $casteds[] = $this->intentionTypeCast(isset($intention[$filePocketName]) ? $intention[$filePocketName] : null, $types, $filePocketName);
+        $casteds[] = $this->intentionTypeCast($paramName, isset($intention[$filePocketName]) ? $intention[$filePocketName] : null, $types, $filePocketName);
+      } elseif ($isAutoConstructable) {
+        $casteds[] = App::make($autoConstructName);
       } else {
-        $casteds[] = $this->intentionTypeCast(isset($intention[$paramName]) ? $intention[$paramName] : null, $types);
+        $casteds[] = $this->intentionTypeCast($paramName, isset($intention[$paramName]) ? $intention[$paramName] : null, $types);
       }
     }
 
@@ -355,7 +394,7 @@ class Quest
   /** @param mixed $methodPram
    * @param array<int, \ReflectionNamedType|null> $types
    */
-  private function intentionTypeCast(mixed $value, $types, ?string $filePocket = null): mixed
+  private function intentionTypeCast(string $paramName, mixed $value, $types, ?string $filePocket = null): mixed
   {
     $casted = null;
 
@@ -372,7 +411,7 @@ class Quest
       foreach ($types as $type) {
         $typeName = $type?->getName() ?? 'mixed';
 
-        if ($type->allowsNull() && $value === null) $casted = null;
+        if (($type?->allowsNull() ?? true) && $value === null) $casted = null;
         else {
           $isOfThisType = match ($typeName) {
             'int' => is_numeric($value) ? (is_string($value) && str_contains($value, '.') ? false : true) : true,
@@ -381,7 +420,7 @@ class Quest
             'bool' => true,
             'null' => true,
             'mixed' => true,
-            'array' => true,
+            'array' => (is_string($value) ? (Json::decode($value) != null) : false) || is_array($value),
             default => false,
           };
 
@@ -393,14 +432,17 @@ class Quest
               'string' => $value,
               'null' => null,
               'mixed' => $value,
-              'array' => is_array($value) ? $value : [],
+              'array' => is_array($value) ? $value : Json::decode($value) ?? [],
             };
           }
         }
 
-        if ($type->allowsNull() === false && $casted === null) throw new \Exception(
-          "The spaw parameter '_paramName_' dont allow Null value. Expected type '$typeName', provided value : " . Json::encode($value),
-        );
+        if ((($type?->allowsNull() ?? true) === false) && $casted === null) {
+          // dd(Json::decode([]));
+          throw new \Exception(
+            "The spaw parameter '$paramName' dont allow Null value. Expected type '$typeName', provided value : " . Json::encode($value),
+          );
+        }
       }
     }
 
@@ -419,35 +461,68 @@ class Quest
     foreach ($params as $param) {
       $type = $param->getType();
 
-      if ($type instanceof ReflectionNamedType) $type = $type->getName();
+      $arrayTypes = [];
+
+      if ($type instanceof ReflectionNamedType) {
+        $arrayTypes[] = $type->getName();
+        if ($type->allowsNull()) $arrayTypes[] = 'null';
+      } elseif ($type instanceof ReflectionUnionType) {
+        foreach ($type->getTypes() as $unionType) {
+          $arrayTypes[] = $unionType->getName();
+          if ($type->allowsNull()) $arrayTypes[] = 'null';
+        }
+      } elseif ($type instanceof ReflectionIntersectionType) {
+        foreach ($type->getTypes() as $intercectionType) {
+          $arrayTypes[] = $intercectionType->{'getName'}();
+          if ($type->allowsNull()) $arrayTypes[] = 'null';
+        }
+      } elseif ($type === null) $arrayTypes[] = 'mixed';
 
       // Check in intion.
-      if ($intention === null) throw new Exception("Your quest has no parameter where " . count($params) . " parameter's are excepted.");
+      if ($intention === null) {
+        throw new Exception(
+          "Your quest has no parameter where " . count($params) . " parameter's are excepted. " .
+            "Run the command : php artisan quest:track-ref 'ref key here...' to see method parameters details."
+        );
+      }
 
       $paramName = $this->getAliasName($param->getName(), $attribut);
 
       $intentionPropertyValue = isset($intention[$paramName]) ? $intention[$paramName] : null;
 
-      if ($intentionPropertyValue !== null) {
-        // check intention type.
-        // $intentionType = $this->typeChecker($intentionPropertyValue);
-
-        // if ($type != $intentionType) {
-        //   throw new \Exception("The intention quest parameter '$paramName' has diferent parameter type with spaw method parameter '$$paramName'. Expected type '$type' found '$intentionType'");
-        // }
-      } else {
-        $exceptionMessage = "The aimed parameter '$paramName' are not optional ";
-
+      if ($intentionPropertyValue === null) {
         if ($filePocket) $filePocket = $this->getAliasName($filePocket, $attribut);
 
-        if ($paramName !== $filePocket) {
-          try {
-            $param->getDefaultValue();
+        $isAutoConstructable = false;
+        $isSupported = false; {
+          foreach ($arrayTypes as $aType) {
+            if (in_array($aType, Quest::supportedSpawTypes)) {
+              $isSupported = true;
+              break;
+            }
 
-            // if ($paramHasDefaultValue == false) throw new \Exception($exceptionMessage);
-          } catch (\Exception $e) {
-            throw new \Exception($exceptionMessage);
+            if (in_array($aType, Quest::supportedSpawTypes) == false && App::bound($aType)) {
+              $isAutoConstructable = true;
+              break;
+            }
           }
+        }
+
+        if ($isSupported) {
+          if (($filePocket !== null && $filePocket === $paramName)) {
+            // Do nothing.
+          } else {
+            try {
+              $param->getDefaultValue(); // Do nothing
+            } catch (\Exception $e) {
+              throw new \Exception("The aimed parameter '$paramName' is required.");
+            }
+          }
+        } elseif ($isAutoConstructable == false) {
+          throw new \Exception(
+            "The type or some of them '" . implode('|', $arrayTypes) .
+              "' on the parameter '$paramName', are not supported or are not bound in The Service Container.",
+          );
         }
       }
     }

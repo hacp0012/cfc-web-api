@@ -1,6 +1,6 @@
 <?php
 
-namespace App\quest;
+namespace Princ\Quest\Attributs;
 
 use Attribute;
 

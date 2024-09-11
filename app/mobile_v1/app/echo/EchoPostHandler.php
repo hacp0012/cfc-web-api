@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\echo;
 
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Echos;
-use App\Quest\QuestSpaw;
+use Princ\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 
 class EchoPostHandler

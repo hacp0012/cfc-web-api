@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Princ\Quest\Commands;
 
-use App\Quest\QuestConsole;
 use Illuminate\Console\Command;
+use Princ\Quest\QuestConsole;
 
 class QuestTrackId extends Command
 {

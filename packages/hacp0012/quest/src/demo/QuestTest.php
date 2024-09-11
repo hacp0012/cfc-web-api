@@ -2,14 +2,14 @@
 
 namespace App\quest\demo;
 
-
+use App\Quest\Quest;
+use App\Quest\QuestRouter;
+use App\Quest\QuestSpaw;
+use App\quest\QuestSpawClass;
+use App\Quest\QuestSpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
-use Princ\Quest\Attributs\QuestSpaw;
-use Princ\Quest\Attributs\QuestSpawClass;
-use Princ\Quest\Quest;
-use Princ\Quest\QuestSpawMethod;
 
 #[QuestSpawClass()]
 class QuestTest

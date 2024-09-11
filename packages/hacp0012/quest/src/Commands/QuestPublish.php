@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Princ\Quest\Commands;
 
-use App\Quest\QuestRouter;
 use Illuminate\Console\Command;
+use Princ\Quest\QuestRouter;
 
 class QuestPublish extends Command
 {

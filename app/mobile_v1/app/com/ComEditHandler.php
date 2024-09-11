@@ -8,9 +8,9 @@ use App\mobile_v1\app\reactions\ViewsHandler;
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Communique;
 use App\Models\File;
-use App\Quest\QuestSpaw;
-use App\quest\QuestSpawMethod;
 use Illuminate\Http\UploadedFile;
+use Princ\Quest\Attributs\QuestSpaw;
+use Princ\Quest\QuestSpawMethod;
 use stdClass;
 
 class ComEditHandler

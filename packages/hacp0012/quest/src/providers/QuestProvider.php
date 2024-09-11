@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Providers;
+namespace Princ\Quest\providers;
 
-use App\Console\Commands\QuestGenerateId;
-use App\Console\Commands\QuestPublish;
-use App\Console\Commands\QuestTrackId;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\ServiceProvider;
+use Princ\Quest\Commands\QuestGenerateId;
+use Princ\Quest\Commands\QuestPublish;
+use Princ\Quest\Commands\QuestTrackId;
 
 class QuestProvider extends ServiceProvider
 {
@@ -23,7 +23,7 @@ class QuestProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    AboutCommand::add('quest', fn () => ['version' => '1.0.0', 'channel' => 'stable']);
+    AboutCommand::add('Quest', fn() => ['version' => '1.0.0', 'channel' => 'dev']);
 
     if ($this->app->runningInConsole()) {
       $this->commands([
@@ -33,9 +33,12 @@ class QuestProvider extends ServiceProvider
       ]);
     }
 
-    $this->publishes([
-      __DIR__ . '/../app/Quest/publishables/quest.php' => config_path('quest.php'),
-      __DIR__ . '/../app/Quest/publishables/quest_routes.php' => base_path('/routes/quest.php'),
-    ]);
+    $this->publishes(
+      groups: 'quest',
+      paths: [
+        __DIR__ . '/../publishables/quest.php' => config_path('quest.php'),
+        __DIR__ . '/../publishables/quest_routes.php' => base_path('/routes/quest.php'),
+      ],
+    );
   }
 }

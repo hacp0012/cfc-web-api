@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Quest;
+namespace Princ\Quest;
 
 /** Void state value. */
 class QuestReturnVoid

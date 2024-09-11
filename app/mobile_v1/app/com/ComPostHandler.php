@@ -4,8 +4,8 @@ namespace App\mobile_v1\app\com;
 
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Communique;
-use App\Quest\QuestSpaw;
 use Illuminate\Http\UploadedFile;
+use Princ\Quest\Attributs\QuestSpaw;
 
 class ComPostHandler
 {

@@ -5,13 +5,15 @@
 Accédez directement aux ressources sans définir des routes
 
 - [Introduction](#introdiction)
-- [Usage](#usage)
-- [Fonctionement](#fonctionement)
 - [Instalation](#installation)
+- [Usage](#usage)
+  - [Le service container](#service_container)
+- [Fonctionement](#fonctionement)
 - [Api reference](#api_ref)
   - [Quest Spaw](#quest_spaw)
   - [Quest Router](#quest_route)
   - [Console](#ref_console)
+- [FAQ](#faq)
 
 ## <span id='introdiction'>🪬Introdiction</span>
 
@@ -22,6 +24,49 @@ Je sais, vous n'avez pas besoin de me mentir 🤥, il vous est souvient arrivé,
 La question des Routes, je ne vous cache pas, moi ca me fout la flemme. Car je doit sois définir un route pour chaques appel et du coup je me retrouve avec des dizaines des Routes défini.
 
 Je sais, nil n'est parfait, ni __Quest__ aussi, mais... il va beaucoup vous simplifier la tâche et fait tombe bas tout ces surcharges mentale, utile mais ennuyant.
+
+## <span id="installation">✨ Installation</span>
+
+### Pré-requis
+
+- PHP 8.0+
+- Laravel minimum laravl 9.x
+- Avoir déjà fais usage de la Facade Route. Ex: `Route::get('chemin/{param}', fn(string $param) => X)`
+
+### Installer Quest depuis composer :
+
+```bash
+$ composer require hacp0012/quest
+```
+
+### Publier les fichiers de configs
+
+Quest à besoin des quelques fichiers pour bien fonctionner.
+
+```bash
+$ php artisan vendor:publish --tag=quest
+```
+
+__Le fichier route quest.php__
+
+est un fichier de base qui peut vous être utile pour y enregistrer vos class. Car les classes enregistrés dans cette liste sont publiques du second niveau, car ils ont une priorité qui viens après la liste passé dans votre route `Quest:spaw(routes: [])`
+
+> Ces références sont accessibles depuis toute les requêtes.
+
+Ce fichier est généré automatiquement mais vous pouvez la générer manuellement.
+
+__Le fichier config quest.php__
+
+Contient quelques réglages que vous pouvez appliquer si vous avez fait des motifs dans le bootstrap/provider.php de votre projete pour un ciblage personnalisé des vos fichiers route (/routes/web.php ou /routes/api.php).
+
+Car Traqueur des références doit connaître vos cible pour traquer vos méthodes référencé (poinçonné).
+
+> Pour publier les fichiers de configuration tapez la commande <kbd>php artisan vendor:publish<kbd>
+
+Ceci va crée le fichier `configs/quest.php` (qui contient quelques peux des configuration) et le fichier que routage globale de quest dans `routes/quest.php`
+
+_De façon manuel, vous pouvez publier les fichiers des configs de cette façon <kbd>php artisan quest:publish</kbd> dans le répertoire configs/ et routes/ de façon manuelle._
+
 
 ## 🏳️ Comment est-ce qu'il m'est utile ?
 
@@ -45,6 +90,7 @@ dio.post("/quest/my quest flag ID", data: {'moon': 2, 'sunRise': 7});
 ```
 
 Remarque que Quest se charge de passer des paramètres à vôtre méthode. (Et vous pouvez même lui passer un fichier) comme paramètres, juste de donner le nom du parcmètre à votre fichier. (mais il faut le signaler dans filePocket)
+
 
 ## <span id="fonctionement">🚧 Comment fonctionne Quest</span>
 
@@ -101,8 +147,6 @@ class Forest
 
 Et c'est toute, vous pouvez maintenant commencer à appeler vos méthodes poinçonné (référencé) par leur clé de référence `id: 'NAhLlRZW3g3Fbh30dZ'`.
 
-
-
 Comme dans cette exemple ci-dessous :
 
 ```dart
@@ -146,29 +190,21 @@ Route::post('quest/{ref}', function(string $ref) {
 
 ⚠️ Même si celui-ci n'est pas la méthode la plus clean, Je vous déconseillé de l'utiliser car il peut vous pondre des type de retour bizarre que même le `Service container` de Laravel ne saura pas interprété.
 
-## <span id="installation">✨ Installation</span>
+### <span id="service_container">Service container</span>
 
-Quest à besoin des quelques fichiers pour bien fonctionner.
+Laravel fourni un système d'injection de dépendance automatique qu'il nomme Service Container. Il est capable de construire un objet que vous avez   déclarez en paramètre.
 
-__Le fichier route quest.php__
+Prénom ceci comme rappel :
 
-est un fichier de base qui peut vous être utile pour y enregistrer vos class. Car les classes enregistrés dans cette liste sont publiques du second niveau, car ils ont une priorité qui viens après la liste passé dans votre route `Quest:spaw(routes: [])`
+```php
+Route::get('/', function(Request $request) {
+  // Le service container construits automatiquement $request pour vous.
+});
+```
 
-> Ces références sont accessibles depuis toute les requêtes.
+Et bien quest ne pouvez pas vous gâchez cette bonheur. Quest résout aussi vos object déclaré dans le paramètres.
 
-Ce fichier est généré automatiquement mais vous pouvez la générer manuellement.
-
-__Le fichier config quest.php__
-
-Contient quelques réglages que vous pouvez appliquer si vous avez fait des motifs dans le bootstrap/provider.php de votre projete pour un ciblage personnalisé des vos fichiers route (/routes/web.php ou /routes/api.php).
-
-Car Traqueur des références doit connaître vos cible pour traquer vos méthodes référencé (poinçonné).
-
-> Pour publier les fichiers de configuration tapez la commande <kbd>php artisan vendor:publish<kbd>
-
-Ceci va crée le fichier `configs/quest.php` (qui contient quelques peux des configuration) et le fichier que routage globale de quest dans `routes/quest.php`
-
-_De façon manuel, vous pouvez publier les fichiers des configs de cette façon <kbd>php artisan quest:publish</kbd> dans le répertoire configs/ et routes/ de façon manuelle._
+Try and you will know.
 
 ## <span id="ref_console">👽 Commandes CLI</span>
 
@@ -334,3 +370,21 @@ function updateText(string $com_id, string $title, string $text, string $status)
 ## Choses à rajouter
 
 - Routes temporaire.
+
+## <span id="#faq">FAQ</span>
+
+### Comment je peux faire mes validations `request` ?
+
+Tout d'abord le paramètres de la méthode sont aussi un type de validation mais de bas niveau.
+Vous pouvez récupérer tout vos `request parameters`  via l'objet `Request` de cette façon :
+
+```php
+function myMethod(Request $request, array $myQueryParams)
+{
+  $validateds = $request->validate([...], [...]);
+
+  $validateds = request()->validate(...);
+
+  # ...
+}
+```

@@ -6,8 +6,8 @@ use App\mobile_v1\app\comment\CommentsHandler;
 use App\mobile_v1\app\reactions\LikesHandler;
 use App\mobile_v1\app\reactions\ViewsHandler;
 use App\Models\Enseignement;
-use App\Quest\QuestSpaw;
-use App\quest\QuestSpawMethod;
+use Princ\Quest\Attributs\QuestSpaw;
+use Princ\Quest\QuestSpawMethod;
 use stdClass;
 
 class TeachingEditHandler
