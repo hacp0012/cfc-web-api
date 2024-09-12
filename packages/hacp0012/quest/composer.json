@@ -1,5 +1,5 @@
 {
-  "name": "princ/quest",
+  "name": "hacp0012/quest",
   "description": "Express router for accessing methods",
   "type": "library",
   "require": {
@@ -8,7 +8,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Princ\\Quest\\": "src/"
+      "Hacp0012\\Quest\\": "src/"
     }
   },
   "authors": [
@@ -21,7 +21,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Princ\\Quest\\providers\\QuestProvider"
+        "Hacp0012\\Quest\\providers\\QuestProvider"
       ]
     }
   }

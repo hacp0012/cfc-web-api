@@ -1,9 +1,9 @@
 <?php
 
-namespace Princ\Quest\Attributs;
+namespace Hacp0012\Quest\Attributs;
 
 use Attribute;
-use Princ\Quest\QuestSpawMethod;
+use Hacp0012\Quest\QuestSpawMethod;
 
 /** The Spaw Attribut.
  *

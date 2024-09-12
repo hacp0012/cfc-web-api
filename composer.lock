@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46b4eb47fe34b2ffd1b89998cec241dd",
+    "content-hash": "4a87b39444e9c05002d30c81d7643587",
     "packages": [
         {
             "name": "brick/math",
@@ -1049,6 +1049,44 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "hacp0012/quest",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/hacp0012/quest",
+                "reference": "f49a8d9bf27825e875ce3288ef77eaba3fc16ed6"
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hacp0012\\Quest\\providers\\QuestProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hacp0012\\Quest\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "hacp0012",
+                    "email": "princeieugene48@gmail.com"
+                }
+            ],
+            "description": "Express router for accessing methods",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "inertiajs/inertia-laravel",
@@ -2672,44 +2710,6 @@
                 }
             ],
             "time": "2024-07-20T21:41:07+00:00"
-        },
-        {
-            "name": "princ/quest",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "packages/hacp0012/quest",
-                "reference": "63a53ecb40f231e8d932235dec102d1a2ccbc740"
-            },
-            "require": {
-                "php": ">=8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Princ\\Quest\\providers\\QuestProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Princ\\Quest\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "hacp0012",
-                    "email": "princeieugene48@gmail.com"
-                }
-            ],
-            "description": "Express router for accessing methods",
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "psr/clock",
@@ -8349,7 +8349,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "princ/quest": 20
+        "hacp0012/quest": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

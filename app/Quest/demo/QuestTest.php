@@ -6,10 +6,10 @@ namespace App\quest\demo;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
-use Princ\Quest\Attributs\QuestSpaw;
-use Princ\Quest\Attributs\QuestSpawClass;
-use Princ\Quest\Quest;
-use Princ\Quest\QuestSpawMethod;
+use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\Attributs\QuestSpawClass;
+use Hacp0012\Quest\Quest;
+use Hacp0012\Quest\QuestSpawMethod;
 
 #[QuestSpawClass()]
 class QuestTest

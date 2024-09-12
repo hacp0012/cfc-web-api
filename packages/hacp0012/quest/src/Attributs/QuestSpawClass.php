@@ -1,6 +1,6 @@
 <?php
 
-namespace Princ\Quest\Attributs;
+namespace Hacp0012\Quest\Attributs;
 
 use Attribute;
 

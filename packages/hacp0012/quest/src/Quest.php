@@ -1,6 +1,6 @@
 <?php
 
-namespace Princ\Quest;
+namespace Hacp0012\Quest;
 
 use Closure;
 use Exception;
@@ -15,10 +15,10 @@ use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Princ\Quest\Attributs\QuestSpaw;
-use Princ\Quest\Attributs\QuestSpawClass;
-use Princ\Quest\core\QuestConsole;
-use Princ\Quest\core\QuestReturnVoid;
+use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\Attributs\QuestSpawClass;
+use Hacp0012\Quest\core\QuestConsole;
+use Hacp0012\Quest\core\QuestReturnVoid;
 use ReflectionIntersectionType;
 
 /** Quest core handler.

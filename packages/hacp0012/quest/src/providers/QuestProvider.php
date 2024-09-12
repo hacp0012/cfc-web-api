@@ -1,12 +1,12 @@
 <?php
 
-namespace Princ\Quest\providers;
+namespace Hacp0012\Quest\providers;
 
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\ServiceProvider;
-use Princ\Quest\Commands\QuestGenerateId;
-use Princ\Quest\Commands\QuestPublish;
-use Princ\Quest\Commands\QuestTrackId;
+use Hacp0012\Quest\Commands\QuestGenerateId;
+use Hacp0012\Quest\Commands\QuestPublish;
+use Hacp0012\Quest\Commands\QuestTrackId;
 
 class QuestProvider extends ServiceProvider
 {

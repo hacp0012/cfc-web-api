@@ -1,6 +1,6 @@
 <?php
 
-namespace Princ\Quest\core;
+namespace Hacp0012\Quest\core;
 
 /** Void state value. */
 class QuestReturnVoid

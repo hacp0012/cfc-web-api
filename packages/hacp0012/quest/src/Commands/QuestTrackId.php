@@ -1,9 +1,9 @@
 <?php
 
-namespace Princ\Quest\Commands;
+namespace Hacp0012\Quest\Commands;
 
 use Illuminate\Console\Command;
-use Princ\Quest\core\QuestConsole;
+use Hacp0012\Quest\core\QuestConsole;
 
 class QuestTrackId extends Command
 {

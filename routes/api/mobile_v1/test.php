@@ -9,7 +9,7 @@ use App\quest\demo\QuestTest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-use Princ\Quest\Quest;
+use Hacp0012\Quest\Quest;
 
 Route::middleware('guest')->prefix('test')->group(function () {
   // Route::any('quest/{quest_ref}', fn(string $quest_ref) => (new QuestRouter(questRef: $quest_ref))->spawn());

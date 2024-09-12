@@ -1,6 +1,6 @@
-![Generated ref code](./assets/quest.png)
-
 # Quest
+
+![Generated ref code](./doc/assets/quest.png)
 
 Accédez directement aux ressources sans définir des routes
 
@@ -19,9 +19,9 @@ Accédez directement aux ressources sans définir des routes
 
 Quest, le __maître Guru__ qui simplifie votre quête, il vous donne un itinéraire court à suivre pour atteindre votre objectif (ressource).
 
-Je sais, vous n'avez pas besoin de me mentir 🤥, il vous est souvient arrivé, quand vous faites votre brainstorming pour implémenter un fonctionnalité ou récupérer des ressources, de vous demander. Mais... __comment est-ce que je vais organiser mes Routes ?__
+Je sais, vous n'avez pas besoin de me mentir 🤥, il vous est souvient arrivé, quand vous faites votre brainstorming pour implémenter une fonctionnalité ou récupérer des ressources et de vous demander: Mais... __comment est-ce que je vais organiser mes Routes ?__
 
-La question des Routes, je ne vous cache pas, moi ca me fout la flemme. Car je doit sois définir un route pour chaques appel et du coup je me retrouve avec des dizaines des Routes défini.
+La question des Routes, je ne vous cache pas, moi, ca me fout la flemme. Car je doit sois définir un route pour chaques appel et du coup je me retrouve avec des dizaines des Routes défini.
 
 Je sais, nil n'est parfait, ni __Quest__ aussi, mais... il va beaucoup vous simplifier la tâche et fait tombe bas tout ces surcharges mentale, utile mais ennuyant.
 
@@ -30,10 +30,10 @@ Je sais, nil n'est parfait, ni __Quest__ aussi, mais... il va beaucoup vous simp
 ### Pré-requis
 
 - PHP 8.0+
-- Laravel minimum laravl 9.x
-- Avoir déjà fais usage de la Facade Route. Ex: `Route::get('chemin/{param}', fn(string $param) => X)`
+- Laravel minimum 9.x
+- Avoir déjà fais usage de la Facade Route. Ex: `Route::get('route/to/x/{param}', fn(string $param) => X)`
 
-### Installer Quest depuis composer :
+### Installer Quest depuis composer
 
 ```bash
 $ composer require hacp0012/quest
@@ -95,7 +95,7 @@ Remarque que Quest se charge de passer des paramètres à vôtre méthode. (Et v
 ## <span id="fonctionement">🚧 Comment fonctionne Quest</span>
 
 Quest est basé sur les attributs PHP. Il parcours tout vos références et cré un registre des méthodes que vous avez marqué.
-Une méthode est marqué par une clé de référence qui sert à quest comme point de repére pour appeler ma méthode.
+Une méthode est marqué par une clé de référence qui sert à quest comme point de repére pour appeler ta méthode.
 
 Pour crée une référence :
 
@@ -110,18 +110,18 @@ Commençons par définir nôtre route avec Quest :
 
 ```php
 # Dans votre fichier route
-use Princ\Quest\Quest;
+use Hacp0012\Quest\Quest;
 
-Route::get('/', fn() => view('home')); // Exemple ...
+Route::get(uri: '/', action: fn() => view('home')); // Exemple ...
 
-Quest::spawn(uri: 'quest', routes: [Forest::class]);
+Quest::spawn(uri: 'quest', routes: [Forest::class])->name('my.quest');
 ```
 
-> __`Princ\Quest`__ est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
+> __`Hacp0012\Quest`__ est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
 
-> Puis il y a le namespace __`Princ\Quest\Attributs`__, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
+> Puis il y a le namespace __`Hacp0012\Quest\Attributs`__, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
 
-Vous pouvez ajouter des middlewares et autres car la fonction `spaw` de Quest renvoi un objer de type `Illuminate\Routing\Route` donc il supporte tout les autres méthodes de la facade Route.
+Vous pouvez ajouter des middlewares et autres car la fonction static `spawn` de Quest renvoi un objer de type `Illuminate\Routing\Route` donc il supporte tout les autres méthodes de la facade Route.
 
 > Noté bien que la class `Forest` a était ajouté dans la liste des routes de la méthode `spaw(..., routes: [Forest::class])`
 
@@ -150,26 +150,26 @@ class Forest
 }
 ```
 
-Et c'est toute, vous pouvez maintenant commencer à appeler vos méthodes poinçonné (référencé) par leur clé de référence `id: 'NAhLlRZW3g3Fbh30dZ'`.
+Et c'est toute, vous pouvez maintenant commencer à appeler vos méthodes poinçonné (référencé) par leur clé de référence `ref: 'NAhLlRZW3g3Fbh30dZ'`.
 
-Comme dans cette exemple ci-dessous :
+Noté bien que vous pouvez utiliser n'importé quel phrase comme référence. même si quest vous permet de générer des clé unique. Vous pouvez utiliser comme par ex: _forest.app.tree.NAhLlRZW3g3Fbh30dZ_. [Ou consulter le référence des commandes CLI pour plus des détails](#ref_console)
+
+Comme dans cette exemple ci-dessus :
 
 ```dart
 // Code client :
 dio.get("/quest/NAhLlRZW3g3Fbh30dZ", data: {'color': 'green'});
 ```
 
-Noté bien que vous pouvez utiliser n'importé quel phrase comme référence. même si quest vous permet de générer des clé unique. Vous pouvez utiliser comme par ex: _forest.app.tree.NAhLlRZW3g3Fbh30dZ_. [Ou consulter le référence des commandes CLI pour plus des détails](#ref_console)
-
 ```php
 // Ou depuis votre fichier view blad:
 
-route('quest', ['quest_ref' => 'RrOWXRfKOjauvSpc7y', 'count' => 9]);
+route('my.quest', ['quest_ref' => 'RrOWXRfKOjauvSpc7y', 'count' => 9]);
 # Il est simple quand vous avez donné un nom à vôtre route. `->name('quest')`.
 
 ```
 
-_`quest_ref` est la clé du paramètre du route généré par Quest. le genre de paramètres que l'on passe dans l'url : https://monsite.com/quest/{quest_id}_
+_`quest_ref` est la clé du paramètre du route généré par Quest. le genre de paramètres que l'on passe dans l'url : https://moonsite.com/my/quest/{quest_id}_
 
 🔖 Il y a une autre façon de faire appel à quest. C'est de passer QuestRouter et crée un objet router, de cette façon :
 
@@ -202,36 +202,48 @@ Laravel fourni un système d'injection de dépendance automatique qu'il nomme Se
 Prénom ceci comme rappel :
 
 ```php
-Route::get('/', function(Request $request) {
+Route::get('/', function(Request $request, int $number) {
   // Le service container construits automatiquement $request pour vous.
 });
 ```
 
 Et bien quest ne pouvez pas vous gâchez cette bonheur. Quest résout aussi vos object déclaré dans le paramètres.
+En tout cas sentez-vous allais de faire ce que vous voulez.
 
-Try and you will know.
+🪄 _Try and you will know._ 🧙‍♂️
 
 ## <span id="ref_console">👽 Commandes CLI</span>
 
-Générer une clé de référence. Mais cela ne vous empêche pas de prendre n'importe quel text pour référence. Ceci est juste un aide, pour vous permettre de faire quelque chose d'unique.
+> `php artisan quest:generate-ref [36] [--uuid]`
 
-`php artisan quest:generate-ref [36] [--uuid]`
+Générer une clé de référence. Mais cela ne vous empêche pas de prendre n'importe quel text pour référence. Ceci est juste un aide, pour vous permettre de faire quelque chose d'unique.
 
 _Si vous ajoutez l'option `--uuid`, il va générer un clé UUID et ignorer la longueur que vous avez précisé. Les UUID comptant 36 caractères (de toutes façon ils sont unique)_
 
-Par défaut la commande génère 36 caractères aléatoire <kbd>php artisan quest:generate-ref</kbd>
+Par défaut la commande génère 36 caractères aléatoire
 
-![Generated ref code](./assets/generated_ref.png)
+<kbd>php artisan quest:generate-ref</kbd>
+
+![Generated ref code](./doc/assets/generated_ref.png)
+
+> `php artisan quest:track-ref [ref-id]`
 
 Traquer la référence d'une méthode pointé (spawed)
 
-`php artisan quest:track-ref RrOWXRfKOjauvSpc7y`
-
-![Tracked reference result](./assets/ref.png)
 
 Parmis les bonnes choses, il y a le ref tracker. Cet traqueur est génial, il vous permet de vous retrouver plus facilement et trouver l'implémentation de votre méthode.
 
+<kbd>php artisan quest:track-ref RrOWXRfKOjauvSpc7y</kbd>
+
+![Tracked reference result](./doc/assets/ref.png)
+
 Car soyons sérieux, le système des clés de référence peut être un peu plus constipants quand on a pas une architecture bien solide ou quand on est débutant. C'est pourquoi je vous conseille de ne pas vous fié non seulement aux clés généré par la commande `quest:generate-ref`, ayez l'habitudes de rajouter quelques mots dites __human readable__. Ex. 'my.forest.trees.meXRQbm0WQP6ZpAN5U'
+
+Pour vérifier la version de quest :
+
+> `php artisan about`
+
+_c'est une commande interne de Laravel_
 
 ## <span id="api_ref">🔆 Api reference</span>
 
@@ -370,7 +382,7 @@ function updateText(string $com_id, string $title, string $text, string $status)
 
  Veuillez spécifié le type de retour et les détails le concernant, par ce que le traquer renvoie les commentaires PHP-Doc de la méthode. Ca vous aidera pour une idée direct de ce qui est retourné par l'appel.
 
- ![Screen shot](./assets/2024-09-09-174755.png)
+ ![Screen shot](./doc/assets/2024-09-09-174755.png)
 
 ## Choses à rajouter
 
@@ -380,7 +392,7 @@ function updateText(string $com_id, string $title, string $text, string $status)
 
 ### Comment je peux faire mes validations `request` ?
 
-Tout d'abord le paramètres de la méthode sont aussi un type de validation mais de bas niveau.
+Tout d'abord le paramètres de la méthode sont aussi un autre type de validation mais de bas niveau.
 Vous pouvez récupérer tout vos `request parameters`  via l'objet `Request` de cette façon :
 
 ```php
@@ -393,3 +405,5 @@ function myMethod(Request $request, array $myQueryParams)
   # ...
 }
 ```
+
+> De base, quest supporte certains types de base (native) `['bool', 'int', 'float', 'string', 'null', 'array', 'mixed', UploadedFile::class]` et cel que vous aviez lié dans Service Container via Provider. Les autres type ne sont pas prise en charge. La raison en est que, sur le protocole HTTP(S) on ne transfère pas souvent des objets. C'est souvent du textes et souvent formaté en JSON. Donc les types de base (native) sont souvent les mêmes type que l'annotation JSON supporte.

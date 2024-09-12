@@ -1,6 +1,6 @@
 <?php
 
-namespace Princ\Quest;
+namespace Hacp0012\Quest;
 
 enum QuestSpawMethod
 {

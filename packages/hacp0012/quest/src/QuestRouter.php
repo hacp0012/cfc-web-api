@@ -1,9 +1,9 @@
 <?php
 
-namespace Princ\Quest;
+namespace Hacp0012\Quest;
 
-use Princ\Quest\core\QuestReturnVoid;
-use Princ\Quest\core\QuestRoutes;
+use Hacp0012\Quest\core\QuestReturnVoid;
+use Hacp0012\Quest\core\QuestRoutes;
 
 class QuestRouter extends QuestRoutes
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Princ\Quest\Commands;
+namespace Hacp0012\Quest\Commands;
 
 use Illuminate\Console\Command;
-use Princ\Quest\QuestRouter;
+use Hacp0012\Quest\QuestRouter;
 
 class QuestPublish extends Command
 {
