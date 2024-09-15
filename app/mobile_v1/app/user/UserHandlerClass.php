@@ -121,6 +121,20 @@ class UserHandlerClass
     return $data;
   }
 
+  /** Get user picture. */
+  public static function getUserPicture(string $userId): ?string
+  {
+    // Photo :
+    $photo = FileHanderClass::get(
+      type: FileHanderClass::TYPE['IMAGE'],
+      owner: $userId,
+      ownerGroup: Constants::GROUPS_USER,
+      contentGroup: 'PHOTO_PROFILE',
+    )->first();
+
+    return $photo?->pid;
+  }
+
   /** Initialize properties. */
   public function getUserCouple(): ?Couple
   {

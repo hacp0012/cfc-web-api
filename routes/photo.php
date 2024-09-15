@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Classes\PhotoHandlerClass;
 use App\mobile_v1\handlers\PhotoHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

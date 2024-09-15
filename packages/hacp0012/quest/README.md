@@ -10,20 +10,21 @@ Accédez directement aux ressources sans définir des routes
   - [Le service container](#service_container)
 - [Fonctionement](#fonctionement)
 - [Api reference](#api_ref)
-  - [Quest Spaw](#quest_spaw)
+  - [Quest Spaw (attribut)](#quest_spaw)
+  - [Quest Spaw Class (attribut)](#quest_spaw_class)
   - [Quest Router](#quest_route)
   - [Console](#ref_console)
 - [FAQ](#faq)
 
 ## <span id='introdiction'>🪬Introdiction</span>
 
-Quest, le __maître Guru__ qui simplifie votre quête, il vous donne un itinéraire court à suivre pour atteindre votre objectif (ressource).
+Quest, le **maître Guru** qui simplifie votre quête, il vous donne un itinéraire court à suivre pour atteindre votre objectif (ressource).
 
-Je sais, vous n'avez pas besoin de me mentir 🤥, il vous est souvient arrivé, quand vous faites votre brainstorming pour implémenter une fonctionnalité ou récupérer des ressources et de vous demander: Mais... __comment est-ce que je vais organiser mes Routes ?__
+Je sais, vous n'avez pas besoin de me mentir 🤥, il vous est souvient arrivé, quand vous faites votre brainstorming pour implémenter une fonctionnalité ou récupérer des ressources et de vous demander: Mais... **comment est-ce que je vais organiser mes Routes ?**
 
 La question des Routes, je ne vous cache pas, moi, ca me fout la flemme. Car je doit sois définir un route pour chaques appel et du coup je me retrouve avec des dizaines des Routes défini.
 
-Je sais, nil n'est parfait, ni __Quest__ aussi, mais... il va beaucoup vous simplifier la tâche et fait tombe bas tout ces surcharges mentale, utile mais ennuyant.
+Je sais, nil n'est parfait, ni **Quest** aussi, mais... il va beaucoup vous simplifier la tâche et fait tombe bas tout ces surcharges mentale, utile mais ennuyant.
 
 ## <span id="installation">✨ Installation</span>
 
@@ -36,7 +37,7 @@ Je sais, nil n'est parfait, ni __Quest__ aussi, mais... il va beaucoup vous simp
 ### Installer Quest depuis composer
 
 ```bash
-$ composer require hacp0012/quest
+composer require hacp0012/quest
 ```
 
 ### Publier les fichiers de configs
@@ -44,10 +45,10 @@ $ composer require hacp0012/quest
 Quest à besoin des quelques fichiers pour bien fonctionner.
 
 ```bash
-$ php artisan vendor:publish --tag=quest
+php artisan vendor:publish --tag=quest
 ```
 
-__Le fichier route quest.php__
+**Le fichier route quest.php**
 
 est un fichier de base qui peut vous être utile pour y enregistrer vos class. Car les classes enregistrés dans cette liste sont publiques du second niveau, car ils ont une priorité qui viens après la liste passé dans votre route `Quest:spaw(routes: [])`
 
@@ -55,7 +56,7 @@ est un fichier de base qui peut vous être utile pour y enregistrer vos class. C
 
 Ce fichier est généré automatiquement mais vous pouvez la générer manuellement.
 
-__Le fichier config quest.php__
+**Le fichier config quest.php**
 
 Contient quelques réglages que vous pouvez appliquer si vous avez fait des motifs dans le bootstrap/provider.php de votre projete pour un ciblage personnalisé des vos fichiers route (/routes/web.php ou /routes/api.php).
 
@@ -67,12 +68,11 @@ Ceci va crée le fichier `configs/quest.php` (qui contient quelques peux des con
 
 _De façon manuel, vous pouvez publier les fichiers des configs de cette façon <kbd>php artisan quest:publish</kbd> dans le répertoire configs/ et routes/ de façon manuelle._
 
-
 ## 🏳️ Comment est-ce qu'il m'est utile ?
 
 Quest vous permet d'accédez à des ressources ou d'envoyer vos ressources directement sans vous soucié des Routes. Il vous suffit juste de poser des Flags de référence ou des Marques de référence sur vos méthodes de classes et d'appeler 🤙 ce méthode directement, avec comme paramètres, les mêmes que celles de la method.
 
-Ne vous inquiétez pas, il vous suffit juste de respecter les même types de paramètres que vous aviez défini sur votre méthode. Par exemple 
+Ne vous inquiétez pas, il vous suffit juste de respecter les même types de paramètres que vous aviez défini sur votre méthode. Par exemple
 
 ```php
 #[QuestSpaw(ref: 'my quest flag ID', filePocket: 'guidPicture')]
@@ -90,7 +90,6 @@ dio.post("/quest/my quest flag ID", data: {'moon': 2, 'sunRise': 7});
 ```
 
 Remarque que Quest se charge de passer des paramètres à vôtre méthode. (Et vous pouvez même lui passer un fichier) comme paramètres, juste de donner le nom du parcmètre à votre fichier. (mais il faut le signaler dans filePocket)
-
 
 ## <span id="fonctionement">🚧 Comment fonctionne Quest</span>
 
@@ -117,9 +116,9 @@ Route::get(uri: '/', action: fn() => view('home')); // Exemple ...
 Quest::spawn(uri: 'quest', routes: [Forest::class])->name('my.quest');
 ```
 
-> __`Hacp0012\Quest`__ est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
+> **`Hacp0012\Quest`** est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
 
-> Puis il y a le namespace __`Hacp0012\Quest\Attributs`__, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
+> Puis il y a le namespace **`Hacp0012\Quest\Attributs`**, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
 
 Vous pouvez ajouter des middlewares et autres car la fonction static `spawn` de Quest renvoi un objer de type `Illuminate\Routing\Route` donc il supporte tout les autres méthodes de la facade Route.
 
@@ -169,7 +168,7 @@ route('my.quest', ['quest_ref' => 'RrOWXRfKOjauvSpc7y', 'count' => 9]);
 
 ```
 
-_`quest_ref` est la clé du paramètre du route généré par Quest. le genre de paramètres que l'on passe dans l'url : https://moonsite.com/my/quest/{quest_id}_
+_`quest_ref` est la clé du paramètre du route généré par Quest. le genre de paramètres que l'on passe dans l'url : <https://moonsite.com/my/quest/{quest_id}>_
 
 🔖 Il y a une autre façon de faire appel à quest. C'est de passer QuestRouter et crée un objet router, de cette façon :
 
@@ -197,7 +196,7 @@ Route::post('quest/{ref}', function(string $ref) {
 
 ### <span id="service_container">Service container</span>
 
-Laravel fourni un système d'injection de dépendance automatique qu'il nomme Service Container. Il est capable de construire un objet que vous avez   déclarez en paramètre.
+Laravel fourni un système d'injection de dépendance automatique qu'il nomme Service Container. Il est capable de construire un objet que vous avez déclarez en paramètre.
 
 Prénom ceci comme rappel :
 
@@ -230,14 +229,13 @@ Par défaut la commande génère 36 caractères aléatoire
 
 Traquer la référence d'une méthode pointé (spawed)
 
-
 Parmis les bonnes choses, il y a le ref tracker. Cet traqueur est génial, il vous permet de vous retrouver plus facilement et trouver l'implémentation de votre méthode.
 
 <kbd>php artisan quest:track-ref RrOWXRfKOjauvSpc7y</kbd>
 
 ![Tracked reference result](./doc/assets/ref.png)
 
-Car soyons sérieux, le système des clés de référence peut être un peu plus constipants quand on a pas une architecture bien solide ou quand on est débutant. C'est pourquoi je vous conseille de ne pas vous fié non seulement aux clés généré par la commande `quest:generate-ref`, ayez l'habitudes de rajouter quelques mots dites __human readable__. Ex. 'my.forest.trees.meXRQbm0WQP6ZpAN5U'
+Car soyons sérieux, le système des clés de référence peut être un peu plus constipants quand on a pas une architecture bien solide ou quand on est débutant. C'est pourquoi je vous conseille de ne pas vous fié non seulement aux clés généré par la commande `quest:generate-ref`, ayez l'habitudes de rajouter quelques mots dites **human readable**. Ex. 'my.forest.trees.meXRQbm0WQP6ZpAN5U'
 
 Pour vérifier la version de quest :
 
@@ -257,9 +255,9 @@ QuestRouter(protected string $questRef, array $routes = [])
 
 - @param array<int, string> $routes An array of spawned class's. But class's listed
 here are not visible by the Ref-Tracker in console. The Class referenced here are private to this route.
-If `$routes` is not empty, only the global routes `$routes` a accessible. The base routes quest are not quested.
+If `$routes`is not empty, only the global routes`$routes` a accessible. The base routes quest are not quested.
 
-__Routes precedence__ :
+**Routes precedence** :
 
 1. Local routes : defined in spawed $routes parameter.
 2. Global Base routes : defined in your routes/quest.php.
@@ -281,7 +279,7 @@ Quest::spawn(string $uri = 'quest', array $routes = [QuestTest:class]);
 # ⚠️ To use only in route file.
 ```
 
-@param string $uri 
+@param string $uri
 
 ⚠️ At any end of `uri` a `{quest_ref}` route parameter are append. Dont append it twice.
 
@@ -311,7 +309,7 @@ QuestSpaw(
 - ⚠️ The method parameter name, not an alias name.
 - ⚠️ For this version, filePocket reference will receive a single `Illuminate\Http\UploadedFile` file.
 
-@param `QuestSpawMethod $method` Http method.
+@param `QuestSpawMethod $method` Http method. supporteds [GET, POST and DELETE].
 
 @param bool `$jsonResponse` The return value will be serealized as Json Response. Set it to `false` if you want to return un serealized data.
 
@@ -328,32 +326,33 @@ not be called.
 ⚠️ Alias affect the `$filePocket` name. In the filesPccket, use the original parameter name; not an alias.
 
 ```php
-# Exemple: 
+# Exemple:
 #[QuestSpaw(ref: 'RrOWXRfKOjauvSpc7y', alias: ['count'=> 'max_weight', 'state' => 'quality'])]
 function displayAnApples(int $count, string $color, string $state): View
 
 // désormais, le nom du paramètre `$count` devient `max_weight`
 ```
 
-### QuestSpawClass [Attribut]
+### <span id="quest_spaw_class">QuestSpawClass [Attribut]</span>
+
+Custruct the spawed class instance.
 
 ```php
-QuestSpawClass(public array|null $constructWith = null)
+QuestSpawClass(public array $constructWith = [])
 ```
 
-@param array<int, mixed>|null `$constructWith` A list of argument to pass to
-the class constructor.
-Not an _AsscoArray_ only indexed array.
+@param array<string,mixed> $constructWith Is a list of argument to pass to the class constructor.
 
-_If parameters are less or more, the class will not be constructed, but methods will be called without class construction.
-Be careful when you acceced values that will be constructed before with class constructore._
+- ⚠️ Only an _AsscoArray_ are allowed not indexed array.
+- ⚠️ Only primitve data are allowed in the constructWith array value.
+- 🚧 But you can use the sugar of Laravel Service Container in the class constructor.
 
 ```php
-Ex:
-#[QuestSpawClass(constructWith: ['Appels field'])]
-class Forest
-{
-  function __construct(protected string $name) {}
+# Laravel Service Container Sugar :
+
+#[QuestSpawClass(['age' => 1])]
+class person {
+ function __construct(Request $request, int $age) {...}
 }
 ```
 
@@ -380,9 +379,9 @@ function updateText(string $com_id, string $title, string $text, string $status)
 }
 ```
 
- Veuillez spécifié le type de retour et les détails le concernant, par ce que le traquer renvoie les commentaires PHP-Doc de la méthode. Ca vous aidera pour une idée direct de ce qui est retourné par l'appel.
+Veuillez spécifié le type de retour et les détails le concernant, par ce que le traquer renvoie les commentaires PHP-Doc de la méthode. Ca vous aidera pour une idée direct de ce qui est retourné par l'appel.
 
- ![Screen shot](./doc/assets/2024-09-09-174755.png)
+![Screen shot](./doc/assets/2024-09-09-174755.png)
 
 ## Choses à rajouter
 
@@ -393,7 +392,7 @@ function updateText(string $com_id, string $title, string $text, string $status)
 ### Comment je peux faire mes validations `request` ?
 
 Tout d'abord le paramètres de la méthode sont aussi un autre type de validation mais de bas niveau.
-Vous pouvez récupérer tout vos `request parameters`  via l'objet `Request` de cette façon :
+Vous pouvez récupérer tout vos `request parameters` via l'objet `Request` de cette façon :
 
 ```php
 function myMethod(Request $request, array $myQueryParams)

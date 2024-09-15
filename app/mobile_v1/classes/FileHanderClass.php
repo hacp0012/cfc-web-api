@@ -193,7 +193,7 @@ class FileHanderClass
     return $documents->first();
   }
 
-  /** @deprecated Use `validate` instead */
+  /** @deprecated Use `validate` enstead */
   public static function validateFile(string $type, Request $request, string $name): UploadedFile|null
   {
     if (isset(FileHanderClass::TYPE_PATH[$type]) == false) return null;

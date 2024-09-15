@@ -5,7 +5,7 @@ namespace App\mobile_v1\app\com;
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Communique;
 use Illuminate\Http\UploadedFile;
-use Princ\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\Attributs\QuestSpaw;
 
 class ComPostHandler
 {

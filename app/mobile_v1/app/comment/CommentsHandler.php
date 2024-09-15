@@ -4,6 +4,7 @@ namespace App\mobile_v1\app\comment;
 
 use App\mobile_v1\app\reactions\ViewsHandler;
 use App\Models\Comment;
+use App\Models\Reaction;
 use stdClass;
 
 class CommentsHandler
@@ -148,8 +149,23 @@ class CommentsHandler
     return $return;
   }
 
-  /** Count all of person. */
-  function countOf() {}
+  /** Count all of person.
+   * @return stdClass {count:int}
+   */
+  function countOf(string $model, string $modelId, string $posterId)
+  {
+    $return = new stdClass;
+
+    $count = Reaction::where([
+      'for'     => $model,
+      'for_id'  => $modelId,
+      'user'    => $posterId,
+    ])->count();
+
+    $return->count = $count;
+
+    return $return;
+  }
 
   /** Get all of a person. */
   function getOf() {}

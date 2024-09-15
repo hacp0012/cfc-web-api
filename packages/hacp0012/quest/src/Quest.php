@@ -85,6 +85,7 @@ class Quest
   }
 
   // METHODS  ROUTER-->----------------------------------------------------------- :
+  /** Internal Main quest router */
   function router(string $questId, array $classes): mixed
   {
     // loop in classes.
@@ -119,7 +120,7 @@ class Quest
           }
 
           // control : Request method | Method avalable.
-          $this->controllQuestSpawSetting(spawedQuestAttribut: $attributs[0]);
+          $this->controllQuestSpawMethods(spawedQuestAttribut: $attributs[0]);
 
           // control modifier [only public a authorized].
           $this->controlModifier(method: $method);
@@ -174,6 +175,7 @@ class Quest
     }
   }
 
+  /** Get Request data */
   function intentionRequest(): ?array
   {
     $request = request();
@@ -187,7 +189,7 @@ class Quest
     return $params;
   }
 
-  /** Control modifier [only public are authorized].
+  /** Control modifier [only public & static are authorized].
    *
    * @param \ReflectionMethod $method
    */
@@ -240,18 +242,19 @@ class Quest
   }
 
   /** @param \ReflectionAttribute $spawedQuestAttribut */
-  private function controllQuestSpawSetting($spawedQuestAttribut)
+  private function controllQuestSpawMethods($spawedQuestAttribut)
   {
     // Control Http quest method.
     $questMethod = request()->method();
     $questState = match ($questMethod) {
       QuestSpawMethod::GET->name => true,
       QuestSpawMethod::POST->name => true,
+      QuestSpawMethod::DELETE->name => true,
 
       default => false,
     };
 
-    if ($questState == false) throw new \Exception("The quest method '$questMethod' are not admit to this quest. Avallable quest method are GET and POST.");
+    if ($questState == false) throw new \Exception("The quest method '$questMethod' are not admit to this quest. Avallable quest method are GET, POST and DELETE.");
 
     // REQUEST MOTHOD ------------ :
     $spawedQuestAttributInstance = $spawedQuestAttribut->newInstance();
@@ -530,6 +533,110 @@ class Quest
     }
   }
 
+  /** @param \ReflectionParameter[] $params
+   * @param \ReflectionAttribute $attribut
+   */
+  private function classTypeChecker(array $constructionParams, $params): array
+  {
+    // method parameters.
+    $casteds = [];
+    foreach ($params as $param) {
+      /** @var array<int, \ReflectionNamedType|null> */
+      $types = [$param->getType()]; # can be null;
+
+      if ($param->getType() instanceof ReflectionUnionType) $types = $param->getType()->getTypes();
+
+      $paramName = $param->getName();
+
+      $isAutoConstructable = false;
+      $autoConstructName = null;
+      foreach ($types as $mType) {
+        if ($mType instanceof ReflectionNamedType) {
+          $typeName = $mType->getName();
+          // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+          if (App::bound($typeName)) {
+            $isAutoConstructable = true;
+            $autoConstructName = $typeName;
+            break;
+          }
+        } elseif ($mType instanceof ReflectionUnionType) {
+          foreach ($mType->getTypes() as $unionType) {
+            $typeName = $unionType->getName();
+            // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+            if (App::bound($typeName)) {
+              $isAutoConstructable = true;
+              $autoConstructName = $typeName;
+              break;
+            }
+          }
+        } elseif ($mType instanceof ReflectionIntersectionType) {
+          foreach ($mType->getTypes() as $intercectionType) {
+            $typeName = $intercectionType->{'getName'}();
+            // if ($mType->allowsNull()) $arrayTypes[] = 'null';
+            if (App::bound($typeName)) {
+              $isAutoConstructable = true;
+              $autoConstructName = $typeName;
+              break;
+            }
+          }
+        }
+      }
+
+      if ($isAutoConstructable) $casteds[] = App::make($autoConstructName);
+      else $casteds[] = $constructionParams[$paramName];
+    }
+
+    return $casteds;
+  }
+
+  /** Construct the spawed class and return her instance.
+   *
+   * @param \ReflectionClass<object> $class
+   * @return T class instance. */
+  function makeClassInstance($class)
+  {
+    $classAttributs = $class->getAttributes(QuestSpawClass::class);
+    $constructionParam = [];
+
+    if (isset($classAttributs[0])) {
+      $classAttributs = $classAttributs[0]->newInstance();
+      $constructionParam = $classAttributs->constructWith ?? [];
+    }
+
+    $classInstance = null;
+
+    $classConstructor = $class->getConstructor();
+    $classParams = $classConstructor->getParameters();
+
+    if (count($classParams)) {
+      if (count($constructionParam) && Arr::isAssoc($constructionParam) == false)
+        throw new \Exception(
+          "Only associative array<string, value> are allowed on `constructWith` parameter on class attribut '" .
+            $class->getName() . "'.",
+        );
+
+      try {
+        $filledParams = $this->classTypeChecker($constructionParam, $classParams);
+
+        if (count($filledParams) !== count($classParams ?? [])) {
+          throw new \Exception(
+            "The quest guid can't construct the class '" . $class->getName() .
+              "', beacause parameters provided in QuestSpawClass are too less or to mutch.",
+          );
+        }
+
+        $classInstance = $class->newInstance(...$filledParams);
+      } catch (\Exception $e) {
+        throw new \Exception(
+          message: "Parameter error from QuestSpawClass on '" . $class->getName() .
+            ". The raison is : " . $e->getMessage(),
+        );
+      }
+    } else $classInstance = $class->newInstanceWithoutConstructor();
+
+    return $classInstance;
+  }
+
   /**
    * @param \ReflectionClass<object> $class
    * @param \ReflectionMethod $method
@@ -538,32 +645,7 @@ class Quest
   public function call($class, $method): mixed
   {
     // Class construction.
-    $classAttributs = $class->getAttributes(QuestSpawClass::class);
-    $constructionParam = null;
-
-    if (isset($classAttributs[0])) {
-      $classAttributs = $classAttributs[0]->newInstance();
-      $constructionParam = $classAttributs->constructWith;
-    }
-
-    $classInstance = null;
-
-    if ($constructionParam !== null) {
-      $classConstructor = $class->getConstructor();
-      $classParams = $classConstructor->getParameters();
-
-      if (count($classParams) !== count($constructionParam ?? [])) {
-        throw new \Exception("The quest guid can't construct the class '" . $class->getName() . "', beacause parameters provided in QuestSpawClass are too less or to much.");
-      }
-
-      if (Arr::isList($constructionParam) == false) throw new \Exception("Only indexed array are allowed on `constructWith` parameter.");
-
-      try {
-        $classInstance = $class->newInstance(...$constructionParam);
-      } catch (\Exception $e) {
-        throw new \Exception("Parameter error from QuestSpawClass at '" . $class->getName() . "'. " . $e->__toString());
-      }
-    } else $classInstance = $class->newInstanceWithoutConstructor();
+    $classInstance = $this->makeClassInstance($class);
 
     // METHODS --- :
     $newMethodArgList = [];

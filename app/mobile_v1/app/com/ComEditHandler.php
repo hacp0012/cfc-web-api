@@ -9,8 +9,8 @@ use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Communique;
 use App\Models\File;
 use Illuminate\Http\UploadedFile;
-use Princ\Quest\Attributs\QuestSpaw;
-use Princ\Quest\QuestSpawMethod;
+use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\QuestSpawMethod;
 use stdClass;
 
 class ComEditHandler
@@ -29,12 +29,29 @@ class ComEditHandler
     $state = false;
 
     // Get com :
+    /** @var \App\Models\Communique|null */
     $com = Communique::find($com_id);
 
     if ($com) {
+      $com = $com->toArray();
+
       // Comments :
       $comments = (new CommentsHandler)->countAllOf(Communique::class, $com_id);
       $return->comments = $comments->count;
+
+      // Get document name:
+      $documentFile = FileHanderClass::getByPublicId($com['document'] ?? '---');
+
+      $com['document'] = ['name' => null, 'pid' => null];
+
+      if ($documentFile) {
+        $comDocumentData = [
+          'name' => $documentFile->original_name . '.' . $documentFile->ext,
+          'pid' => $documentFile->pid,
+        ];
+
+        $com['document'] = $comDocumentData;
+      }
 
       // Com :
       $return->com = $com;
@@ -60,7 +77,7 @@ class ComEditHandler
     // $coms = Communique::all();
 
     $list = [];
-    foreach($coms as $com) {
+    foreach ($coms as $com) {
       $list[] = [
         'com' => [
           'id'          => $com->id,
@@ -148,6 +165,8 @@ class ComEditHandler
   }
 
   // --> HEAD PICTURE : -------------------------------------------------------->
+  /** @return stdClass {success:bool, pid:string} */
+  #[QuestSpaw(ref: 'com.edit.update.picture.uCJPfanAYmhvQesGEG', filePocket: 'picture')]
   function uploadHeadImage(string $com_id, UploadedFile $picture): stdClass
   {
     $return = new stdClass;
@@ -186,6 +205,89 @@ class ComEditHandler
           public_id: $newPid,
         );
       }
+
+      if ($state) {
+        $com->picture = $newPid;
+        $com->save();
+      }
+    }
+
+    $return->success = $state;
+    $return->pid = $newPid;
+
+    return $return;
+  }
+
+  /** @return stdClass {success:bool} */
+  #[QuestSpaw(ref: 'com.edit.relete.picture.0q69A65BL0f6LRRDDz', method: QuestSpawMethod::DELETE)]
+  function removeHeadImage(string $pid): stdClass
+  {
+    $return = new stdClass;
+
+    $document = FileHanderClass::getByPublicId($pid);
+
+    // Update document.
+    if ($document) {
+      $owner = $document->owner;
+
+      $docOwner = Communique::find($owner);
+      if ($docOwner) {
+        $docOwner->picture = null;
+        $docOwner->save();
+      }
+    }
+
+    $return->success = FileHanderClass::destroy(publicId: $pid);
+
+    return $return;
+  }
+
+  // --> DOCUMENT :------------------------------------------------------------->
+  /** @return stdClass {state:UPDATED|FAILED, pid:string} */
+  #[QuestSpaw(ref: 'com.edit.update.doc.1q2IIeqday1xSwRHZl', filePocket: 'document')]
+  function uploadDocument(string $com_id, UploadedFile $document)
+  {
+    $return = new stdClass;
+
+    $state = false;
+    $newPid = null;
+
+    $validated = FileHanderClass::validate(type: FileHanderClass::TYPE['DOCUMENT'], uploadedFile: $document);
+
+    $com = Communique::find($com_id);
+
+    if ($com && $validated) {
+      // get com Document
+      $comDocument = $com->document;
+
+      if ($comDocument) {
+        // update.
+        $file = File::firstWhere('pid', $comDocument);
+
+        if ($file) {
+          $state = FileHanderClass::replace(
+            document: $validated,
+            type: FileHanderClass::TYPE['DOCUMENT'],
+            id: $file->id,
+            new_public_id: $newPid,
+          );
+        }
+      } else {
+        // store new
+        $state = FileHanderClass::store(
+          document: $validated,
+          type: FileHanderClass::TYPE['DOCUMENT'],
+          owner: $com_id,
+          ownerGroup: 'COMMUCATION',
+          contentGroup: 'DOCUMENT',
+          public_id: $newPid,
+        );
+      }
+
+      if ($state) {
+        $com->document = $newPid;
+        $com->save();
+      }
     }
 
     $return->state = $state ? 'UPDATED' : 'FAILED';
@@ -194,19 +296,28 @@ class ComEditHandler
     return $return;
   }
 
-  function removeHeadImage(string $com_id, string $pid): stdClass
+  /** @return stdClass {success:bool} */
+  #[QuestSpaw('com.edit.delete.doc.6LUlI6O4yAnKXI2M1J', method: QuestSpawMethod::DELETE)]
+  function removeDocument(string $pid): stdClass
   {
     $return = new stdClass;
 
-    $state = FileHanderClass::destroy(publicId: $pid);
+    $document = FileHanderClass::getByPublicId($pid);
 
-    $return->state = $state ? 'UPDATED' : 'FAILED';
+    // Update user
+    if ($document) {
+      $owner = $document->owner;
+
+      $docOwner = Communique::find($owner);
+      if ($docOwner) {
+        $docOwner->document = null;
+
+        $docOwner->save();
+      }
+    }
+
+    $return->success = FileHanderClass::destroy(publicId: $pid);
 
     return $return;
   }
-
-  // --> DOCUMENT :------------------------------------------------------------->
-  function uploadDocument() {}
-
-  function removeDocument() {}
 }

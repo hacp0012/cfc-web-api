@@ -72,14 +72,14 @@ class PhotoHandler
   /** Download a file. */
   static function download(string $public_id, string $mimeType = '*/*')
   {
-    $media = File::wherePublic_id($public_id)->get()->first();
+    $media = File::wherePublic_id($public_id)->first();
 
     $path = storage_path('app/')
       . FileHanderClass::TYPE_PATH[$media->type]
       . '/'
-      . $media->file_name;
+      . $media->hashed_name;
 
-    return Response::download(file: $path, name: $media->name . '.' . $media->ext, headers: ['Content-Type' => $mimeType]);
+    return Response::download(file: $path, name: $media->original_name . '.' . $media->ext, headers: ['Content-Type' => $mimeType]);
   }
 
   /** Return file as reponse. */
@@ -91,7 +91,7 @@ class PhotoHandler
       $path = storage_path('app/')
         . FileHanderClass::TYPE_PATH[$media->type]
         . '/'
-        . $media->file_name;
+        . $media->hashed_name;
 
       return response()->file($path, ['Content-Type' => $mimeType]);
     }

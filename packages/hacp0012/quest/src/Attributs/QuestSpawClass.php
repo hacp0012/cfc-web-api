@@ -8,13 +8,23 @@ use Attribute;
 class QuestSpawClass
 {
   /**
-   * Create a new class instance.
-   * @param array<mixed>|null $constructWith A list of argument to pass to
-   * the class constructor.
-   * Not an _AsscoArray_ on only indexed array.
+   * Custruct the spawed class instance.
    *
-   * _If parameters are less or more, the class will not be constructed, but methods will be called without class construction.
-   * Be careful when you acceced values that will be constructed before with class constructore._
+   * @param array<string,mixed> $constructWith Is a list of argument to pass to
+   * the class constructor.
+   *
+   * - ⚠️ Only an _AsscoArray_ are allowed not indexed array.
+   * - ⚠️ Only primitve data are allowed in the constructWith array value.
+   * - 🚧 But you can use the sugar of Laravel Service Container in the class constructor.
+   *
+   * ```php
+   * # Laravel Service Container Sugar :
+   *
+   * #[QuestSpawClass(['age' => 1])]
+   * class person {
+   *  function __construct(Request $request, int $age) {...}
+   * }
+   * ```
    */
-  public function __construct(public array|null $constructWith = null) {}
+  public function __construct(public array $constructWith = []) {}
 }

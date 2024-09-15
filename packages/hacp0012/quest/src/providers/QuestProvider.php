@@ -36,7 +36,7 @@ class QuestProvider extends ServiceProvider
     $this->publishes(
       groups: 'quest',
       paths: [
-        __DIR__ . '/../publishables/quest.php' => config_path('quest.php'),
+        __DIR__ . '/../publishables/quest_configs.php' => config_path('quest.php'),
         __DIR__ . '/../publishables/quest_routes.php' => base_path('/routes/quest.php'),
       ],
     );

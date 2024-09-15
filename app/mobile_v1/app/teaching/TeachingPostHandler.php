@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\teaching;
 
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Enseignement;
-use Princ\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
@@ -17,13 +17,16 @@ class TeachingPostHandler
 
   /** @return array<string,string> [state:POSTED|FAILED, id] */
   #[QuestSpaw(ref: '6P25iKiAj3KlIXXkrs')]
-  function create(string $title, string $teaching, string $date, string $verse = null, string $predicator = null): mixed
+  function create(string $title, string $teaching, string $date = null, string $verse = null, string $predicator = null): mixed
   {
     // User :
     $user = request()->user();
 
-    $carbon = new Carbon(str_replace('/', '-', $date));
-    $formatedDate = $carbon->toISOString();
+    $formatedDate = null;
+    if ($date) {
+      $carbon = new Carbon(str_replace('/', '-', $date));
+      $formatedDate = $carbon->toISOString();
+    }
 
     // Get user role.
     $userRolw = $user->role;
