@@ -16,7 +16,7 @@ Route::prefix("photo")->group(function () {
 
   Route::get('file/{pid}', fn (string $pid) => PhotoHandler::fileAsResponse(public_id: $pid))->name('file');
 
-  Route::post('user/{user_id}/{scale}/{default?}', function(string $user_id, string $scale, string $default = null)  {
+  Route::get('user/{user_id}/{scale}/{default?}', function(string $user_id, string $scale, string $default = null)  {
     $picturePid = UserHandlerClass::getUserPicture($user_id);
 
     return PhotoHandler::getAsResponse(

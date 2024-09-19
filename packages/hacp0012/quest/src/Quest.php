@@ -3,7 +3,6 @@
 namespace Hacp0012\Quest;
 
 use Closure;
-use Exception;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Support\Arr;
 use Reflection;
@@ -18,6 +17,7 @@ use Illuminate\Support\Str;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\Attributs\QuestSpawClass;
 use Hacp0012\Quest\core\QuestConsole;
+use Hacp0012\Quest\core\Obstacle;
 use Hacp0012\Quest\core\QuestReturnVoid;
 use ReflectionIntersectionType;
 
@@ -85,16 +85,26 @@ class Quest
   }
 
   // METHODS  ROUTER-->----------------------------------------------------------- :
+  private array $classTrace = ['line' => null, 'file' => null];
+  private array $methodTrace = ['line' => null, 'file' => null];
+
   /** Internal Main quest router */
-  function router(string $questId, array $classes): mixed
+  public function router(string $questId, array $classes): mixed
   {
     // loop in classes.
     foreach ($classes as $class) {
       try {
         $classReflexion = new ReflectionClass($class);
       } catch (\Exception $e) {
-        throw new \Exception("The provided quest class '$class' not exist. " /* . $e->__toString() */);
+        throw new Obstacle(
+          "The provided quest class '$class' not exist. " /* . $e->__toString() */,
+          file: $this->classTrace['file'],
+          line: $this->classTrace['line'],
+        );
       }
+
+      // Make class trace.
+      $this->makeClassTrace($classReflexion);
 
       // loop in methods.
       $methods = $classReflexion->getMethods();
@@ -113,6 +123,9 @@ class Quest
 
           // check if id's match.
           if ($this->controlQuestId(questId: $questId, attribut: $attributInst) == false) continue;
+
+          // Make method trace.
+          $this->makeMethodTrace($method);
 
           // Contol middleware.
           if ($attributInst->middleware !== null) {
@@ -135,6 +148,26 @@ class Quest
     }
 
     return new QuestReturnVoid;
+  }
+
+  /** @param \ReflectionClass<object> $class */
+  function makeClassTrace($class): void
+  {
+    $line = $class->getStartLine();
+    $filename = $class->getFileName();
+
+    $this->classTrace['file'] = $filename;
+    $this->classTrace['line'] = $line;
+  }
+
+  /** @param \ReflectionMethod $method */
+  function makeMethodTrace($method): void
+  {
+    $line = $method->getStartLine();
+    $filename = $method->getFileName();
+
+    $this->methodTrace['file'] = $filename;
+    $this->methodTrace['line'] = $line;
   }
 
   /**
@@ -199,7 +232,11 @@ class Quest
     $methodName = $method->getName();
 
     if (str_contains(trim($modifier), 'public') == false && str_contains(trim($modifier), 'static') == false)
-      throw new \Exception("Only static and public method are authorized for quest spaw at [$methodName]");
+      throw new Obstacle(
+        "Only static and public method are authorized for quest spaw at [$methodName]. ",
+        file: $this->methodTrace['file'],
+        line: $this->methodTrace['line'],
+      );
   }
 
   /**
@@ -254,16 +291,22 @@ class Quest
       default => false,
     };
 
-    if ($questState == false) throw new \Exception("The quest method '$questMethod' are not admit to this quest. Avallable quest method are GET, POST and DELETE.");
+    if ($questState == false) throw new Obstacle(
+      "The quest method '$questMethod' are not admit to this quest. Avallable quest method are GET, POST and DELETE. ",
+      file: $this->methodTrace['file'],
+      line: $this->methodTrace['line'],
+    );
 
     // REQUEST MOTHOD ------------ :
     $spawedQuestAttributInstance = $spawedQuestAttribut->newInstance();
 
     $providedMethod = $spawedQuestAttributInstance->method;
 
-    if ($providedMethod->name != $questMethod) throw new \Exception(
+    if ($providedMethod->name != $questMethod) throw new Obstacle(
       "The spaw method are not match. The expected method are " . $providedMethod->name . " and your provide " . $questMethod .
-        ". Default is " . QuestSpawMethod::POST->name
+        ". Default is " . QuestSpawMethod::POST->name,
+      file: $this->methodTrace['file'],
+      line: $this->methodTrace['line'],
     );
   }
 
@@ -290,7 +333,11 @@ class Quest
 
         if ($isIncorrectType) {
           $paramName = $param->getName();
-          throw new \Exception("The quest file pocket '$paramName' support only [" . implode(', ', Quest::supportedFilesPocketTypes) . "] as types.");
+          throw new Obstacle(
+            "The quest file pocket '$paramName' support only [" . implode(', ', Quest::supportedFilesPocketTypes) . "] as types.",
+            file: $this->methodTrace['file'],
+            line: $this->methodTrace['line'],
+          );
         }
       } else {
         foreach ($types as $type) {
@@ -300,9 +347,11 @@ class Quest
             $isIncorrectType = true;
             if (in_array($type?->{'getName'}() ?? 'mixed', Quest::supportedSpawTypes)) $isIncorrectType = false;
 
-            if ($isIncorrectType) throw new \Exception(
+            if ($isIncorrectType) throw new Obstacle(
               "The spaw quest parameter has an unsupported Type '" . $type->{'getName'}() . "'. Expected [" . implode(', ', Quest::supportedSpawTypes) . "] as types. " .
-                "Or a class that is bound in Service Container",
+                "Or a class that is bound in Service Container.",
+              file: $this->methodTrace['file'],
+              line: $this->methodTrace['line'],
             );
           }
         }
@@ -405,13 +454,19 @@ class Quest
 
     if ($filePocket) {
       $request = request();
-      if ($request->method() != QuestSpawMethod::POST->name) throw new \Exception(
-        "The files pocket only support the quest method " . QuestSpawMethod::POST->name . ". You use " . $request->method()
+      if ($request->method() != QuestSpawMethod::POST->name) throw new Obstacle(
+        "The files pocket only support the quest method " . QuestSpawMethod::POST->name . ". You use " . $request->method(),
+        file: $this->methodTrace['file'],
+        line: $this->methodTrace['line'],
       );
 
       if ($request->hasFile($filePocket))  $casted = $request->file($filePocket);
 
-      else throw new \Exception("No file found for this pocket name '$filePocket'");
+      else throw new Obstacle(
+        "No file found for this pocket name '$filePocket'.",
+        file: $this->methodTrace['file'],
+        line: $this->methodTrace['line'],
+      );
     } else {
       foreach ($types as $type) {
         $typeName = $type?->getName() ?? 'mixed';
@@ -444,8 +499,10 @@ class Quest
 
         if ((($type?->allowsNull() ?? true) === false) && $casted === null) {
           // dd(Json::decode([]));
-          throw new \Exception(
+          throw new Obstacle(
             "The spaw parameter '$paramName' dont allow Null value. Expected type '$typeName', provided value : " . Json::encode($value),
+            file: $this->methodTrace['file'],
+            line: $this->methodTrace['line'],
           );
         }
       }
@@ -485,9 +542,11 @@ class Quest
 
       // Check in intion.
       if ($intention === null) {
-        throw new Exception(
+        throw new Obstacle(
           "Your quest has no parameter where " . count($params) . " parameter's are excepted. " .
-            "Run the command : php artisan quest:track-ref 'ref key here...' to see method parameters details."
+            "Run the command : php artisan quest:track-ref 'ref key here...' to see method parameters details.",
+          file: $this->methodTrace['file'],
+          line: $this->methodTrace['line'],
         );
       }
 
@@ -520,13 +579,19 @@ class Quest
             try {
               $param->getDefaultValue(); // Do nothing
             } catch (\Exception $e) {
-              throw new \Exception("The aimed parameter '$paramName' is required.");
+              throw new Obstacle(
+                "The aimed parameter '$paramName' is required.",
+                file: $this->methodTrace['file'],
+                line: $this->methodTrace['line'],
+              );
             }
           }
         } elseif ($isAutoConstructable == false) {
-          throw new \Exception(
+          throw new Obstacle(
             "The type or some of them '" . implode('|', $arrayTypes) .
               "' on the parameter '$paramName', are not supported or are not bound in The Service Container.",
+            file: $this->methodTrace['file'],
+            line: $this->methodTrace['line'],
           );
         }
       }
@@ -610,26 +675,32 @@ class Quest
 
     if (count($classParams)) {
       if (count($constructionParam) && Arr::isAssoc($constructionParam) == false)
-        throw new \Exception(
+        throw new Obstacle(
           "Only associative array<string, value> are allowed on `constructWith` parameter on class attribut '" .
             $class->getName() . "'.",
+          file: $this->classTrace['file'],
+          line: $this->classTrace['line'],
         );
 
       try {
         $filledParams = $this->classTypeChecker($constructionParam, $classParams);
 
         if (count($filledParams) !== count($classParams ?? [])) {
-          throw new \Exception(
+          throw new Obstacle(
             "The quest guid can't construct the class '" . $class->getName() .
               "', beacause parameters provided in QuestSpawClass are too less or to mutch.",
+            file: $this->classTrace['file'],
+            line: $this->classTrace['line'],
           );
         }
 
         $classInstance = $class->newInstance(...$filledParams);
       } catch (\Exception $e) {
-        throw new \Exception(
+        throw new Obstacle(
           message: "Parameter error from QuestSpawClass on '" . $class->getName() .
             ". The raison is : " . $e->getMessage(),
+          file: $this->classTrace['file'],
+          line: $this->classTrace['line'],
         );
       }
     } else $classInstance = $class->newInstanceWithoutConstructor();

@@ -130,7 +130,7 @@ class QuestConsole
 
     $routes = config('quest.base_routes', []);
 
-    foreach($routes as $route) include $route;
+    foreach ($routes as $route) include $route;
 
     $return = $GLOBALS[QuestConsole::GLOBAL_TEMP_LIST];
 
