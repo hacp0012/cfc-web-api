@@ -6,7 +6,6 @@ use App\mobile_v1\app\comment\CommentsHandler;
 use App\mobile_v1\app\reactions\LikesHandler;
 use App\mobile_v1\app\reactions\ViewsHandler;
 use App\mobile_v1\app\user\UserHandlerClass;
-use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Enseignement;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;

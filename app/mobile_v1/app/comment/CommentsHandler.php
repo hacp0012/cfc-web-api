@@ -2,6 +2,7 @@
 
 namespace App\mobile_v1\app\comment;
 
+use App\mobile_v1\app\reactions\LikesHandler;
 use App\mobile_v1\app\reactions\ViewsHandler;
 use App\Models\Comment;
 use App\Models\Communique;
@@ -121,11 +122,12 @@ class CommentsHandler
 
   /** @return stdClass --> getAllOf */
   #[QuestSpaw(ref: 'get.EoJkzyMftwPf72SCUuNxv8IMiinUL9rKIOTi', method: QuestSpawMethod::GET)]
-  function getAllOfFromRequest(string $model, string $model_id) {
+  function getAllOfFromRequest(string $model, string $model_id)
+  {
     $return = new stdClass;
     $return->success = false;
 
-    $correctModel = match($model) {
+    $correctModel = match ($model) {
       'ECHO' => Echos::class,
       'COM' => Communique::class,
       'TEACHING' => Enseignement::class,
@@ -179,6 +181,10 @@ class CommentsHandler
       $model->indent = 0;
       $model->comment = $comment;
 
+      $like = new LikesHandler;
+
+      $reactions = $like->countAllOf(model: Comment::class, id: $comment->id);
+
       $poster = User::find($comment->user);
 
       $posterModel = ['fullname' => null, 'id' => null];
@@ -190,6 +196,8 @@ class CommentsHandler
       }
 
       $model->poster = $posterModel;
+
+      $model->likes = $reactions->count;
 
       $formateds[] = $model;
     }
@@ -257,4 +265,25 @@ class CommentsHandler
 
   /** Get all of a person. */
   function getOf() {}
+
+  /** @return stdClass {success:bool, count:int} */
+  #[QuestSpaw(ref: 'like.reaction.gfsUuXfSdNUDdUruwSGDjbm2xQf')]
+  function like(string $commentId, string $reactorId): stdClass
+  {
+    $return = new stdClass;
+    $return->success = false;
+
+    $like = new LikesHandler;
+
+    $state = $like->toggle(Comment::class, $commentId, $reactorId);
+
+    if ($state->state) {
+      $count = $like->countAllOf(Comment::class, $commentId);
+
+      $return->count = $count->count;
+      $return->success = true;
+    }
+
+    return $return;
+  }
 }

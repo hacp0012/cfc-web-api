@@ -13,6 +13,7 @@ require __DIR__ . '/mobile_v1/teaching.php';
 require __DIR__ . '/mobile_v1/com.php';
 require __DIR__ . '/mobile_v1/echo.php';
 require __DIR__ . '/mobile_v1/comment.php';
+require __DIR__ . '/mobile_v1/home.php';
 
 // require __DIR__ . '/../quest.php';
 

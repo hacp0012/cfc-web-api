@@ -203,7 +203,7 @@ class FileHanderClass
       $rules = match ($type) {
         'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
         'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
-        'DOCUMENT' => [File::types([/* 'application/pdf',  */'plain/text', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
+        'DOCUMENT' => [File::types(['application/pdf', 'plain/text', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
 
         default => [],
       };
@@ -211,9 +211,9 @@ class FileHanderClass
       # Cancel if size is great than 18Mb.
       if ($type == 'VIDEO' && $request->file($name)->getSize() > (1024 * 18000)) return null;
       # Cancel if size is great than 9Mb.
-      if ($type == 'AUDIO' && $request->file($name)->getSize() > (1024 * 9000)) return null;
+      if ($type == 'AUDIO' && $request->file($name)->getSize() > (1024 * 36000)) return null;
       # Cancel if size is great than 5.4Mb.
-      if ($type == 'DOCUMENT' && $request->file($name)->getSize() > (1024 * 5400)) return null;
+      if ($type == 'DOCUMENT' && $request->file($name)->getSize() > (1024 * 18000)) return null;
 
       # Validate.
       $validate = Validator::validate([$name => $request->file($name)], [
@@ -243,7 +243,7 @@ class FileHanderClass
     $rules = match ($type) {
       'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
       'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
-      'DOCUMENT' => [File::types([/* 'application/pdf',  */'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
+      'DOCUMENT' => [File::types(['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
 
       default => [],
     };
@@ -251,9 +251,9 @@ class FileHanderClass
     # Cancel if size is great than 18Mb.
     if ($type == 'VIDEO' && $uploadedFile->getSize() > (1024 * 18000)) return null;
     # Cancel if size is great than 9Mb.
-    if ($type == 'AUDIO' && $uploadedFile->getSize() > (1024 * 9000)) return null;
+    if ($type == 'AUDIO' && $uploadedFile->getSize() > (1024 * 36000)) return null;
     # Cancel if size is great than 5.4Mb.
-    if ($type == 'DOCUMENT' && $uploadedFile->getSize() > (1024 * 5400)) return null;
+    if ($type == 'DOCUMENT' && $uploadedFile->getSize() > (1024 * 18000)) return null;
 
     # Validate.
     $validate = Validator::validate(['file' => $uploadedFile], [

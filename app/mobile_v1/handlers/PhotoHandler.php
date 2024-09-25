@@ -43,7 +43,9 @@ class PhotoHandler
 
       if (file_exists($filePath)) {
         $imagePath = $defaultPath . '/' . $defaultContent . $defaultExt;
-      }
+      }/*  else {
+        $imagePath = storage_path('app') . '/' . $defaultPath . '/' . $defaultValue;
+      } */
     }
 
     # Casting scale -------------------------------------------------------------

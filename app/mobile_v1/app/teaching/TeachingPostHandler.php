@@ -34,7 +34,7 @@ class TeachingPostHandler
     $levelId = match ($userRolw['level']) {
       'pool'      => $user->pool,
       'com_loc'   => $user->com_loc,
-      'noyau_ag'  => $user->noyau_af,
+      'noyau_af'  => $user->noyau_af,
       default     => null,
     };
 

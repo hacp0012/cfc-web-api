@@ -31,6 +31,8 @@ return new class extends Migration
       $table->text('audio')->nullable()->comment('pid');
       $table->text('document')->nullable()->comment("public_id");
 
+      $table->softDeletes();
+
       $table->timestamps();
     });
   }

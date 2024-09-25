@@ -14,5 +14,5 @@ class Constants
   const PASSWORD          = '0000';
 
   const IMAGE_UPLOAD_NAME = 'picture';
-  const IMAGE_UPLOAD_SIZE = 4 * 1024;
+  const IMAGE_UPLOAD_SIZE = 9 * 1024;
 }
