@@ -13,7 +13,10 @@ use Hacp0012\Quest\Quest;
 
 Route::middleware('guest')->prefix('test')->group(function () {
   // Route::any('quest/{quest_ref}', fn(string $quest_ref) => (new QuestRouter(questRef: $quest_ref))->spawn());
-  Quest::spawn(routes: [QuestTest::class])->middleware('guest');
+  Quest::spawn(routes: [
+    QuestTest::class,
+    // 'app'
+  ])->middleware('guest');
 
   Route::get('', function () {
     return ["Aliquip amet exercitation incididunt incididunt adipisicing et mollit Lorem esse consectetur."];
@@ -36,12 +39,12 @@ Route::middleware('guest')->prefix('test')->group(function () {
     // return (new NotificationHandler($user->id))->getAllUnreads();
   });
 
-  Route::prefix('midd')->group(function() {
+  Route::prefix('midd')->group(function () {
 
     // if ($me == 'dar') {
-      Route::get('', function() {
-        return "message ,,,";
-      });
+    Route::get('', function () {
+      return "message ,,,";
+    });
     // }
   });
 });
