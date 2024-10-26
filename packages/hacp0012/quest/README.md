@@ -1,12 +1,12 @@
-![Generated ref code](./doc/assets/quest.png)
+![Logo](./doc/assets/quest.png)
 
 # Quest
 
 Access resources directly without defining routes, thanks to PHP attributes.
 
-[**Online documentation here** https://hacp0012.github.io/Quest/](https://hacp0012.github.io/Quest/)
+[**Please visite online doc**](https://hacp0012.github.io/Quest/)
 
-_[▶️ French Readme here](./doc/fr.md)_
+_[▶️ French Readme here](./fr.md)_
 
 ---
 
@@ -148,8 +148,18 @@ $routes = [
   Forest::class,
   # Or specifie a directory:
   // 'app/demo',
-];
+]; 
+
+# Or it can be only the class name.
+$routes = Forest::class; // Or directory.
+
 Quest::spawn(uri: 'quest', routes: $routes)->name('my.quest');
+
+# Or 
+
+Quest::spaw(uri: 'my/forest', [Forest::class, 'RrOWXRfKOjauvSpc7y']);
+// For direct call.
+// Note method name, this is `spaw`. 
 ```
 
 > **`Hacp0012\Quest`** is the main namespace. Contains the `Quest()` class and the `QuestRouter()` class and the `QuestSpawMethod` enum.

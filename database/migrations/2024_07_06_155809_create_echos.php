@@ -21,11 +21,11 @@ return new class extends Migration
       // $table->enum('status', ['REALIZED', 'INWAIT', 'NONE'])->default('NONE')->comment("Status de realisation.");
       $table->string('visibility')->comment('[level, level_id] - Ex. [level:pool, level_id:pool_id]');
 
-      $table->text('title');
+      $table->text('title')->fulltext();
       // $table->text('date')->nullable()->comment('Teaching date');
       // $table->text('verse')->nullable()->comment('Teaching bible reference');
       // $table->text('predicator')->nullable()->comment('Teaching predicator');
-      $table->text('text')->nullable()->comment('Teaching description');
+      $table->text('text')->fulltext()->nullable()->comment('Teaching description');
 
       // $table->text('picture')->nullable()->comment('pid');
       $table->text('audio')->nullable()->comment('pid');

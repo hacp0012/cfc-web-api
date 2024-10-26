@@ -9,7 +9,7 @@ No parameter.
 ## spawn
 
 ```php
-static spawn(string $uri = 'quest', array $routes = []): Illuminate\Routing\Route
+static spawn(string $uri = 'quest', string|array $routes = []): Illuminate\Routing\Route
 ```
 
 Quest Router `QuesetRouter` short hand.
@@ -17,7 +17,7 @@ Quest Router `QuesetRouter` short hand.
 * string $uri
 * ⚠️ At any end of `uri` a `{quest_ref}` route parameter are append. Dont append it twice.
 
-array<int, string> $routes An array of spawned class's or directories (paths) started at the Laravel base path `base_path()`.
+@param string|array<int, string> `$routes` the (class name or directory) or an array of spawned class's, it can be directories (paths) started at the Laravel base path `base_path()`.
 
 __Routes precedence__ :
 
@@ -32,6 +32,21 @@ Route::get('/', [...]);
 Quest::spawn(uri: '/my/quest', routes: [QuestDemo::class]);
 
 # ⚠️ To use only in route file. 
+```
+
+## spaw
+
+```php
+static function spaw(string $uri, string|array $spaw): RoutingRoute
+```
+
+Spaw a specific reference (call it directly). No quest reference key is required on request call.
+
+```php
+# Exemple: 
+Quest::spaw('my/quest', 'App\class@ref-id');
+
+Quest::spaw('my/quest', [className::class, 'ref-id']);
 ```
 
 ## router

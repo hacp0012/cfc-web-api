@@ -19,6 +19,7 @@ require __DIR__ . '/mobile_v1/home.php';
 
 // * -- FEATURES -- *
 Route::prefix('feature')->group(function() {
+  require __DIR__ . '/mobile_v1/ws.php';
   require __DIR__ . '/mobile_v1/otp.php';
   require __DIR__ . '/mobile_v1/validable.php';
   require __DIR__ . '/mobile_v1/notification.php';

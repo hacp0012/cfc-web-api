@@ -15,7 +15,7 @@ return new class extends Migration
       $table->comment("Liste of couples and her children");
       $table->uuid('id')->primary();
 
-      $table->string('nom');
+      $table->string('nom')->fulltext();
 
       $table->uuid('epoue')->nullable();
       $table->uuid('epouse')->nullable();

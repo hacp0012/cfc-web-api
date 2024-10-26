@@ -1,6 +1,5 @@
-SMS OTP
-- apI url
-- sender name
-- api key
-- api password
+Socket
+  - notification
+Search
 
+- composer require phrity/websocket

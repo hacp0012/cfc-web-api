@@ -1,5 +1,6 @@
 <?php
 
+use App\mobile_v1\app\search\SearchEngine;
 use App\mobile_v1\handlers\NotificationHandler;
 use App\mobile_v1\routes\Loader;
 use App\Models\User;
@@ -17,6 +18,9 @@ Route::middleware('guest')->prefix('test')->group(function () {
     QuestTest::class,
     // 'app'
   ])->middleware('guest');
+
+  // Quest::spaw('demo', [SearchEngine::class, 'search-engine-571ca4f1-1e81-4934-a523-1721792a4660']);
+  Quest::spaw('demo', [SearchEngine::class, 'search-next-0a1f5c1c-4e1d-42a7-b626-3985f4356ee8']);
 
   Route::get('', function () {
     return ["Aliquip amet exercitation incididunt incididunt adipisicing et mollit Lorem esse consectetur."];
