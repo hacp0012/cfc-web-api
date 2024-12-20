@@ -14,18 +14,24 @@ class EchoHomeHandler
   public function __construct() {}
 
   #[QuestSpaw(ref: 'home.echos.get.mVBuu9LnEPpBNFm9dJBPFUUNIrz', method: QuestSpawMethod::GET)]
-  public function getSuggestions(): stdClass
+  public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;
     $return->success = false;
 
-    # Comm.
-    $echos = Echos::all();
-    $reversed = $echos->shuffle();
+    # Echos.
+    $echos = [];
+    if ($byDate && count($byDate) == 2) {
+      $echos = Echos::query()
+        ->whereDate('created_at', '>=', $byDate[0])
+        ->whereDate('created_at', '<=', $byDate[1])
+        ->get();
+    } else $echos = Echos::all();
+    // $reversed = $echos->shuffle();
 
     # Poster & Reactions
     $list = collect();
-    foreach ($reversed as $echo) {
+    foreach ($echos as $echo) {
       $publiser = User::find($echo->published_by);
 
       $echo->text = Str::words($echo->text, 27, '...');
@@ -48,6 +54,8 @@ class EchoHomeHandler
         ]);
       }
     }
+
+    $list = array_values($list->reverse()->toArray());
 
     $return->success = true;
     $return->echos = $list;

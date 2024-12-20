@@ -35,6 +35,7 @@ return new class extends Migration
       $table->date('d_naissance')->nullable();
       $table->enum('genre', ['M', 'F'])->default('M')->comment("remplacer par la civilite");
 
+      $table->text('address')->nullable();
       $table->uuid('pool')->nullable();
       $table->uuid('com_loc')->nullable();
       $table->uuid('noyau_af')->nullable();

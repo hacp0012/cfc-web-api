@@ -4,22 +4,31 @@ namespace App\mobile_v1\app\com;
 
 use App\Models\Communique;
 use App\Models\User;
+use Carbon\Carbon;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestSpawMethod;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 
 class ComHomeHandler
 {
   public function __construct() {}
 
-  #[QuestSpaw(ref: 'home.coms.get.ImbynpTohaSCWy6Wkc0P8cCPglI', method:QuestSpawMethod::GET)]
-  public function getSuggestions(): stdClass
+  /** @param array<string,string>|null $byDate [date_A, date_B] */
+  #[QuestSpaw(ref: 'home.coms.get.ImbynpTohaSCWy6Wkc0P8cCPglI', method: QuestSpawMethod::GET)]
+  public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;
     $return->success = false;
 
     # Comm.
-    $coms = Communique::all();
+    $coms = [];
+    if ($byDate && count($byDate) == 2) {
+      $coms = Communique::query()
+        ->whereDate('created_at', '>=', $byDate[0])
+        ->whereDate('created_at', '<=', $byDate[1])
+        ->get();
+    } else $coms = Communique::all();
     // $reversed = $coms->shuffle();
 
     # Poster & Reactions
@@ -40,6 +49,8 @@ class ComHomeHandler
       ]);
       // }
     }
+
+    $list = array_values($list->reverse()->toArray());
 
     $return->success = true;
     $return->coms = $list;

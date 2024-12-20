@@ -34,3 +34,4 @@ Route::inertia('/temp/login', 'Home/Login');
 // });
 
 // require __DIR__ . '/auth.php';
+

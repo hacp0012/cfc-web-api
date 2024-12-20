@@ -12,14 +12,16 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('admins', function (Blueprint $table) {
-      $table->comment("");
+      $table->comment("Aministrors");
       $table->id();
 
-      $table->string('name');
-      $table->string('can');
+      $table->boolean('is_master')->default(false)->comment("Define is user is master admin. Master admin can't be deleted.");
+      $table->uuid('user_ref')->nullable()->comment("A users table ref : UUID. Set this field when the admin is already app user.");
+      $table->string('can')->nullable();
 
-      $table->string('uname');
-      $table->string('mdp');
+      $table->string('name');
+      $table->string('uname')->nullable();
+      $table->string('pswd');
 
       $table->timestamps();
     });

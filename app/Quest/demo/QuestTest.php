@@ -25,7 +25,7 @@ class QuestTest
   #[QuestSpaw(ref: '9ef4f696-9bdd-4b31-8aba-d626799b2299', method: QuestSpawMethod::GET)]
   public static function printHello(string $message, int|float $age): string
   {
-    return "$message ... avec ta tete de Facochere : $age";
+    return "$message ... avec ta tete de Facochere et avec cet : $age";
   }
 
   #[QuestSpaw(ref: 'RdVWAQFS7FSFZeYMkp', method: QuestSpawMethod::POST)]

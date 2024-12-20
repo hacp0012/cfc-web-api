@@ -3,7 +3,9 @@
 namespace App\mobile_v1\app\com;
 
 use App\mobile_v1\classes\FileHanderClass;
+use App\mobile_v1\handlers\NotificationHandler;
 use App\Models\Communique;
+use App\Notifications\Communinication;
 use Illuminate\Http\UploadedFile;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 
@@ -47,10 +49,22 @@ class ComPostHandler
       // return $data;
       $newCreatedPostId = Communique::create($data);
 
+      // Send notification to all users.
+      $this->notify(userId: $user->id, subjetId: $newCreatedPostId, title: $title, message: $com, picture: null);
+
       return ['state' => 'POSTED', 'id' => $newCreatedPostId->id];
     }
 
     return ['state' => 'FAILED'];
+  }
+
+  private function notify(string $userId, string $subjetId, string $title, string $message, ?string $picture): void
+  {
+    $notificationHandler = new NotificationHandler($userId);
+
+    $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
+    $action = $group->std(Communinication::class, $subjetId);
+    $action->toAll();
   }
 
   /** @return array<string,string> [state:STORED|FAILED] */

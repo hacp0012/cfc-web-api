@@ -19,8 +19,9 @@ return new class extends Migration
       $table->string('nom');
       $table->enum('type', ['POOL', 'COM', 'NA'])->comment("POOL | COM | NA");
       $table->string('photo')->nullable();
+      $table->string('gps')->nullable()->comment("{lat:int, lon:int}");
       $table->string('adresse')->nullable();
-      $table->text('label')->nullable();
+      $table->longText('label')->nullable();
 
       $table->timestamps();
     });

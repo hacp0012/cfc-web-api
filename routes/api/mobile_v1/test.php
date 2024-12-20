@@ -33,8 +33,8 @@ Route::middleware('guest')->prefix('test')->group(function () {
 
     // NotificationHandler::send(title: fake()->title(), body: fake()->sentence(9))->std(Wellcome::class)->to($user);
     NotificationHandler::send(title: fake()->name(), body: fake()->sentence(18))
-      // ->std(Teaching::class, '5076ff2e-f192-4504-8fa7-da16a5c83df0')
-      ->flash(Wellcome::class)
+      ->std(Teaching::class, '9cf2adaf-c44c-4d2d-b4a1-280584eefc1d')
+      // ->flash(Wellcome::class)
       ->to($user);
     // $nots = NotificationHandler::deleteAllOf('9cd5c881-958e-4e63-9c7c-f9d71af1c019');
     // $nots = NotificationHandler::delete('0a583ec9-179f-4c41-8479-2bc1e222c83a');

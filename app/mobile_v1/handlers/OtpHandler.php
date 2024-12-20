@@ -82,6 +82,7 @@ use App\Models\Otp;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Generator
 {

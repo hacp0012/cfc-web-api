@@ -22,7 +22,7 @@ return new class extends Migration
       $table->string('mime')->nullable();
       $table->string('ext')->nullable();
 
-      $table->string('label')->nullable();
+      $table->text('label')->nullable();
 
       $table->string('hashed_name')->nullable();
       $table->string('folder_path')->nullable();

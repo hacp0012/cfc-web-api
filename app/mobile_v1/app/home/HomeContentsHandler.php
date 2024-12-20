@@ -2,16 +2,19 @@
 
 namespace App\mobile_v1\app\home;
 
+use App\mobile_v1\admin\CarousselMan;
 use App\mobile_v1\app\com\ComHomeHandler;
 use App\mobile_v1\app\teaching\TeachingHomeHandler;
 use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\QuestResponse;
 use Hacp0012\Quest\QuestSpawMethod;
+use Illuminate\Database\Eloquent\Collection;
 use stdClass;
 
 class HomeContentsHandler
 {
   #[QuestSpaw(ref: 'get.home.3nLq7p0NwnXpcHjH9NANsNCNWJXKTyTKxJ9V', method: QuestSpawMethod::GET)]
-  public function getHome(): stdClass
+  public function getHome(?array $byDate = null): stdClass
   {
     $return = new stdClass;
     $return->success = false;
@@ -19,7 +22,7 @@ class HomeContentsHandler
     # -------------------------------------------- :
     // Get coms.
     $comObject = new ComHomeHandler;
-    $coms = $comObject->getSuggestions();
+    $coms = $comObject->getSuggestions(byDate: $byDate);
     $filledsComs = [];
 
     foreach ($coms->coms as $item) {
@@ -32,7 +35,7 @@ class HomeContentsHandler
 
     // Get teachings.
     $teachingObject = new TeachingHomeHandler;
-    $teachs = $teachingObject->getSuggestions();
+    $teachs = $teachingObject->getSuggestions(byDate: $byDate);
     $filledsTeachs = [];
 
     foreach ($teachs->teachs as $item) {
@@ -48,7 +51,8 @@ class HomeContentsHandler
 
     # -------------------------------------------- :
     // Merge.
-    $mergeds = array_merge($filledsTeachs, $filledsComs);
+    // $mergeds = array_merge($filledsTeachs, $filledsComs);
+    $mergeds = array_merge($filledsComs, $filledsTeachs);
 
     // Sort.
     // $sorteds = [];
@@ -77,5 +81,17 @@ class HomeContentsHandler
     $return->list = $mergeds;
 
     return $return;
+  }
+
+  #[QuestSpaw(ref: 'get.home.caroussel.pictures.HT2eqMBIOPIVT5AeATpHwRJ5OvLgcu6iiBRS', method: QuestSpawMethod::GET)]
+  public function getCarousselPictures(): Collection
+  {
+    $carousselMan = new CarousselMan(request: request());
+
+    $pictures = $carousselMan->getIts();
+
+    QuestResponse::setForJson(ref: 'get.home.caroussel.pictures.HT2eqMBIOPIVT5AeATpHwRJ5OvLgcu6iiBRS', dataName: 'pictures');
+
+    return $pictures;
   }
 }

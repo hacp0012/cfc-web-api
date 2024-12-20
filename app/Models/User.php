@@ -43,6 +43,7 @@ class User extends Authenticatable
     'password',
     'child_can_be_maried',
     'child_state',
+    'address',
   ];
 
   /**

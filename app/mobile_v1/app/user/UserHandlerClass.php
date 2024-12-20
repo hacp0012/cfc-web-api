@@ -2,6 +2,7 @@
 
 namespace App\mobile_v1\app\user;
 
+use App\mobile_v1\admin\AdminMan;
 use App\mobile_v1\classes\Constants;
 use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Couple;
@@ -84,7 +85,7 @@ class UserHandlerClass
 
   /** Get simplifeds user datas.
    * Via userID or constructor userID.
-  */
+   */
   public static function getSimpleUserData(string $userId): ?array
   {
     $user = User::firstWhere('id', $userId);
@@ -97,6 +98,9 @@ class UserHandlerClass
       ownerGroup: Constants::GROUPS_USER,
       contentGroup: 'PHOTO_PROFILE',
     );
+
+    // Check admin state.
+    $isAdmin = AdminMan::isAdmin(userId: $userId);
 
     // Datas :
     $data = [
@@ -114,6 +118,7 @@ class UserHandlerClass
       'telephone'                 => $user->telephone,
 
       'photo'                     => null,
+      'is_admin'                  => $isAdmin,
     ];
 
     if ($photo->first()) $data['photo'] = $photo->first()->pid;
@@ -195,7 +200,12 @@ class UserHandlerClass
 
   public function updateOrSendPcnSubscription(string $pool, string $comLoc, string $noyauAf): bool
   {
-    $newData = ['pool' => $pool, 'com_loc' => $comLoc, 'noyau_af' => $noyauAf];
+    $newData = [
+      'pool' => $pool,
+      'com_loc' => $comLoc,
+      'noyau_af' => $noyauAf,
+      'created_at' => now(),
+    ];
 
     if ($this->user) {
       $this->user->pcn_in_waiting_validation = $newData;
@@ -208,7 +218,7 @@ class UserHandlerClass
   public function updateRole(string $level, string $role): bool
   {
     $data = [
-      'state' => 'INWAIT',
+      'state' => 'INVALIDATE', // 'INWAIT',
       'name' => null,
       'level' => $level,
       'role' => $role,

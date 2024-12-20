@@ -3,7 +3,9 @@
 namespace App\mobile_v1\app\teaching;
 
 use App\mobile_v1\classes\FileHanderClass;
+use App\mobile_v1\handlers\NotificationHandler;
 use App\Models\Enseignement;
+use App\Notifications\Teaching;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -56,10 +58,27 @@ class TeachingPostHandler
       // return $data;
       $newCreatedPostId = Enseignement::create($data);
 
+      $this->notify(
+        userId: $user->id,
+        subjetId: $newCreatedPostId,
+        title: $title,
+        message: "[$verse] " . $predicator ?? '' . " : $teaching",
+        picture: null,
+      );
+
       return ['state' => 'POSTED', 'id' => $newCreatedPostId->id];
     }
 
     return ['state' => 'FAILED'];
+  }
+
+  private function notify(string $userId, string $subjetId, string $title, string $message, ?string $picture): void
+  {
+    $notificationHandler = new NotificationHandler($userId);
+
+    $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
+    $action = $group->std(Teaching::class, $subjetId);
+    $action->toAll();
   }
 
   /** @return array<string,string> [state:STORED|FAILED] */
@@ -105,7 +124,7 @@ class TeachingPostHandler
     $teaching = Enseignement::find($teaching_id);
 
     if ($teaching) {
-      $validatedFile = FileHanderClass::validate(FileHanderClass::TYPE['IMAGE'], $audio);
+      $validatedFile = FileHanderClass::validate(FileHanderClass::TYPE['AUDIO'], $audio);
 
       if ($validatedFile) {
         $audioPid = null;

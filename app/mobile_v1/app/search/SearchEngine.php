@@ -3,6 +3,7 @@
 namespace App\mobile_v1\app\search;
 
 use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\Attributs\QuestSpawClass;
 use Hacp0012\Quest\QuestSpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -14,14 +15,16 @@ enum Section
   case teaching;
   case echo;
   case communication;
+  case custom;
 }
 
+#[QuestSpawClass(['keyphrase' => '', 'section' => Section::all])]
 class SearchEngine
 {
   /**
    * Create a new class instance.
    */
-  public function __construct(protected string $keyphrase, protected Section $section = Section::all)
+  public function __construct(protected string $keyphrase = '', protected Section $section = Section::all)
   {
     $this->engine = new Engine($keyphrase);
   }
@@ -29,6 +32,8 @@ class SearchEngine
   static int $return_max = 18;
 
   private Engine|null $engine = null;
+
+  public $sectionCounts = ['teachings' => 0, 'echos' => 0, 'coms' => 0];
 
   public function search(): array
   {
@@ -48,6 +53,19 @@ class SearchEngine
     return $unrateds;
   }
 
+  public function customSearch(mixed $tableModel, array $fields): array
+  {
+    $results = $this->engine->customable(tableModel: $tableModel, fields: $fields);
+
+    $rateds = $this->rater($results, Section::custom, $fields);
+
+    $sorteds = $this->descSort($rateds);
+
+    $unrateds = Rater::unrate($sorteds);
+
+    return $unrateds;
+  }
+
   # --------------------------------------------- /
 
   private function descSort(array $results): array
@@ -61,7 +79,7 @@ class SearchEngine
     return $results;
   }
 
-  private function rater(Collection $results, Section $section): array
+  private function rater(Collection $results, Section $section, array $fields = []): array
   {
     $rater = new Rater($this->keyphrase, $results);
 
@@ -69,6 +87,7 @@ class SearchEngine
       Section::communication => $rater->com(),
       Section::echo => $rater->echo(),
       Section::teaching => $rater->teaching(),
+      Section::custom => $rater->custom($fields),
       default => [],
     };
 
@@ -89,6 +108,8 @@ class SearchEngine
     $echo = $this->sEcho();
     $com = $this->sCom();
     $teaching = $this->sTeaching();
+
+    $this->sectionCounts = ['teachings' => count($teaching), 'echos' => count($echo), 'coms' => count($com)];
 
     $mergeds = array_merge($echo, $com, $teaching);
 
@@ -143,6 +164,7 @@ class SearchEngine
       $sliceds = SearchEngine::next($results);
 
       $return->results = $sliceds;
+      $return->counts = $se->sectionCounts;
       $return->success = true;
     } else {
       $return->results = [];

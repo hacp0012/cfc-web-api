@@ -3,7 +3,9 @@
 namespace App\mobile_v1\app\echo;
 
 use App\mobile_v1\classes\FileHanderClass;
+use App\mobile_v1\handlers\NotificationHandler;
 use App\Models\Echos;
+use App\Notifications\Echos as NotificationsEchos;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 
@@ -46,10 +48,22 @@ class EchoPostHandler
       // return $data;
       $newCreatedPostId = Echos::create($data);
 
+      // Notify all users.
+      $this->notify(userId: $user->id, subjetId: $newCreatedPostId, title: $title, message: $echo, picture: null);
+
       return ['state' => 'POSTED', 'id' => $newCreatedPostId->id];
     }
 
     return ['state' => 'FAILED'];
+  }
+
+  private function notify(string $userId, string $subjetId, string $title, string $message, ?string $picture): void
+  {
+    $notificationHandler = new NotificationHandler($userId);
+
+    $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
+    $action = $group->std(NotificationsEchos::class, $subjetId);
+    $action->toAll();
   }
 
   /** @return array<string,string> [state:STORED|FAILED] */

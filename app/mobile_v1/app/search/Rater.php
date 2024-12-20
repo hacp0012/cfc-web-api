@@ -53,6 +53,13 @@ class Rater
     return $data;
   }
 
+  public function custom(array $fields)
+  {
+    $data = $this->engine($fields);
+
+    return $data;
+  }
+
   static public function unrate(array $rateds)
   {
     $unrateds = [];

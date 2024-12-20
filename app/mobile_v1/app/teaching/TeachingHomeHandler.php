@@ -13,13 +13,20 @@ class TeachingHomeHandler
   public function __construct() {}
 
   #[QuestSpaw(ref: 'home.teachs.get.tNakED4gqPiuBHcOGHa7IT3U86n', method: QuestSpawMethod::GET)]
-  public function getSuggestions(): stdClass
+  public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;
     $return->success = false;
 
-    # Comm.
-    $teachs = Enseignement::all();
+    # Teachings.
+    $teachs = [];
+    if ($byDate && count($byDate) == 2) {
+      $teachs = Enseignement::query()
+        ->whereDate('date', '>=', $byDate[0])
+        ->whereDate('date', '<=', $byDate[1])
+        ->get();
+    } else $teachs = Enseignement::all();
+
     // $reversed = $teachs->shuffle();
 
     # Poster & Reactions
@@ -40,6 +47,7 @@ class TeachingHomeHandler
         ]);
       }
     }
+    $list = array_values($list->reverse()->toArray());
 
     $return->success = true;
     $return->teachs = $list;

@@ -62,7 +62,7 @@ class NotificationHandler
     $unReads = $user->unreadNotifications()->update(['read_at' => now()]);
 
     // Mark as reads.
-    // $unReads->markAsRead();
+    // $notification->markAsRead();
     return $unReads;
   }
 
@@ -201,7 +201,7 @@ class Group
     'group'         => '',
     'type'          => null,
     'max_visible'   => 1,
-    'shedules'      => [],
+    //'shedules'      => [],
     'notification'  => null,
     'subject_id'    => null,
   ];

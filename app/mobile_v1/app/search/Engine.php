@@ -5,6 +5,7 @@ namespace App\mobile_v1\app\search;
 use App\Models\Communique;
 use App\Models\Echos;
 use App\Models\Enseignement;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Engine
@@ -28,15 +29,17 @@ class Engine
     $this->wrapedsKeyphrases = $wrapeds;
   }
 
-  static array $teachingFields = ['title', 'text', 'verse', 'predicator'];
-  static array $echoFields = ['title', 'text'];
-  static array $comFields = ['title', 'text'];
+  static array $teachingFields = ['title', 'text', 'verse', 'predicator', 'date'];
+  static array $echoFields = ['title', 'text', 'created_at'];
+  static array $comFields = ['title', 'text', 'created_at'];
 
   private string $escapedKeyprase = '';
   private array $wrapedsKeyphrases = [];
 
   public function teaching()
   {
+    $tableName = 'teachings';
+
     $fields = Engine::$teachingFields;
 
     $where = Enseignement::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%');
@@ -48,11 +51,14 @@ class Engine
 
     $results = $where->get();
 
+    foreach ($results as $key => $item) $results[$key]->table = $tableName;
+
     return $results;
   }
 
   public function echo()
   {
+    $tableName = 'echos';
     $fields = Engine::$echoFields;
 
     $where = Echos::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%');
@@ -64,11 +70,14 @@ class Engine
 
     $results = $where->get();
 
+    foreach ($results as $key => $item) $results[$key]->table = $tableName;
+
     return $results;
   }
 
   public function com()
   {
+    $tableName = 'coms';
     $fields = Engine::$comFields;
 
     $where = Communique::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%');
@@ -79,6 +88,30 @@ class Engine
     }
 
     $results = $where->get();
+
+    foreach ($results as $key => $item) $results[$key]->table = $tableName;
+
+    return $results;
+  }
+
+  // Custom engine.
+  public function customable(mixed $tableModel, array $fields): Collection|null
+  {
+    $tableName = $tableModel::class;
+
+    if (count($fields) == 0) return null;
+
+    $where = $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%');
+    for ($index = 0; $index < count($fields); $index++) {
+      foreach ($this->wrapedsKeyphrases as $item) {
+        $where->orWhere($fields[$index], 'LIKE', $item);
+      }
+    }
+
+    /** @var \Illuminate\Database\Eloquent\Collection */
+    $results = $where->get();
+
+    foreach ($results as $key => $item) $results[$key]->table = $tableName;
 
     return $results;
   }

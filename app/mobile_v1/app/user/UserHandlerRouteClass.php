@@ -2,6 +2,7 @@
 
 namespace App\mobile_v1\app\user;
 
+use App\mobile_v1\admin\AdminMan;
 use App\mobile_v1\app\family\FamilyChildren;
 use App\mobile_v1\app\family\FamilyCouple;
 use App\mobile_v1\app\user\UserHandlerClass;
@@ -136,6 +137,7 @@ class UserHandlerRouteClass
 
     $user   = null;
     $couple = null;
+    $admin  = null;
 
     if ($userId) {
       // Get Simple user data.
@@ -143,9 +145,12 @@ class UserHandlerRouteClass
 
       // Get couple.
       $couple = (new FamilyCouple(userId: $userId ?? '---'))->getCoupleInfos();
+
+      // Get if is an admin.
+      $admin = (new AdminMan)->getOne(userId: $userId);
     }
 
-    return ['user' => $user, 'couple' => $couple];
+    return ['user' => $user, 'couple' => $couple, 'admin' => $admin];
   }
 
   public function getChildParentCoupleViaValidable(Request $request)

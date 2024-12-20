@@ -14,6 +14,11 @@ require __DIR__ . '/mobile_v1/com.php';
 require __DIR__ . '/mobile_v1/echo.php';
 require __DIR__ . '/mobile_v1/comment.php';
 require __DIR__ . '/mobile_v1/home.php';
+require __DIR__ . '/mobile_v1/calendar.php';
+require __DIR__ . '/mobile_v1/find_cfc_around.php';
+
+// * -- ADMIN -- *
+require __DIR__ . '/admin_feature/admin.php';
 
 // require __DIR__ . '/../quest.php';
 
@@ -23,4 +28,5 @@ Route::prefix('feature')->group(function() {
   require __DIR__ . '/mobile_v1/otp.php';
   require __DIR__ . '/mobile_v1/validable.php';
   require __DIR__ . '/mobile_v1/notification.php';
+  require __DIR__ . '/mobile_v1/search.php';
 });

@@ -130,7 +130,7 @@ class FileHanderClass
     return false;
   }
 
-  function updateLabel(string $publicId, string $label): bool
+  public static function updateLabel(string $publicId, string $label): bool
   {
     $query = [];
 
@@ -241,7 +241,8 @@ class FileHanderClass
     // if ($request->hasFile($name)) {
     // TODO: add more Videos and Audio mimes types and remove un suporteds Documents formats.
     $rules = match ($type) {
-      'VIDEO' || 'AUDIO' => [File::types(['video/mp4', 'audio/mp3', 'audio/aac'])],
+      'VIDEO' => [File::types(['video/mp4'])],
+      'AUDIO' => [File::types(['audio/mp3', 'audio/aac', 'audio/mpeg', "audio/x-m4a", "audio/mp4", "audio/x-ms-wma", "audio/x-alac-m4a", "audio/flac", "audio/x-flac", "audio/aiff", "audio/x-aiff", "audio/wav", "audio/x-wa"])],
       'IMAGE' || 'USER' => [File::types(['image/jpeg', 'image/pipeg', 'image/png']), File::image()->max(Constants::IMAGE_UPLOAD_SIZE)],
       'DOCUMENT' => [File::types(['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])],
 
@@ -250,9 +251,9 @@ class FileHanderClass
 
     # Cancel if size is great than 18Mb.
     if ($type == 'VIDEO' && $uploadedFile->getSize() > (1024 * 18000)) return null;
-    # Cancel if size is great than 9Mb.
-    if ($type == 'AUDIO' && $uploadedFile->getSize() > (1024 * 36000)) return null;
-    # Cancel if size is great than 5.4Mb.
+    # Cancel if size is great than 81Mb.
+    if ($type == 'AUDIO' && $uploadedFile->getSize() > (1024 * 81000)) return null;
+    # Cancel if size is great than 18Mb.
     if ($type == 'DOCUMENT' && $uploadedFile->getSize() > (1024 * 18000)) return null;
 
     # Validate.
