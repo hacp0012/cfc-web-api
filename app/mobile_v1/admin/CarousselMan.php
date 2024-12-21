@@ -22,6 +22,7 @@ class CarousselMan
     $this->admin = (new AdminMan)->getOne(userId: $user->id);
   }
 
+  public string $ownerId = 'vXC0KSzZeLfkCOsp36vyBjd0NY6ji3RjdOaN';
   public string $imageGroupe = 'HOME_SLIDER';
   public string $contentGroup = 'IMAGE';
   public Collection|null|Admin $admin = null;
@@ -32,7 +33,7 @@ class CarousselMan
   {
     $pictures = FileHanderClass::get(
       type: FileHanderClass::TYPE['IMAGE'],
-      owner: $this->admin->id ?? '---',
+      owner: $this->ownerId,
       ownerGroup: $this->imageGroupe,
       contentGroup: $this->contentGroup,
     );
@@ -63,7 +64,7 @@ class CarousselMan
       $state = FileHanderClass::store(
         document: $uFile,
         type: FileHanderClass::TYPE['IMAGE'],
-        owner: $this->admin->id,
+        owner: $this->ownerId,
         ownerGroup: $this->imageGroupe,
         contentGroup: $this->contentGroup,
         label: $label,

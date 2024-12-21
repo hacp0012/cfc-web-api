@@ -38,7 +38,7 @@ class CalendarHandlerClass
         'visibility'  => ['level' => $level, 'leve_id' => $levelId],
         'start'       => $startDate,
         'end'         => $endDate,
-        'done'        => false,
+        'done'        => 0,
         'summary'     => $summary,
         'description' => $description,
         'color'       => $color,
@@ -123,7 +123,7 @@ class CalendarHandlerClass
 
   private function updateDoneState()
   {
-    CalendarEvent::query()->whereDate('end', '<', now())->update(['done' => true]);
+    CalendarEvent::query()->whereDate('end', '<', now())->update(['done' => 1]);
   }
 
   public function getOne(string $eventId): CalendarEvent|null
@@ -137,14 +137,14 @@ class CalendarHandlerClass
 
   public function getAlldones(): Collection
   {
-    $events = CalendarEvent::where(['created_by' => $this->user->id, 'done' => true])->get();
+    $events = CalendarEvent::where(['created_by' => $this->user->id, 'done' => 1])->get();
 
     return $events;
   }
 
   public function getAllUndones(): Collection
   {
-    $events = CalendarEvent::where(['created_by' => $this->user->id, 'done' => false])->get();
+    $events = CalendarEvent::where(['created_by' => $this->user->id, 'done' => 0])->get();
 
     return $events;
   }

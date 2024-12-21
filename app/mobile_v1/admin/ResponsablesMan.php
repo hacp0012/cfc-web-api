@@ -20,7 +20,10 @@ class ResponsablesMan
   public function getActives(): Collection
   {
     /** @var \Illuminate\Database\Eloquent\Collection */
-    $users = User::where('role->state', 'ACTIVE')->whereNot('role->role', 'STANDARD_USER')->get(['role', 'id', 'fullname', 'pool', 'com_loc', 'noyau_af', 'telephone']);
+    $users = User::where('role->state', 'ACTIVE')
+      ->whereNot('role->role', 'STANDARD_USER')
+      ->whereNot('role->role', null)
+      ->get(['role', 'id', 'fullname', 'pool', 'com_loc', 'noyau_af', 'telephone']);
 
     QuestResponse::setForJson(ref: 'QaqgoeMhx3qp5JDiQbQPMhhZ7MWfqRootc3g', dataName: 'users');
 
