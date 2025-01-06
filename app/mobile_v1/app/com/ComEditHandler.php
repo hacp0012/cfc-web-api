@@ -10,7 +10,7 @@ use App\Models\Communique;
 use App\Models\File;
 use Illuminate\Http\UploadedFile;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use stdClass;
 
 class ComEditHandler
@@ -21,7 +21,7 @@ class ComEditHandler
   public function __construct() {}
 
   /** @return stdClass {state:GETTED|FAILED, ?comments:int, ?com:App\Models\Communique } */
-  #[QuestSpaw(ref: 'edit.get.KRT7TBTvs5yGP2rUsy', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'edit.get.KRT7TBTvs5yGP2rUsy', method: SpawMethod::GET)]
   function get(string $com_id): stdClass
   {
     $return = new stdClass;
@@ -65,7 +65,7 @@ class ComEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'edit.getlist.d8CmMR0YTSeFFF6mUe', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'edit.getlist.d8CmMR0YTSeFFF6mUe', method: SpawMethod::GET)]
   function getist(): array
   {
     // User :
@@ -219,7 +219,7 @@ class ComEditHandler
   }
 
   /** @return stdClass {success:bool} */
-  #[QuestSpaw(ref: 'com.edit.relete.picture.0q69A65BL0f6LRRDDz', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'com.edit.relete.picture.0q69A65BL0f6LRRDDz', method: SpawMethod::DELETE)]
   function removeHeadImage(string $pid): stdClass
   {
     $return = new stdClass;
@@ -297,7 +297,7 @@ class ComEditHandler
   }
 
   /** @return stdClass {success:bool} */
-  #[QuestSpaw('com.edit.delete.doc.6LUlI6O4yAnKXI2M1J', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw('com.edit.delete.doc.6LUlI6O4yAnKXI2M1J', method: SpawMethod::DELETE)]
   function removeDocument(string $pid): stdClass
   {
     $return = new stdClass;

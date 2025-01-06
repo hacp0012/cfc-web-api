@@ -2,8 +2,10 @@
 
 namespace App\mobile_v1\auth;
 
+use App\Jobs\DestroyUser;
 use App\mobile_v1\app\family\FamilyChildren;
 use App\mobile_v1\app\family\FamilyCouple;
+use App\mobile_v1\app\user\UserDestroyer;
 use App\mobile_v1\handlers\NotificationHandler;
 use App\mobile_v1\handlers\OtpHandler;
 use App\Models\User;
@@ -73,10 +75,10 @@ class RegisterAuth
       'telephone'   => [$phoneCode, $phoneNumber],
 
       // TODO: This role, pool, ..., is juste for debug. {#f00, 4}
-      'role' => ['state' => "ACTIVE", 'name' => "Chargé de communication",     'level' => 'pool', 'role' => null /* "COMMUNICATION_MANAGER" */,  'can' => []],
-      'pool' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
-      'com_loc' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
-      'noyau_af' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
+      // 'role' => ['state' => "ACTIVE", 'name' => "Chargé de communication", 'level' => 'pool', 'role' => null /* "COMMUNICATION_MANAGER" */,  'can' => []],
+      // 'pool' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
+      // 'com_loc' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
+      // 'noyau_af' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
     ];
 
     if ($alreadyMember) $data['pcn_in_waiting_validation'] = Json::encode([
@@ -156,7 +158,7 @@ class RegisterAuth
 
     // TODO: finalize user UNREGISTER implementation.
     // FELETE USER ACCOUNT.
-    $state = $user->delete();
+    // $state = $user->delete();
     // DELETE SANCTUM TOKENS.
     // DELETE VIRTUAL CHILDREN.
     // DELETE TEACHINGS.
@@ -169,6 +171,9 @@ class RegisterAuth
     // DELETE COMMENTS.
     // DELETE COMMUNCATIONS.
 
-    return $state ? true : false;
+    // ! RUN JOB IN BACKGROUND ! ------------ --> X
+    if ($user) DestroyUser::dispatch($user->id);
+
+    return true;
   }
 }

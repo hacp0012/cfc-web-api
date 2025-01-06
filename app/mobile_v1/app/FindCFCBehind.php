@@ -6,7 +6,7 @@ use App\mobile_v1\app\search\Section;
 use App\Models\Pcn;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 
 class FindCFCBehind
 {
@@ -18,7 +18,7 @@ class FindCFCBehind
   /**
    * @param string $section POOL | COM | NA
    */
-  #[QuestSpaw(ref: 'w5JdBPrKjtn0YngSQqJAvkWmxlzzAw7qtWJs', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'w5JdBPrKjtn0YngSQqJAvkWmxlzzAw7qtWJs', method: SpawMethod::GET)]
   function areaTowers(float $lat, float $lon, String $section, float $ray = .01): array
   {
     $rayon = $ray; // .01; // 1.5Km

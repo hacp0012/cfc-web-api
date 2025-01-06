@@ -162,7 +162,7 @@ Quest::spaw(uri: 'my/forest', [Forest::class, 'RrOWXRfKOjauvSpc7y']);
 // Note method name, this is `spaw`. 
 ```
 
-> **`Hacp0012\Quest`** is the main namespace. Contains the `Quest()` class and the `QuestRouter()` class and the `QuestSpawMethod` enum.
+> **`Hacp0012\Quest`** is the main namespace. Contains the `Quest()` class and the `QuestRouter()` class and the `SpawMethod` enum.
 > Then there is the namespace **`Hacp0012\Quest\Attributes`**, which contains the Quest attributes. Such as `QuestSpaw()` and `QuestSpawClass()`.
 
 You can add middlewares and such because Quest's static `spawn` function returns an object of type `Illuminate\Routing\Route` so it supports all other methods of the Route facade.
@@ -186,7 +186,7 @@ class Forest
     return 18;
   }
 
-  #[QuestSpaw(ref: 'RrOWXRfKOjauvSpc7y', method: QuestSpawMethod::GET, jsonResponse: false)]
+  #[QuestSpaw(ref: 'RrOWXRfKOjauvSpc7y', method: SpawMethod::GET, jsonResponse: false)]
   function displayAnApples(int $count): View
   {
     //...
@@ -294,6 +294,7 @@ _This is an internal command of Laravel_
 
 - [Quest Attributs](./doc/refs/attributs.md)
 - [Quest class](./doc/refs/quest.md)
+- [Quest response](./doc/refs/response.md)
 - [Quest Router](./doc/refs/quester_router.md)
 - [CLI Commands](./doc/refs/commands.md)
 

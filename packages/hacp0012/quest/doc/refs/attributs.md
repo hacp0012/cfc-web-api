@@ -25,14 +25,14 @@ class person {
 
 ## 🧩 QuestSpwn (Attribut)
 
-The Spaw Attribut.
+The QuestSpaw Attribut.
 
-Create a new Spaw Attribut instance.
+Create a new QuestSpaw Attribut instance.
 
 ```php
 QuestSpaw(
   string $ref,
-  ?QuestSpawMethod $method       = null,
+  ?SpawMethod $method       = null,
   string|null $filePocket        = null,
   bool $jsonResponse             = true,
   array|string|null $middleware  = null,
@@ -49,7 +49,7 @@ QuestSpaw(
 - ⚠️ The method parameter name, not an alias name.
 - ⚠️ For this version, filePocket reference will receive a single `Illuminate\Http\UploadedFile` file.
 
-@param `QuestSpawMethod|null $method` Http method. supporteds [GET, POST and DELETE]. Default is `QuestSpawMethod::POST`. But you can change this behavior in quest config file.
+@param `SpawMethod|null $method` Http method. supporteds [GET, POST and DELETE]. Default is `SpawMethod::POST`. But you can change this behavior in quest config file.
 
 @param bool `$jsonResponse` The return value will be serealized as Json Response. Set it to `false` if you want to return un serealized data.
 

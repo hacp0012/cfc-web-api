@@ -5,14 +5,14 @@ namespace App\mobile_v1\app\teaching;
 use App\Models\Enseignement;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use stdClass;
 
 class TeachingHomeHandler
 {
   public function __construct() {}
 
-  #[QuestSpaw(ref: 'home.teachs.get.tNakED4gqPiuBHcOGHa7IT3U86n', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'home.teachs.get.tNakED4gqPiuBHcOGHa7IT3U86n', method: SpawMethod::GET)]
   public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;
@@ -26,8 +26,6 @@ class TeachingHomeHandler
         ->whereDate('date', '<=', $byDate[1])
         ->get();
     } else $teachs = Enseignement::all();
-
-    // $reversed = $teachs->shuffle();
 
     # Poster & Reactions
     $list = collect();

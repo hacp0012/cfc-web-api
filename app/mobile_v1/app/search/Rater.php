@@ -2,7 +2,9 @@
 
 namespace App\mobile_v1\app\search;
 
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Rater
@@ -19,7 +21,13 @@ class Rater
       $count = 0;
 
       foreach ($fields as $field) {
-        $fieldData = Str::lower($result->{$field});
+        $content = is_array($result->{$field});
+
+        if (is_array($result->{$field})) {
+          $content = Json::encode($result->{$field});
+        }
+
+        $fieldData = Str::lower($content);
 
         foreach ($splitedKeyphrase as $key) {
           $count += Str::substrCount($fieldData, $key);

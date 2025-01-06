@@ -5,16 +5,19 @@ namespace App\mobile_v1\app\home;
 use App\mobile_v1\admin\CarousselMan;
 use App\mobile_v1\app\com\ComHomeHandler;
 use App\mobile_v1\app\teaching\TeachingHomeHandler;
+use App\Models\Enseignement;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 use stdClass;
 
 class HomeContentsHandler
 {
-  #[QuestSpaw(ref: 'get.home.3nLq7p0NwnXpcHjH9NANsNCNWJXKTyTKxJ9V', method: QuestSpawMethod::GET)]
-  public function getHome(?array $byDate = null): stdClass
+  private int $contentStep = 18;
+
+  #[QuestSpaw(ref: 'get.home.3nLq7p0NwnXpcHjH9NANsNCNWJXKTyTKxJ9V', method: SpawMethod::GET)]
+  public function getHome(?array $byDate = null, int $currentPosition = 0): stdClass
   {
     $return = new stdClass;
     $return->success = false;
@@ -77,13 +80,22 @@ class HomeContentsHandler
     usort($mergeds, $comp);
     # --------------------------------------------- :
 
+    $sliceds = $this->sliceContent($mergeds, $currentPosition);
+
     $return->success = true;
-    $return->list = $mergeds;
+    $return->list = $sliceds;
+    $return->currentIndex = count($sliceds) > 0 ? $currentPosition + 1 : $currentPosition;
 
     return $return;
   }
 
-  #[QuestSpaw(ref: 'get.home.caroussel.pictures.HT2eqMBIOPIVT5AeATpHwRJ5OvLgcu6iiBRS', method: QuestSpawMethod::GET)]
+  private function sliceContent(array $data, int $currentStep = 0): array
+  {
+    $sliceds = array_slice($data, $this->contentStep * $currentStep, $this->contentStep);
+    return $sliceds;
+  }
+
+  #[QuestSpaw(ref: 'get.home.caroussel.pictures.HT2eqMBIOPIVT5AeATpHwRJ5OvLgcu6iiBRS', method: SpawMethod::GET)]
   public function getCarousselPictures(): Collection
   {
     $carousselMan = new CarousselMan(request: request());

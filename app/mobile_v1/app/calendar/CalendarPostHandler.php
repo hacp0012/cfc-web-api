@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\calendar;
 
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -21,7 +21,7 @@ class CalendarPostHandler
   private User $user;
 
   # METHODS *************************************************************************************************************
-  #[QuestSpaw(ref: "9qAlnrEMYnsxSItYiAjIQdJ1nLvu1oxvD4Ma", method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: "9qAlnrEMYnsxSItYiAjIQdJ1nLvu1oxvD4Ma", method: SpawMethod::POST)]
   public function add(
     string $startDate,
     string $endDate,

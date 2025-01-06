@@ -7,6 +7,9 @@ use App\mobile_v1\app\family\FamilyChildren;
 use App\mobile_v1\app\family\FamilyCouple;
 use App\mobile_v1\app\user\UserHandlerClass;
 use App\mobile_v1\classes\FileHanderClass;
+use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\QuestResponse;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -29,6 +32,7 @@ class UserHandlerRouteClass
       'fullname'    => "required|string",
       'brith_date'  => "required|date",
       'civility'    => "required|string|max:1",
+      'address'     => "required|string"
     ]);
 
     $brithDate = new Carbon(str_replace('/', '-',$validated['brith_date']));
@@ -38,6 +42,7 @@ class UserHandlerRouteClass
       fullname: $validated['fullname'],
       brithData: $brithDate->toDateString(),
       civility: $validated['civility'],
+      address: $validated['address'],
     );
 
     return ['state' => $state ? 'SUCCESS' : 'FAILED'];
@@ -95,6 +100,20 @@ class UserHandlerRouteClass
     );
 
     return ['state' => $updateState ? 'UPDATED' : 'FAILED'];
+  }
+
+  #[QuestSpaw(ref: "osPEm6fRqus74H2Pp01neJt5unOnEkCYxljV", method: SpawMethod::DELETE)]
+  public function canclePcnChangeRequest(): bool
+  {
+    QuestResponse::setForJson(ref: 'osPEm6fRqus74H2Pp01neJt5unOnEkCYxljV', dataName: 'success');
+
+    $user = request()->user();
+
+    $userHandler = new UserHandlerClass($user->id);
+
+    $state = $userHandler->cancelPcnSubscription();
+
+    return $state;
   }
 
   public function updateRole(Request $request): array

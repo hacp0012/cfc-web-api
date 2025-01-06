@@ -2,6 +2,11 @@
 
 namespace App\mobile_v1\app\family;
 
+use App\mobile_v1\handlers\ValidableHandler;
+use App\Models\Validable;
+use Hacp0012\Quest\Attributs\QuestSpaw;
+use Hacp0012\Quest\QuestResponse;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -123,6 +128,48 @@ class FamilyRouteCtrl
     }
 
     return ['state' => $state ? 'CREATED' : 'FAILED'];
+  }
+
+  #[QuestSpaw(ref: '5vcGsykpcUWmEEZqpaKl0ONE9nHEkC0cCZwC')]
+  function acceptCoupleRequest(string $validableId): mixed
+  {
+    QuestResponse::setForJson(ref: '5vcGsykpcUWmEEZqpaKl0ONE9nHEkC0cCZwC', dataName: 'success');
+
+    // Get data via validable.
+    $validable = Validable::find($validableId);
+
+    // validate validable.
+    if ($validable) {
+      $validableState = (new ValidableHandler)->validate($validableId);
+      return $validableState;
+
+      // accpet couple request.
+      // if ($validableState) {
+      //   $coupleHandler = new FamilyCouple(userId: $validable->receiver);
+      //   $accpetState = $coupleHandler->acceptPartner($validable->sender);
+
+      //   return $accpetState;
+      // }
+    }
+
+    return false;
+  }
+
+  #[QuestSpaw(ref: 'JMj7lfHkNlIDUUPXXm9fv0490sKuFNimzpxI')]
+  function rejectCoupleRequest(string $validableId): bool
+  {
+    QuestResponse::setForJson(ref: 'JMj7lfHkNlIDUUPXXm9fv0490sKuFNimzpxI', dataName: 'success');
+
+    // Get data via validable.
+    $validable = Validable::find($validableId);
+
+    // reject validable.
+    if ($validable) {
+      $rejectState = (new ValidableHandler)->reject($validableId);
+      return $rejectState;
+    }
+
+    return false;
   }
 
   // CHILD ---------------------------------------------------------------- :

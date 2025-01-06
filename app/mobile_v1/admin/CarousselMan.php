@@ -6,7 +6,7 @@ use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Admin;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -28,7 +28,7 @@ class CarousselMan
   public Collection|null|Admin $admin = null;
 
   # METHODS ---------------------------------------------------------->
-  #[QuestSpaw(ref: 'vXC0KSzZeLfkCOsp36vyBjd0NY6ji3RjdOaN', jsonResponse: true, method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'vXC0KSzZeLfkCOsp36vyBjd0NY6ji3RjdOaN', jsonResponse: true, method: SpawMethod::GET)]
   public function getIts(): Collection
   {
     $pictures = FileHanderClass::get(
@@ -43,7 +43,7 @@ class CarousselMan
     return $pictures;
   }
 
-  #[QuestSpaw(ref: 'WporhlnxyCd37QXeu85Q6WUxMFPxxYDjjtcC', jsonResponse: true, method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'WporhlnxyCd37QXeu85Q6WUxMFPxxYDjjtcC', jsonResponse: true, method: SpawMethod::DELETE)]
   public function removeOne(string $pid): bool
   {
     $state = FileHanderClass::destroy(publicId: $pid);
@@ -77,7 +77,7 @@ class CarousselMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'dYgPfNcenZWJ4wdJ0Zzi6eMMq3YhiwXZI6uL', jsonResponse: true, method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'dYgPfNcenZWJ4wdJ0Zzi6eMMq3YhiwXZI6uL', jsonResponse: true, method: SpawMethod::DELETE)]
   public function removeAll(): bool
   {
     $all = $this->getIts();

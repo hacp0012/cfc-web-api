@@ -22,13 +22,14 @@ class UserHandlerClass
     $this->user = User::firstWhere('id', $userId);
   }
 
-  public function updateInfos(string $name, string $fullname, string $brithData, string $civility): bool
+  public function updateInfos(string $name, string $fullname, string $brithData, string $civility, string $address): bool
   {
     $data = [
       'name' => $name,
       'fullname' => $fullname,
       'civility' => $civility,
       'd_naissance' => $brithData,
+      'address' => $address,
     ];
 
     $state = User::whereId($this->userId)->update($data);
@@ -59,6 +60,8 @@ class UserHandlerClass
       contentGroup: 'PHOTO_PROFILE',
     );
 
+    $isAdmin = AdminMan::isAdmin(userId: $this->userId);
+
     // Datas :
     $data = [
       'child_can_be_maried'     => $user->child_can_be_maried,
@@ -75,6 +78,8 @@ class UserHandlerClass
       'pcn_in_waiting_validation' => $user->pcn_in_waiting_validation,
       'telephone'                 => $user->telephone,
 
+      'address'                   => $user->address,
+      'is_admin'                  => $isAdmin,
       'photo'                     => null,
     ];
 
@@ -117,8 +122,9 @@ class UserHandlerClass
       'pcn_in_waiting_validation' => $user->pcn_in_waiting_validation,
       'telephone'                 => $user->telephone,
 
-      'photo'                     => null,
+      'address'                   => $user->address,
       'is_admin'                  => $isAdmin,
+      'photo'                     => null,
     ];
 
     if ($photo->first()) $data['photo'] = $photo->first()->pid;
@@ -213,6 +219,16 @@ class UserHandlerClass
     }
 
     return false;;
+  }
+
+  public function cancelPcnSubscription(): bool
+  {
+    if ($this->user) {
+      $this->user->pcn_in_waiting_validation = null;
+      return $this->user->save();
+    }
+
+    return false;
   }
 
   public function updateRole(string $level, string $role): bool

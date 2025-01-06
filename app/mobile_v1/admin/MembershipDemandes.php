@@ -6,7 +6,7 @@ use App\Models\Pcn;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -72,7 +72,7 @@ class MembershipDemandes
   }
   // -----------------------------------------------------------------------------:
 
-  #[QuestSpaw(ref: 'q136sugDE3VbMy1ZxSC4DmDkyBANxpOH5rPz', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'q136sugDE3VbMy1ZxSC4DmDkyBANxpOH5rPz', method: SpawMethod::GET)]
   public function get(): Collection
   {
     QuestResponse::setForJson(ref: 'q136sugDE3VbMy1ZxSC4DmDkyBANxpOH5rPz', dataName: 'users');
@@ -81,7 +81,7 @@ class MembershipDemandes
     else return $this->getOnlyForLevel();
   }
 
-  #[QuestSpaw(ref: 'PaplufYs0q4dGtPx16TWG4l6dviyY6HD1pHu', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'PaplufYs0q4dGtPx16TWG4l6dviyY6HD1pHu', method: SpawMethod::POST)]
   public function validate(string $userId): bool
   {
     QuestResponse::setForJson(ref: 'PaplufYs0q4dGtPx16TWG4l6dviyY6HD1pHu', dataName: 'success');
@@ -107,7 +107,7 @@ class MembershipDemandes
     return false;
   }
 
-  #[QuestSpaw(ref: 'ELi6ZuJLEqjknR0LTXgD12w9zY8u9kqntKy1', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'ELi6ZuJLEqjknR0LTXgD12w9zY8u9kqntKy1', method: SpawMethod::POST)]
   public function reject(string $userId): bool
   {
     QuestResponse::setForJson(ref: 'ELi6ZuJLEqjknR0LTXgD12w9zY8u9kqntKy1', dataName: 'success');

@@ -2,7 +2,7 @@
 
 namespace Hacp0012\Quest;
 
-enum QuestSpawMethod
+enum SpawMethod
 {
   case POST;
   case GET;

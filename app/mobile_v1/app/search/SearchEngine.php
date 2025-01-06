@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\search;
 
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\Attributs\QuestSpawClass;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use stdClass;
@@ -53,9 +53,9 @@ class SearchEngine
     return $unrateds;
   }
 
-  public function customSearch(mixed $tableModel, array $fields): array
+  public function customSearch(mixed $tableModel, array $fields, ?CustomSearchEngineModelRequestMode $mode = null): array
   {
-    $results = $this->engine->customable(tableModel: $tableModel, fields: $fields);
+    $results = $this->engine->customable(tableModel: $tableModel, fields: $fields, mode: $mode);
 
     $rateds = $this->rater($results, Section::custom, $fields);
 
@@ -65,6 +65,8 @@ class SearchEngine
 
     return $unrateds;
   }
+
+  public function customSearchFrom(array $data, mixed $tableModel, array $fields) {}
 
   # --------------------------------------------- /
 
@@ -141,7 +143,7 @@ class SearchEngine
 
   # [QUEST] --> ------------------------------------------- /
 
-  #[QuestSpaw(ref: 'search-engine-571ca4f1-1e81-4934-a523-1721792a4660', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'search-engine-571ca4f1-1e81-4934-a523-1721792a4660', method: SpawMethod::GET)]
   public static function questSearch(string $keyphrase, string $section): stdClass
   {
     $return = new stdClass;
@@ -174,7 +176,7 @@ class SearchEngine
     return $return;
   }
 
-  #[QuestSpaw('search-next-0a1f5c1c-4e1d-42a7-b626-3985f4356ee8', QuestSpawMethod::GET)]
+  #[QuestSpaw('search-next-0a1f5c1c-4e1d-42a7-b626-3985f4356ee8', SpawMethod::GET)]
   public static function questNext(string $keyphrase, string $section, int $at): stdClass
   {
     $results = SearchEngine::questSearch($keyphrase, $section);

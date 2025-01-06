@@ -5,7 +5,7 @@
  */
 
 return [
-  # Spawed classes names here ...
+  # QuestSpawed classes names here ...
 
   /* It is now possible to specifie a path to a directory.
   |

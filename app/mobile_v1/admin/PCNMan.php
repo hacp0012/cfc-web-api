@@ -6,7 +6,7 @@ use App\mobile_v1\app\search\SearchEngine;
 use App\Models\Pcn;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 
 class PCNMan
@@ -17,7 +17,7 @@ class PCNMan
   public function __construct() {}
 
   # METHODS -----------------------------------------------------------------------------------:
-  #[QuestSpaw(ref: 'O4KOJLTC5Y7CpW0Lm7oBcxVuYqPkuIHSZiMh', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'O4KOJLTC5Y7CpW0Lm7oBcxVuYqPkuIHSZiMh', method: SpawMethod::GET)]
   public function getPools(): Collection
   {
     $pools = Pcn::whereType('POOL')->get();
@@ -28,7 +28,7 @@ class PCNMan
     return $pools;
   }
 
-  #[QuestSpaw(ref: '9zq5szI64lMmhVR0XAixLSV9cOOt05SAVQDr', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '9zq5szI64lMmhVR0XAixLSV9cOOt05SAVQDr', method: SpawMethod::GET)]
   public function getComs(string $pool): Collection
   {
     $coms = Pcn::where(['type' => 'COM', 'parent' => $pool])->get();
@@ -39,7 +39,7 @@ class PCNMan
     return $coms;
   }
 
-  #[QuestSpaw(ref: 'SpIeq26hjJzeIqZuYF7UVKfv5KhUv2XySQcS', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'SpIeq26hjJzeIqZuYF7UVKfv5KhUv2XySQcS', method: SpawMethod::GET)]
   public function getNodes(string $com): Collection
   {
     $nodes = Pcn::where(['type' => 'NA', 'parent' => $com])->get();
@@ -47,7 +47,7 @@ class PCNMan
     return $nodes;
   }
 
-  #[QuestSpaw(ref: 'pJS836gW8WQunuQNCoaWMF8rMBoxY1ZabCp9', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'pJS836gW8WQunuQNCoaWMF8rMBoxY1ZabCp9', method: SpawMethod::GET)]
   public function homeDash(): array
   {
     QuestResponse::setForJson(ref: 'pJS836gW8WQunuQNCoaWMF8rMBoxY1ZabCp9', dataName: 'counts');
@@ -77,7 +77,7 @@ class PCNMan
     return 0;
   }
 
-  #[QuestSpaw(ref: 'xXstZjuI6nggUdjrl49OOnoe8YbIINAyLrY4', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'xXstZjuI6nggUdjrl49OOnoe8YbIINAyLrY4', method: SpawMethod::GET)]
   public function getMy(string $id)
   {
     $state = false;
@@ -106,7 +106,7 @@ class PCNMan
   /**
    * @param array<string,float> $gps {lat:double, lon:double}
    */
-  #[QuestSpaw(ref: 'Azom44yAWwzRielFsy48NZ3zljDJJt1UhdcP', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'Azom44yAWwzRielFsy48NZ3zljDJJt1UhdcP', method: SpawMethod::POST)]
   public function poolAdd(string $name, string $adress, string $label = null, array $gps = null): bool
   {
     $model = [
@@ -126,7 +126,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'i5ah6sSfwzGMpd928YVSUqxaMs0LWnSrKHrX', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'i5ah6sSfwzGMpd928YVSUqxaMs0LWnSrKHrX', method: SpawMethod::DELETE)]
   public function poolRemove(string $poolId): bool
   {
     $pool = Pcn::find($poolId);
@@ -143,7 +143,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'lrpsVhjuqdZ2d3BGd8A2j885MsBXqQ086Ger', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'lrpsVhjuqdZ2d3BGd8A2j885MsBXqQ086Ger', method: SpawMethod::DELETE)]
   public function poolRemoveAll(): bool
   {
     $req = Pcn::where(['type' => 'POOL']);
@@ -159,7 +159,7 @@ class PCNMan
     return $state;
   }
 
-  #[QuestSpaw(ref: '3w0iEP56j7GHJQWlDCsxYCwGctg3a02ZNbiP', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: '3w0iEP56j7GHJQWlDCsxYCwGctg3a02ZNbiP', method: SpawMethod::POST)]
   public function poolUpdate(string $poolId, string $name = null, string $adress = null, string $label = null, array $gps = []): bool
   {
     $model = [];
@@ -184,7 +184,7 @@ class PCNMan
   /**
    * @param array<string,float> $gps {lat:double, lon:double}
    */
-  #[QuestSpaw(ref: '0KVX1JKPu5dpnBV4Y06pNTct816ZW218aui4', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: '0KVX1JKPu5dpnBV4Y06pNTct816ZW218aui4', method: SpawMethod::POST)]
   public function comAdd(string $poolId, string $name, string $adress, string $label = null, array $gps = null): bool
   {
     $model = [
@@ -205,7 +205,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'GPdXpR0GElTwIJBbj1IPrCYMKKTUdQcEIDoT', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'GPdXpR0GElTwIJBbj1IPrCYMKKTUdQcEIDoT', method: SpawMethod::DELETE)]
   public function comRemove(string $comId): bool
   {
     $com = Pcn::find($comId);
@@ -222,7 +222,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'Z70hRLrkPu4g4i6syPWnDjIjgOsJNrUCzHCn', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'Z70hRLrkPu4g4i6syPWnDjIjgOsJNrUCzHCn', method: SpawMethod::DELETE)]
   public function comRemoveAllOf(string $poolId): bool
   {
     $req = Pcn::where(['parent' => $poolId, 'type' => 'COM']);
@@ -242,7 +242,7 @@ class PCNMan
     return $state;
   }
 
-  #[QuestSpaw(ref: '8qLPSm7gh06wqVpPqvJwB4QYuvC5kb3tfrQl', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: '8qLPSm7gh06wqVpPqvJwB4QYuvC5kb3tfrQl', method: SpawMethod::POST)]
   public function comUpdate(string $comId, string $name = null, string $adress = null, string $label = null, array $gps = []): bool
   {
     $model = [];
@@ -267,7 +267,7 @@ class PCNMan
   /**
    * @param array<string,float> $gps {lat:double, lon:double}
    */
-  #[QuestSpaw(ref: 'tkL6aJfppk9joAPKxdCVTWNTSuDAatHOuVti', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'tkL6aJfppk9joAPKxdCVTWNTSuDAatHOuVti', method: SpawMethod::POST)]
   public function nodeAdd(string $comId, string $name, string $adress, string $label = null, array $gps = null): bool
   {
     $model = [
@@ -288,7 +288,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'EWD2ZJpjJIX6FRwXweCnJfDc52ogHQu0xanL', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'EWD2ZJpjJIX6FRwXweCnJfDc52ogHQu0xanL', method: SpawMethod::DELETE)]
   public function nodeRemove(string $nodeId): bool
   {
     $node = Pcn::find($nodeId);
@@ -303,7 +303,7 @@ class PCNMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'MXTM8vyJisFsVXsN8IKABOD3pEo80dT5zhwg', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'MXTM8vyJisFsVXsN8IKABOD3pEo80dT5zhwg', method: SpawMethod::DELETE)]
   public function nodeRemoveAllOf(string $comId): bool
   {
     $req = Pcn::where(['parent' => $comId, 'type' => 'NA']);
@@ -314,7 +314,7 @@ class PCNMan
     return $state;
   }
 
-  #[QuestSpaw(ref: 'NjstkEVtkB2UjTZ1ZaACMBt6DCLf9s4JEceG', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'NjstkEVtkB2UjTZ1ZaACMBt6DCLf9s4JEceG', method: SpawMethod::POST)]
   public function nodeUpdate(string $nodeId, string $name, string $adress, string $label = null, array $gps = null): bool
   {
     $model = [];
@@ -337,7 +337,7 @@ class PCNMan
 
   // SEARCH -----------------------------------------------------------------------------------:
   /** @param string $section POOL | COM | NA */
-  #[QuestSpaw(ref: '6IWomX3HS1mSkRKpQ0AKnfjjHRgKB7pRXD1U', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '6IWomX3HS1mSkRKpQ0AKnfjjHRgKB7pRXD1U', method: SpawMethod::GET)]
   public function search(string $name, string $section): array
   {
     $searchEngine = new SearchEngine(keyphrase: $name);

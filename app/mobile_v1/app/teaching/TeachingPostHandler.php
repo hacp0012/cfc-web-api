@@ -2,6 +2,7 @@
 
 namespace App\mobile_v1\app\teaching;
 
+use App\Jobs\SendNotificationsToAllUsers;
 use App\mobile_v1\classes\FileHanderClass;
 use App\mobile_v1\handlers\NotificationHandler;
 use App\Models\Enseignement;
@@ -9,6 +10,7 @@ use App\Notifications\Teaching;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Process;
 
 class TeachingPostHandler
 {
@@ -60,7 +62,7 @@ class TeachingPostHandler
 
       $this->notify(
         userId: $user->id,
-        subjetId: $newCreatedPostId,
+        subjetId: $newCreatedPostId->id,
         title: $title,
         message: "[$verse] " . $predicator ?? '' . " : $teaching",
         picture: null,
@@ -74,11 +76,14 @@ class TeachingPostHandler
 
   private function notify(string $userId, string $subjetId, string $title, string $message, ?string $picture): void
   {
-    $notificationHandler = new NotificationHandler($userId);
+    SendNotificationsToAllUsers::dispatch(Teaching::class, $userId, $subjetId, $title, $message, $picture);
+    Process::path(base_path())->start("php artisan queue:work --stop-when-empty");
 
-    $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
-    $action = $group->std(Teaching::class, $subjetId);
-    $action->toAll();
+    // $notificationHandler = new NotificationHandler($userId);
+
+    // $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
+    // $action = $group->std(Teaching::class, $subjetId);
+    // $action->toAll();
   }
 
   /** @return array<string,string> [state:STORED|FAILED] */

@@ -5,7 +5,7 @@ namespace App\mobile_v1\app\echo;
 use App\Models\Echos;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Support\Str;
 use stdClass;
 
@@ -13,7 +13,7 @@ class EchoHomeHandler
 {
   public function __construct() {}
 
-  #[QuestSpaw(ref: 'home.echos.get.mVBuu9LnEPpBNFm9dJBPFUUNIrz', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'home.echos.get.mVBuu9LnEPpBNFm9dJBPFUUNIrz', method: SpawMethod::GET)]
   public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;

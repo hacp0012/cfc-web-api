@@ -6,7 +6,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestRouter;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use ReflectionClass;
 
 class QuestConsole
@@ -90,7 +90,7 @@ class QuestConsole
 
             $atArgs = [];
             foreach ($method->getAttributes(QuestSpaw::class)[0]->getArguments() as $key => $value) {
-              if ($value instanceof QuestSpawMethod) $atArgs[$key] = $value->name;
+              if ($value instanceof SpawMethod) $atArgs[$key] = $value->name;
               elseif ($key == 'ref') continue;
               elseif ($key == 'alias') {
                 $t = json_encode($value);

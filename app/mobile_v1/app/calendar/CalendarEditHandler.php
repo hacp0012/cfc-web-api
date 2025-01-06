@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\calendar;
 
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -20,7 +20,7 @@ class CalendarEditHandler
 
   private User $user;
 
-  #[QuestSpaw(ref: 'grija8VUjUIxcF0Iv9zy83V01B56hwL14kEB', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'grija8VUjUIxcF0Iv9zy83V01B56hwL14kEB', method: SpawMethod::POST)]
   public function update(
     string $eventId,
     string|null $startDate = null,
@@ -49,7 +49,7 @@ class CalendarEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'J7bcSOI6gukwO1Zc7OrTbQiho3PXpbgGQMYO', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'J7bcSOI6gukwO1Zc7OrTbQiho3PXpbgGQMYO', method: SpawMethod::POST)]
   public function setItDone(string $eventId, bool $doneState): stdClass
   {
     $return = new stdClass;
@@ -63,7 +63,7 @@ class CalendarEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'sfUGAxLEedNFZMhcpB6fwc6XTaPIquobVm84', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'sfUGAxLEedNFZMhcpB6fwc6XTaPIquobVm84', method: SpawMethod::GET)]
   public function getAllUndones(): stdClass
   {
     $return = new stdClass;
@@ -79,7 +79,7 @@ class CalendarEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'f9LlNWizExSshq7akTjMKMJSLM5VRnRSK5lZ', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'f9LlNWizExSshq7akTjMKMJSLM5VRnRSK5lZ', method: SpawMethod::GET)]
   public function getAllDones(): stdClass
   {
     $return = new stdClass;
@@ -96,7 +96,7 @@ class CalendarEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: "djYovchblg3ClVxUrVpnuDBgilJHJ49QSsSj", method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: "djYovchblg3ClVxUrVpnuDBgilJHJ49QSsSj", method: SpawMethod::DELETE)]
   public function remove(string $eventId): stdClass
   {
     $return = new stdClass;
@@ -110,7 +110,7 @@ class CalendarEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: '5L9YlJW1zn4nyoPMkifAPNQiWIy9AtUkCwHS', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '5L9YlJW1zn4nyoPMkifAPNQiWIy9AtUkCwHS', method: SpawMethod::GET)]
   public function getOne(string $eventId): stdClass
   {
     $return = new stdClass;

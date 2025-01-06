@@ -6,7 +6,7 @@ use App\Models\Communique;
 use App\Models\User;
 use Carbon\Carbon;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
@@ -15,7 +15,7 @@ class ComHomeHandler
   public function __construct() {}
 
   /** @param array<string,string>|null $byDate [date_A, date_B] */
-  #[QuestSpaw(ref: 'home.coms.get.ImbynpTohaSCWy6Wkc0P8cCPglI', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'home.coms.get.ImbynpTohaSCWy6Wkc0P8cCPglI', method: SpawMethod::GET)]
   public function getSuggestions(?array $byDate = null): stdClass
   {
     $return = new stdClass;
@@ -30,6 +30,8 @@ class ComHomeHandler
         ->get();
     } else $coms = Communique::all();
     // $reversed = $coms->shuffle();
+    // var_dump($coms);
+    // dd($coms);
 
     # Poster & Reactions
     $list = collect();

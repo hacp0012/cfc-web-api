@@ -10,7 +10,7 @@ use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Communique;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -28,7 +28,7 @@ class ComHandlerClass
 
   # ECHO : -----------------------------------------------------------------------------:
   /** @return stdClass {success:bool, com, poster} */
-  #[QuestSpaw(ref: 'get.3MbecKe6Vd0CvcvDqu6n37Du74O', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'get.3MbecKe6Vd0CvcvDqu6n37Du74O', method: SpawMethod::GET)]
   function get(string $comId): stdClass
   {
     $return = new stdClass;
@@ -68,7 +68,7 @@ class ComHandlerClass
 
   # REACTIONS : ------------------------------------------------------------------------:
   /** @return stdClass {likes:{count:int,user:bool}, views:idem, comments:idem} */
-  #[QuestSpaw(ref: 'reactions.wgg3p0XpKDzkMiO9xOGjuG4bqim', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'reactions.wgg3p0XpKDzkMiO9xOGjuG4bqim', method: SpawMethod::GET)]
   function getReactions(string $comId): stdClass
   {
     $return = new stdClass;

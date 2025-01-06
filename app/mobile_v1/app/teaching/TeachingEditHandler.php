@@ -9,7 +9,7 @@ use App\mobile_v1\classes\FileHanderClass;
 use App\Models\Enseignement;
 use App\Models\File;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use stdClass;
@@ -21,7 +21,7 @@ class TeachingEditHandler
    */
   public function __construct() {}
 
-  #[QuestSpaw(ref: 'edit.get.teach.za40Hx5A0r1UbT0pZs', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'edit.get.teach.za40Hx5A0r1UbT0pZs', method: SpawMethod::GET)]
   function get(string $teach_id): stdClass
   {
     $return = new stdClass;
@@ -65,7 +65,7 @@ class TeachingEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'edit.getlist.RrOWXRfKOjauvSpc7y', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'edit.getlist.RrOWXRfKOjauvSpc7y', method: SpawMethod::GET)]
   function getist(): array
   {
     // User :
@@ -227,7 +227,7 @@ class TeachingEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'edit.remove.picture.HU1vcOhjCDK4jtRORc', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'edit.remove.picture.HU1vcOhjCDK4jtRORc', method: SpawMethod::DELETE)]
   function removeHeadImage(string $pid): stdClass
   {
     $return = new stdClass;
@@ -305,7 +305,7 @@ class TeachingEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'edit.remove.document.Ycnr98PntxRv9B3G0l', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'edit.remove.document.Ycnr98PntxRv9B3G0l', method: SpawMethod::DELETE)]
   function removeDocument(string $pid): stdClass
   {
     $return = new stdClass;
@@ -381,7 +381,7 @@ class TeachingEditHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'edit.remove.audio.04NveuJzo0HQxx29tZ', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'edit.remove.audio.04NveuJzo0HQxx29tZ', method: SpawMethod::DELETE)]
   function removeAudio(string $pid): stdClass
   {
     $return = new stdClass;

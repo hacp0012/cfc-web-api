@@ -5,7 +5,7 @@ namespace App\mobile_v1\admin;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 
 class ResponsablesMan
@@ -16,7 +16,7 @@ class ResponsablesMan
   public function __construct() {}
 
   # METHODS -------------------------------------------------------------------------------:
-  #[QuestSpaw(ref: 'QaqgoeMhx3qp5JDiQbQPMhhZ7MWfqRootc3g', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'QaqgoeMhx3qp5JDiQbQPMhhZ7MWfqRootc3g', method: SpawMethod::GET)]
   public function getActives(): Collection
   {
     /** @var \Illuminate\Database\Eloquent\Collection */
@@ -30,7 +30,7 @@ class ResponsablesMan
     return $users;
   }
 
-  #[QuestSpaw(ref: 'rLDfwh9HheHbDBZoQrfb4lmxsSUT5dkn5WFC', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'rLDfwh9HheHbDBZoQrfb4lmxsSUT5dkn5WFC', method: SpawMethod::GET)]
   public function getIniactives(): Collection
   {
     /** @var \Illuminate\Database\Eloquent\Collection */

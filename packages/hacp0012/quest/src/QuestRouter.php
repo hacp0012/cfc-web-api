@@ -36,7 +36,7 @@ class QuestRouter extends QuestRoutes
 
   /**
    * Begin the quest by making their way.
-   * Spawn a way.
+   * QuestSpawn a way.
    */
   public function spawn()
   {
@@ -57,7 +57,7 @@ class QuestRouter extends QuestRoutes
       file_get_contents('./publishables/quest_routes.php') ??
         "<?php\n\n" .
         "return [\n" .
-        " // Spawed classes names here ...\n" .
+        " // QuestSpawed classes names here ...\n" .
         "];\n\n",
     );
   }
@@ -99,7 +99,7 @@ class QuestRouter extends QuestRoutes
         if (is_dir(base_path($route))) {
           // Explore it.
           $sp = new SpawExplorer;
-          $fitcheds = $sp->getSpaweds(base_path($route), scandir(base_path($route)));
+          $fitcheds = $sp->getQuestSpaweds(base_path($route), scandir(base_path($route)));
           $newList = array_merge($newList, $fitcheds);
         } else {
           throw new Obstacle(

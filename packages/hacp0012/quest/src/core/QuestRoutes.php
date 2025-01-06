@@ -18,6 +18,6 @@ class QuestRoutes
    * @var array<int, string> $routes An array of spawned class's
    */
   public array $routes = [
-    // Spaweds classe names here...
+    // QuestSpaweds classe names here...
   ];
 }

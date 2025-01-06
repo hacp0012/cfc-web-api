@@ -4,7 +4,7 @@ namespace App\mobile_v1\app\calendar;
 
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -20,7 +20,7 @@ class CalendarHomeHandler
 
   private User $user;
 
-  #[QuestSpaw(ref: 'ouKHUS4pTKKgvBCblYbgt5ubBLA72TBnf9hK', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'ouKHUS4pTKKgvBCblYbgt5ubBLA72TBnf9hK', method: SpawMethod::GET)]
   public function getAll(bool $all = false): stdClass
   {
     $return = new stdClass;
@@ -35,7 +35,7 @@ class CalendarHomeHandler
     return $return;
   }
 
-  #[QuestSpaw(ref: 'wDtdNHb7GNnFQ6XEfjTCb5SHxKIErluiYmVE', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'wDtdNHb7GNnFQ6XEfjTCb5SHxKIErluiYmVE', method: SpawMethod::GET)]
   public function getOne(string $eventId): stdClass
   {
     $return = new stdClass;

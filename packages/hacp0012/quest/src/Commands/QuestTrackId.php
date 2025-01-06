@@ -53,7 +53,7 @@ class QuestTrackId extends Command
           $attribut = str_replace(',', ', ', $attribut);
           $attribut = str_replace(':', ' = ', $attribut);
           $attribut = str_replace('"', '', $attribut);
-          $this->comment('🔖   Spaw attribut : ' . $attribut);
+          $this->comment('🔖   QuestSpaw attribut : ' . $attribut);
         }
 
         $this->newLine();
@@ -61,7 +61,7 @@ class QuestTrackId extends Command
         $infos = str_replace(']', '', $infos);
         $infos = str_replace('Parameters ', 'Parameters [', $infos);
         $infos = str_replace(' {', '] {', $infos);
-        $infos = str_replace('Method ', 'Spaw method 👉 [', $infos);
+        $infos = str_replace('Method ', 'QuestSpaw method 👉 [', $infos);
         $infos = str_replace('Parameter #', 'Parameter 🚧  ', $infos);
 
         $this->info('✨  ' . $infos);

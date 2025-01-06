@@ -2,12 +2,13 @@
 
 namespace App\mobile_v1\app\echo;
 
-use App\mobile_v1\classes\FileHanderClass;
-use App\mobile_v1\handlers\NotificationHandler;
-use App\Models\Echos;
 use App\Notifications\Echos as NotificationsEchos;
+use App\Jobs\SendNotificationsToAllUsers;
+use App\mobile_v1\classes\FileHanderClass;
+use App\Models\Echos;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Process;
 
 class EchoPostHandler
 {
@@ -49,7 +50,7 @@ class EchoPostHandler
       $newCreatedPostId = Echos::create($data);
 
       // Notify all users.
-      $this->notify(userId: $user->id, subjetId: $newCreatedPostId, title: $title, message: $echo, picture: null);
+      $this->notify(userId: $user->id, subjetId: $newCreatedPostId->id, title: $title, message: $echo, picture: null);
 
       return ['state' => 'POSTED', 'id' => $newCreatedPostId->id];
     }
@@ -59,11 +60,14 @@ class EchoPostHandler
 
   private function notify(string $userId, string $subjetId, string $title, string $message, ?string $picture): void
   {
-    $notificationHandler = new NotificationHandler($userId);
+    SendNotificationsToAllUsers::dispatch(NotificationsEchos::class, $userId, $subjetId, $title, $message, $picture);
+    Process::path(app_path())->start("php artisan queue:work --stop-when-empty");
 
-    $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
-    $action = $group->std(NotificationsEchos::class, $subjetId);
-    $action->toAll();
+    // $notificationHandler = new NotificationHandler($userId);
+
+    // $group = $notificationHandler->send(title: $title, body: $message, picture: $picture);
+    // $action = $group->std(NotificationsEchos::class, $subjetId);
+    // $action->toAll();
   }
 
   /** @return array<string,string> [state:STORED|FAILED] */

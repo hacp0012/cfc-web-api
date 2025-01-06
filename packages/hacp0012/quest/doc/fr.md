@@ -10,8 +10,8 @@ Accédez directement aux ressources sans définir des routes grâce aux attribut
   - [Le service container](#service_container)
 - [Fonctionement](#fonctionement)
 - [Api reference](#api_ref)
-  - [Quest Spaw (attribut)](#quest_spaw)
-  - [Quest Spaw Class (attribut)](#quest_spaw_class)
+  - [Quest QuestSpaw (attribut)](#quest_spaw)
+  - [Quest QuestSpaw Class (attribut)](#quest_spaw_class)
   - [Quest Router](#quest_route)
   - [Console](#ref_console)
 - [FAQ](#faq)
@@ -150,7 +150,7 @@ $routes = [
 Quest::spawn(uri: 'quest', routes: $routes)->name('my.quest');
 ```
 
-> **`Hacp0012\Quest`** est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `QuestSpawMethod`.
+> **`Hacp0012\Quest`** est le namespace principale. Contient la classe `Quest()` et la classe `QuestRouter()` et l'enum `SpawMethod`.
 > Puis il y a le namespace **`Hacp0012\Quest\Attributs`**, qui contient les attributs Quest. Tele que `QuestSpaw()` et `QuestSpawClass()`
 
 Vous pouvez ajouter des middlewares et autres car la fonction static `spawn` de Quest renvoi un objer de type `Illuminate\Routing\Route` donc il supporte tout les autres méthodes de la facade Route.
@@ -174,7 +174,7 @@ class Forest
     return 18;
   }
 
-  #[QuestSpaw(ref: 'RrOWXRfKOjauvSpc7y', method: QuestSpawMethod::GET, jsonResponse: false)]
+  #[QuestSpaw(ref: 'RrOWXRfKOjauvSpc7y', method: SpawMethod::GET, jsonResponse: false)]
   function displayAnApples(int $count): View
   {
     //...
@@ -296,7 +296,7 @@ If `$routes`is not empty, only the global routes`$routes` a accessible. The base
 2. Global Base routes : defined in your routes/quest.php.
 3. Defaults Global routes : default quest routes.
 
-### Quest Spaw
+### Quest QuestSpaw
 
 Quest Router `QuesetRouter` short hand.
 
@@ -320,12 +320,12 @@ Quest::spawn(string $uri = 'quest', array $routes = [QuestTest:class]);
 
 ### <span id="quest_spaw">QuestSpaw [Attribut]</span>
 
-Create a new Spaw Attribut instance.
+Create a new QuestSpaw Attribut instance.
 
 ```php
 QuestSpaw(
   string $ref,
-  ?QuestSpawMethod $method       = null,
+  ?SpawMethod $method       = null,
   string|null $filePocket        = null,
   bool $jsonResponse             = true,
   array|string|null $middleware  = null,
@@ -342,7 +342,7 @@ QuestSpaw(
 - ⚠️ The method parameter name, not an alias name.
 - ⚠️ For this version, filePocket reference will receive a single `Illuminate\Http\UploadedFile` file.
 
-@param `QuestSpawMethod|null $method` Http method. supporteds [GET, POST and DELETE]. Default is `QuestSpawMethod::POST`. But you can change this behavior in quest config file.
+@param `SpawMethod|null $method` Http method. supporteds [GET, POST and DELETE]. Default is `SpawMethod::POST`. But you can change this behavior in quest config file.
 
 @param bool `$jsonResponse` The return value will be serealized as Json Response. Set it to `false` if you want to return un serealized data.
 

@@ -4,7 +4,7 @@ namespace App\mobile_v1\routes;
 
 use App\mobile_v1\handlers\NotificationHandler;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -57,7 +57,7 @@ class NotificationRouteCtrl
   }
 
   # -------------------------------------------------------------------------------- :
-  #[QuestSpaw(ref: '5OvFrE6QdKCCihs2uKGZrlQCfsdbOyJAjbLq', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '5OvFrE6QdKCCihs2uKGZrlQCfsdbOyJAjbLq', method: SpawMethod::GET)]
   function unreads(Request $request): Collection
   {
     $user = $request->user();
@@ -69,7 +69,7 @@ class NotificationRouteCtrl
     return $nofications;
   }
 
-  #[QuestSpaw(ref: 'iNCcRKFEp9fbBzunPRiQHSObiH6oqCdfoCKO', method: QuestSpawMethod::PUT)]
+  #[QuestSpaw(ref: 'iNCcRKFEp9fbBzunPRiQHSObiH6oqCdfoCKO', method: SpawMethod::PUT)]
   function markAllAsRead(Request $request): array
   {
     $user = $request->user();

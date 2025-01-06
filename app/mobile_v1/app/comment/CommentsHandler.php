@@ -4,6 +4,7 @@ namespace App\mobile_v1\app\comment;
 
 use App\mobile_v1\app\reactions\LikesHandler;
 use App\mobile_v1\app\reactions\ViewsHandler;
+use App\mobile_v1\classes\Constants;
 use App\Models\Comment;
 use App\Models\Communique;
 use App\Models\Echos;
@@ -11,7 +12,7 @@ use App\Models\Enseignement;
 use App\Models\Reaction;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use stdClass;
@@ -22,6 +23,8 @@ class CommentsHandler
    * Create a new class instance.
    */
   public function __construct() {}
+
+  private int $contentStep = Constants::MAX_COMMENTS_PER_REQUEST;
 
   /** @return stdClass --> add */
   #[QuestSpaw(ref: 'add.DQrta4poHvDfJEeyX2VQ27IW1H1')]
@@ -89,7 +92,7 @@ class CommentsHandler
   }
 
   /** @return stdClass {state:bool} */
-  #[QuestSpaw(ref: 'remove.oua2TPqGoWhF8zkAjFrhPgT8dVG', method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'remove.oua2TPqGoWhF8zkAjFrhPgT8dVG', method: SpawMethod::DELETE)]
   function remove(string $comment_id): stdClass
   {
     $return = new stdClass;
@@ -121,8 +124,8 @@ class CommentsHandler
   function get() {}
 
   /** @return stdClass --> getAllOf */
-  #[QuestSpaw(ref: 'get.EoJkzyMftwPf72SCUuNxv8IMiinUL9rKIOTi', method: QuestSpawMethod::GET)]
-  function getAllOfFromRequest(string $model, string $model_id)
+  #[QuestSpaw(ref: 'get.EoJkzyMftwPf72SCUuNxv8IMiinUL9rKIOTi', method: SpawMethod::GET)]
+  function getAllOfFromRequest(string $model, string $model_id, int $currentPosition = 0)
   {
     $return = new stdClass;
     $return->success = false;
@@ -139,8 +142,18 @@ class CommentsHandler
       $data = $this->getAllOf(model: $correctModel, modelId: $model_id);
       $data->success = true;
 
+      // Slice.
+      $data->comments = $this->sliceContent($data->comments, $currentPosition);
+      $data->currentPosition = count($data->comments) > 0 ? $currentPosition + 1 : $currentPosition;
+
       return $data;
     } else return $return;
+  }
+
+  private function sliceContent(array $data, int $currentStep = 0): array
+  {
+    $sliceds = array_slice($data, $this->contentStep * $currentStep, $this->contentStep);
+    return $sliceds;
   }
 
   /** Get all of a model.
@@ -153,6 +166,7 @@ class CommentsHandler
     $comments = Comment::where([
       'for' => $model,
       'for_id' => $modelId,
+      'parent' => null,
     ])->get();
 
     // $return->comments = $comments;
@@ -161,13 +175,20 @@ class CommentsHandler
     return $return;
   }
 
+  function getChildrenOf(string $commentId, int $indent): array
+  {
+    $comments = Comment::whereParent($commentId)->get();
+
+    return $this->formatListOf($comments, indent: $indent + 1);
+  }
+
   /**
    * Format the comments list to a mobile app format
    * make it idententable.
    *
    * ⚠️ Use with `getAllOff`
    */
-  function formatListOf(Collection $comments): array
+  function formatListOf(Collection $comments, int $indent = 0): array
   {
     $collection = $comments;
     $user = request()->user();
@@ -178,8 +199,9 @@ class CommentsHandler
     foreach ($collection as $comment) {
       $model = new stdClass;
 
-      $model->indent = 0;
+      $model->indent = $indent;
       $model->comment = $comment;
+      $model->children = $this->getChildrenOf($comment['id'], $indent);
 
       $like = new LikesHandler;
 

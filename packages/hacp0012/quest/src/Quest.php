@@ -33,7 +33,7 @@ class Quest
   public function __construct() {}
 
   const authorizedAttributs         = ['QuestSpawClass', 'QuestSpaw'];
-  const supportedSpawTypes          = ['bool', 'int', 'float', 'string', 'null', 'array', 'mixed'];
+  const supportedQuestSpawTypes          = ['bool', 'int', 'float', 'string', 'null', 'array', 'mixed'];
   const supportedFilesPocketTypes   = [UploadedFile::class, 'mixed'];
   const allowedMethodModifiers      = ['static', 'public'];
 
@@ -93,7 +93,7 @@ class Quest
     return $router;
   }
 
-  /** Spaw a specific reference (call it directly).
+  /** QuestSpaw a specific reference (call it directly).
    *
    * No quest reference key is needed on request call.
    * Ex:
@@ -228,7 +228,7 @@ class Quest
           }
 
           // control : Request method | Method avalable.
-          $this->controllQuestSpawMethods(spawedQuestAttribut: $attributs[0]);
+          $this->controllSpawMethods(spawedQuestAttribut: $attributs[0]);
 
           // control modifier [only public a authorized].
           $this->controlModifier(method: $method);
@@ -374,17 +374,17 @@ class Quest
   }
 
   /** @param \ReflectionAttribute $spawedQuestAttribut */
-  private function controllQuestSpawMethods($spawedQuestAttribut)
+  private function controllSpawMethods($spawedQuestAttribut)
   {
     // Control Http quest method.
     $questMethod = request()->method();
     $questState = match ($questMethod) {
-      QuestSpawMethod::GET->name    => true,
-      QuestSpawMethod::POST->name   => true,
-      QuestSpawMethod::DELETE->name => true,
-      QuestSpawMethod::PUT->name    => true,
-      QuestSpawMethod::HEAD->name   => true,
-      QuestSpawMethod::PATCH->name  => true,
+      SpawMethod::GET->name    => true,
+      SpawMethod::POST->name   => true,
+      SpawMethod::DELETE->name => true,
+      SpawMethod::PUT->name    => true,
+      SpawMethod::HEAD->name   => true,
+      SpawMethod::PATCH->name  => true,
 
       default => false,
     };
@@ -402,7 +402,7 @@ class Quest
 
     if ($providedMethod->name != $questMethod) throw new Obstacle(
       "The spaw method are not match. The expected method are " . $providedMethod->name . " and your provide " . $questMethod .
-        ". Default is " . QuestSpawMethod::POST->name,
+        ". Default is " . SpawMethod::POST->name,
       file: $this->methodTrace['file'],
       line: $this->methodTrace['line'],
     );
@@ -439,14 +439,14 @@ class Quest
         }
       } else {
         foreach ($types as $type) {
-          if ($type?->{'getName'}() && in_array($type?->{'getName'}(), Quest::supportedSpawTypes) === false && App::bound($type?->{'getName'}())) {
+          if ($type?->{'getName'}() && in_array($type?->{'getName'}(), Quest::supportedQuestSpawTypes) === false && App::bound($type?->{'getName'}())) {
             // Do nothing.
           } else {
             $isIncorrectType = true;
-            if (in_array($type?->{'getName'}() ?? 'mixed', Quest::supportedSpawTypes)) $isIncorrectType = false;
+            if (in_array($type?->{'getName'}() ?? 'mixed', Quest::supportedQuestSpawTypes)) $isIncorrectType = false;
 
             if ($isIncorrectType) throw new Obstacle(
-              "The spaw quest parameter has an unsupported Type '" . $type->{'getName'}() . "'. Expected [" . implode(', ', Quest::supportedSpawTypes) . "] as types. " .
+              "The spaw quest parameter has an unsupported Type '" . $type->{'getName'}() . "'. Expected [" . implode(', ', Quest::supportedQuestSpawTypes) . "] as types. " .
                 "Or a class that is bound in Service Container.",
               file: $this->methodTrace['file'],
               line: $this->methodTrace['line'],
@@ -552,8 +552,8 @@ class Quest
 
     if ($filePocket) {
       $request = request();
-      if ($request->method() != QuestSpawMethod::POST->name) throw new Obstacle(
-        "The files pocket only support the quest method " . QuestSpawMethod::POST->name . ". You use " . $request->method(),
+      if ($request->method() != SpawMethod::POST->name) throw new Obstacle(
+        "The files pocket only support the quest method " . SpawMethod::POST->name . ". You use " . $request->method(),
         file: $this->methodTrace['file'],
         line: $this->methodTrace['line'],
       );
@@ -658,12 +658,12 @@ class Quest
         $isAutoConstructable = false;
         $isSupported = false; {
           foreach ($arrayTypes as $aType) {
-            if (in_array($aType, Quest::supportedSpawTypes)) {
+            if (in_array($aType, Quest::supportedQuestSpawTypes)) {
               $isSupported = true;
               break;
             }
 
-            if (in_array($aType, Quest::supportedSpawTypes) == false && App::bound($aType)) {
+            if (in_array($aType, Quest::supportedQuestSpawTypes) == false && App::bound($aType)) {
               $isAutoConstructable = true;
               break;
             }
@@ -829,14 +829,14 @@ class Quest
 
     // ! If wrapped in a Try blok, remember to rethrow the catched exception !
     $resultFromResponse = $method->invokeArgs($classInstance, $newMethodArgList);
-    $result = $questResponse->setAdnGetIt(ref: $this->ref, response: $resultFromResponse);
+    $result = $questResponse->setAndGetIt(ref: $this->ref, response: $resultFromResponse);
     // } catch (\Exception $e) {
     // $methodName = $method->getName();
 
     // throw $e;
 
     // throw new \Exception(
-    //   "Your quest intention arguments are wrong or are not match the QuestSpaw parameters types or numbers. Spaw method: [$methodName] \n\n" .
+    //   "Your quest intention arguments are wrong or are not match the QuestSpaw parameters types or numbers. QuestSpaw method: [$methodName] \n\n" .
     //   $e->__toString(),
     // );
     // }
@@ -844,9 +844,9 @@ class Quest
     // Controll response type.
     $methodAttribut = $method->getAttributes(QuestSpaw::class);
 
-    $instanceOfSpaw = $methodAttribut[0]->newInstance();
+    $instanceOfQuestSpaw = $methodAttribut[0]->newInstance();
 
-    $responseAsjson = $instanceOfSpaw->jsonResponse;
+    $responseAsjson = $instanceOfQuestSpaw->jsonResponse;
 
     if ($responseAsjson) {
       return response()->json($result);

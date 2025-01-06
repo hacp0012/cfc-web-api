@@ -40,7 +40,7 @@ Quest::spawn(uri: '/my/quest', routes: [QuestDemo::class]);
 static function spaw(string $uri, string|array $spaw): RoutingRoute
 ```
 
-Spaw a specific reference (call it directly). No quest reference key is required on request call.
+QuestSpaw a specific reference (call it directly). No quest reference key is required on request call.
 
 ```php
 # Exemple: 

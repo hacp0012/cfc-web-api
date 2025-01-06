@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\SanctumCustomMiddleware;
 use App\mobile_v1\app\user\UserHandlerRouteClass;
+use App\mobile_v1\app\user\UserMyCommunity;
+use Hacp0012\Quest\Quest;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(SanctumCustomMiddleware::class)->prefix("user")->group(function() {
@@ -18,6 +20,9 @@ Route::middleware(SanctumCustomMiddleware::class)->prefix("user")->group(functio
   // Update PCN or send new validation request to admin:
   Route::post('update/pcn', [UserHandlerRouteClass::class, 'updatePcn']);
 
+  Quest::spaw('cancele/pcn_request', [UserHandlerRouteClass::class, 'osPEm6fRqus74H2Pp01neJt5unOnEkCYxljV']);
+  // Quest::spawn('cancele/pcn_request', [UserHandlerRouteClass::class]);
+
   // Update ROLE or send new validation request to admin:
   Route::post('update/role', [UserHandlerRouteClass::class, 'updateRole']);
 
@@ -31,4 +36,8 @@ Route::middleware(SanctumCustomMiddleware::class)->prefix("user")->group(functio
   # MISC :
   Route::get('minimum/info', [UserHandlerRouteClass::class, 'getSimpleUserData']);
   Route::get('medium/info', [UserHandlerRouteClass::class, 'getUserInfosOf']);
+
+  # ---------------------------------------------------------------------------------------- #
+  # MISC
+  Quest::spawn('my/community', UserMyCommunity::class);
 });

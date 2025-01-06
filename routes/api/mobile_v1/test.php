@@ -11,8 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Hacp0012\Quest\Quest;
+use Illuminate\Support\Facades\Process;
 
 Route::middleware('guest')->prefix('test')->group(function () {
+  Route::get('command', function() {
+    // dd(base_path());
+    // Process::start("cd ". base_path() ." & php artisan queue:work --stop-when-empty");
+    // exec("cd " . base_path() . " & php artisan queue:work --stop-when-empty");
+  });
+
   // Route::any('quest/{quest_ref}', fn(string $quest_ref) => (new QuestRouter(questRef: $quest_ref))->spawn());
   Quest::spawn(routes: [
     QuestTest::class,

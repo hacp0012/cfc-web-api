@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\Attributs\QuestSpawClass;
 use Hacp0012\Quest\Quest;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 
 #[QuestSpawClass(constructWith: [123, 0])]
 class QuestTest
@@ -22,13 +22,13 @@ class QuestTest
   private string $name = 'Prince';
 
   # -------------------------------------------------------------------------------------------:
-  #[QuestSpaw(ref: '9ef4f696-9bdd-4b31-8aba-d626799b2299', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '9ef4f696-9bdd-4b31-8aba-d626799b2299', method: SpawMethod::GET)]
   public static function printHello(string $message, int|float $age): string
   {
     return "$message ... avec ta tete de Facochere et avec cet : $age";
   }
 
-  #[QuestSpaw(ref: 'RdVWAQFS7FSFZeYMkp', method: QuestSpawMethod::POST)]
+  #[QuestSpaw(ref: 'RdVWAQFS7FSFZeYMkp', method: SpawMethod::POST)]
   public function fileTest(array $arr)
   {
     // dd($request);
@@ -46,7 +46,7 @@ class QuestTest
   # -------------------------------------------------------------------------------------------:
   #[QuestSpaw(
     ref: 'my quest flag ID',
-    method: QuestSpawMethod::GET,
+    method: SpawMethod::GET,
     middleware: ['sunctum:auth'],
     filePocket: 'guidPicture',
     alias: ['moon' => 'middle'],

@@ -7,7 +7,7 @@ use App\Models\Admin;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
 
 class AdminMan
@@ -19,7 +19,7 @@ class AdminMan
 
   # METHODS --------------------------------------------:
 
-  #[QuestSpaw(ref: 'aQD8eIM9XxXUgv4D5aUOHmRC3ruAIdr8LVf7', jsonResponse: true, method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'aQD8eIM9XxXUgv4D5aUOHmRC3ruAIdr8LVf7', jsonResponse: true, method: SpawMethod::GET)]
   public static function isAdmin(String $userId): bool
   {
     $admin = Admin::whereFirst(['user_ref' => $userId]);
@@ -63,7 +63,7 @@ class AdminMan
   /** Delete a admin.
    * - Can't delete a master admin.
    */
-  #[QuestSpaw(ref: 'Qt5GKM16W5EoZ0kVQVIhOfXDxYI9I3cubFz3', jsonResponse: true, method: QuestSpawMethod::DELETE)]
+  #[QuestSpaw(ref: 'Qt5GKM16W5EoZ0kVQVIhOfXDxYI9I3cubFz3', jsonResponse: true, method: SpawMethod::DELETE)]
   public function remove(int $adminId): bool
   {
     QuestResponse::setForJson(ref: 'Qt5GKM16W5EoZ0kVQVIhOfXDxYI9I3cubFz3', dataName: 'success');
@@ -100,7 +100,7 @@ class AdminMan
     return false;
   }
 
-  #[QuestSpaw(ref: 'ZwfjuIPKGNMZqwBOJIkvKSKf1GIVr0TegkSV', jsonResponse: true, method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'ZwfjuIPKGNMZqwBOJIkvKSKf1GIVr0TegkSV', jsonResponse: true, method: SpawMethod::GET)]
   public function list(): Collection
   {
     $admins = Admin::all(['name', 'id', 'user_ref', 'is_master']);
@@ -110,7 +110,7 @@ class AdminMan
     return $admins;
   }
 
-  #[QuestSpaw(ref: 'R3M95bTYq65a62TRjRlhFYUaPRNycHBpiOMd', jsonResponse: true, method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'R3M95bTYq65a62TRjRlhFYUaPRNycHBpiOMd', jsonResponse: true, method: SpawMethod::GET)]
   public function getOne(?string $adminId = null, ?string $userId = null): Admin|null
   {
     if ($adminId) {
@@ -127,7 +127,7 @@ class AdminMan
   }
 
   #---------------------------------------------------------------------------------------------------------------------
-  #[QuestSpaw(ref: '03euj09f8w4mcP3PIR9xY2JeDkDw3dHvNc3J', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: '03euj09f8w4mcP3PIR9xY2JeDkDw3dHvNc3J', method: SpawMethod::GET)]
   public function fetchUsers(string $name): array
   {
     $searchEngine = new SearchEngine(keyphrase: $name);

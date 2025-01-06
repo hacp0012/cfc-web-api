@@ -22,7 +22,7 @@ __Routes precedence__ :
 
 ## spawn
 
-Begin the quest by making their way. Spawn a way.
+Begin the quest by making their way. QuestSpawn a way.
 
 ```php
 spawn(): mixed

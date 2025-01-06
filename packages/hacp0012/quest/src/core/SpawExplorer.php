@@ -110,7 +110,7 @@ class SpawExplorer
   }
 
   /** Get spaweds class that containe spawed methods. */
-  public function getSpaweds (string $base, array $dirs)
+  public function getQuestSpaweds (string $base, array $dirs)
   {
     $matcheds = $this->fileControl($this->explore($base, $dirs));
 

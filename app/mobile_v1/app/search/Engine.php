@@ -95,13 +95,19 @@ class Engine
   }
 
   // Custom engine.
-  public function customable(mixed $tableModel, array $fields): Collection|null
+  public function customable(mixed $tableModel, array $fields, ?CustomSearchEngineModelRequestMode $mode = null): Collection|null
   {
     $tableName = $tableModel::class;
 
     if (count($fields) == 0) return null;
 
-    $where = $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%');
+    $where = match($mode) {
+      CustomSearchEngineModelRequestMode::ONLY_TRASHED => $tableModel::onlyTrashed()->where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
+      CustomSearchEngineModelRequestMode::WITH_TRASHED => $tableModel::withTrashed()->where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
+      // CustomSearchEngineModelRequestMode::WITHOUT_TRASHED => $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
+      default => $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
+    };
+
     for ($index = 0; $index < count($fields); $index++) {
       foreach ($this->wrapedsKeyphrases as $item) {
         $where->orWhere($fields[$index], 'LIKE', $item);
@@ -115,4 +121,10 @@ class Engine
 
     return $results;
   }
+}
+
+enum CustomSearchEngineModelRequestMode {
+  case WITH_TRASHED;
+  case ONLY_TRASHED;
+  case WITHOUT_TRASHED;
 }

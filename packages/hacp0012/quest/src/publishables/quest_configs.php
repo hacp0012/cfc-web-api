@@ -1,10 +1,10 @@
 <?php
 
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 
 return [
   /** The default Request Method. */
-  'method' => QuestSpawMethod::POST,
+  'method' => SpawMethod::POST,
 
   /** Quest track base routes. */
   'base_routes' => [

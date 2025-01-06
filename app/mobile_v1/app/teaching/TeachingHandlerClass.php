@@ -9,7 +9,7 @@ use App\mobile_v1\app\user\UserHandlerClass;
 use App\Models\Enseignement;
 use App\Models\User;
 use Hacp0012\Quest\Attributs\QuestSpaw;
-use Hacp0012\Quest\QuestSpawMethod;
+use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -27,7 +27,7 @@ class TeachingHandlerClass
 
   # ECHO : -----------------------------------------------------------------------------:
   /** @return stdClass {success:bool, teach, poster, pictures} */
-  #[QuestSpaw(ref: 'get.m4tUR9UtiKrfOrwBIc9LuQ4XPU9', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'get.m4tUR9UtiKrfOrwBIc9LuQ4XPU9', method: SpawMethod::GET)]
   function get(string $teachId): stdClass
   {
     $return = new stdClass;
@@ -70,7 +70,7 @@ class TeachingHandlerClass
 
   # REACTIONS : ------------------------------------------------------------------------:
   /** @return stdClass {likes:{count:int,user:bool}, views:idem, comments:idem} */
-  #[QuestSpaw(ref: 'reactions.yfZBOElWFt8n7GuAX4RzK6KyYDY', method: QuestSpawMethod::GET)]
+  #[QuestSpaw(ref: 'reactions.yfZBOElWFt8n7GuAX4RzK6KyYDY', method: SpawMethod::GET)]
   function getReactions(string $teachId): stdClass
   {
     $return = new stdClass;
