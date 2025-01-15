@@ -16,6 +16,7 @@ require __DIR__ . '/mobile_v1/comment.php';
 require __DIR__ . '/mobile_v1/home.php';
 require __DIR__ . '/mobile_v1/calendar.php';
 require __DIR__ . '/mobile_v1/find_cfc_around.php';
+require __DIR__ . '/mobile_v1/favorites.php';
 
 // * -- ADMIN -- *
 require __DIR__ . '/admin_feature/admin.php';

@@ -6,12 +6,14 @@ use App\mobile_v1\admin\AdminMan;
 use App\mobile_v1\app\family\FamilyChildren;
 use App\mobile_v1\app\family\FamilyCouple;
 use App\mobile_v1\app\user\UserHandlerClass;
-use App\mobile_v1\classes\FileHanderClass;
 use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
 use Hacp0012\Quest\SpawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+
+use function PHPUnit\Framework\isNan;
+use function PHPUnit\Framework\isNull;
 
 class UserHandlerRouteClass
 {
@@ -167,9 +169,11 @@ class UserHandlerRouteClass
 
       // Get if is an admin.
       $admin = (new AdminMan)->getOne(userId: $userId);
+
+      return ['user' => $user, 'couple' => $couple, 'admin' => $admin, 'success' => is_null($user) == false];
     }
 
-    return ['user' => $user, 'couple' => $couple, 'admin' => $admin];
+    return ['success' => false];
   }
 
   public function getChildParentCoupleViaValidable(Request $request)

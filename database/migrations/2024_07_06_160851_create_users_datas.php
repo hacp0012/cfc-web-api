@@ -15,7 +15,7 @@ return new class extends Migration
       $table->comment("Can contain favorites, draft, otp, data, ...");
       $table->uuid('id')->primary();
 
-      $table->enum('type', ['TEXT', 'ARRAY', 'ASSOC', 'INT', 'FLOAT', 'NULL'])->default('TEXT');
+      // $table->enum('type', ['TEXT', 'ARRAY', 'ASSOC', 'INT', 'FLOAT', 'NULL'])->default('TEXT');
       $table->string('owner');
       $table->string('key')->comment("data key");
       $table->json('data');

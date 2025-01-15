@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Middleware\SanctumCustomMiddleware;
+use App\mobile_v1\auth\DevicesAuthMan;
 use App\mobile_v1\auth\LoginAuthRouter;
 use App\mobile_v1\auth\RegisterAuthRouter;
+use Hacp0012\Quest\Quest;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -33,5 +35,7 @@ Route::prefix('auth')->group(function () {
     Route::post('userdata', [LoginAuthRouter::class, 'getUserDatas']);
     // logout.
     Route::delete('logout', [LoginAuthRouter::class, 'logout']);
+
+    Quest::spawn('device', DevicesAuthMan::class);
   });
 });

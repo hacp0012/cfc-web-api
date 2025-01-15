@@ -14,6 +14,7 @@ use App\Models\Echos;
 use App\Models\Enseignement;
 use App\Models\Reaction;
 use App\Models\User;
+use App\Models\UsersData;
 use App\Models\Validable;
 use Illuminate\Support\Facades\Log;
 
@@ -58,6 +59,7 @@ class UserDestroyer
     if ($this->loginTokens())     Log::info("ALL LOGIN TOKENS DELETED IN DATABASE");
     if ($this->reactions())       Log::info("ALL REACTIONS DELETED IN DATABASE");
     if ($this->validables())      Log::info("ALL SENTS VALIDABLES, DELETED IN DATABASE");
+    if ($this->userDatas())       Log::info("ALL IN USERS_DATAS:TABLE, DELETED IN DATABASE");
 
     Log::alert("FINISHED DELETED PROFILE");
 
@@ -241,6 +243,13 @@ class UserDestroyer
   private function validables(): bool
   {
     $state = Validable::whereSender($this->userId)->whereOr('receiver', $this->userId)->delete();
+
+    return $state;
+  }
+
+  private function userDatas(): bool
+  {
+    $state = UsersData::whereOwner($this->userId)->delete();
 
     return $state;
   }

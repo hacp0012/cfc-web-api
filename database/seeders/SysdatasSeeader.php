@@ -18,20 +18,20 @@ class SysdatasSeeader extends Seeder
       'label' => "Country phone codes",
       'type'  => 'ARRAY',
       'key'   => 'phone_codes',
-      'data'  => Json::encode([
+      'data'  => Json::encode(["data" => [
         ['code' => '243', 'country' => 'CD', 'country_name' => 'DRC'],
-      ]),
+      ]]),
     ]);
 
     DB::table('sysdatas')->insert([
       'label' => "Roles of users",
       'type'  => 'ARRAY',
       'key'   => 'users_roles',
-      'data'  => Json::encode([
+      'data'  => Json::encode(["data" => [
         ['state' => "ACTIVE", 'name' => "Utilisateur standard",        'level' => null, 'role' => "STANDARD_USER",          'can' => []],
         ['state' => "ACTIVE", 'name' => "Chargé de communication",     'level' => null, 'role' => "COMMUNICATION_MANAGER",  'can' => []],
         ['state' => "ACTIVE", 'name' => "Responsable Évangélisation",  'level' => null, 'role' => "EVANGELISM_MANAGER",     'can' => []],
-      ]),
+      ]]),
     ]);
   }
 }

@@ -6,6 +6,7 @@ use App\Models\Communique;
 use App\Models\Echos;
 use App\Models\Enseignement;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class Engine
@@ -94,6 +95,7 @@ class Engine
     return $results;
   }
 
+  # ############################################################################################################################# #
   // Custom engine.
   public function customable(mixed $tableModel, array $fields, ?CustomSearchEngineModelRequestMode $mode = null): Collection|null
   {
@@ -101,10 +103,10 @@ class Engine
 
     if (count($fields) == 0) return null;
 
-    $where = match($mode) {
+    $where = match ($mode) {
       CustomSearchEngineModelRequestMode::ONLY_TRASHED => $tableModel::onlyTrashed()->where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
       CustomSearchEngineModelRequestMode::WITH_TRASHED => $tableModel::withTrashed()->where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
-      // CustomSearchEngineModelRequestMode::WITHOUT_TRASHED => $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
+        // CustomSearchEngineModelRequestMode::WITHOUT_TRASHED => $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
       default => $tableModel::where($fields[0], 'LIKE', '%' . $this->escapedKeyprase . '%'),
     };
 
@@ -121,9 +123,37 @@ class Engine
 
     return $results;
   }
+
+  /** Custom by provideds data
+   * @param array<int, array<string, mixed>> $listData
+   * @param array<int, string> $fields
+   */
+  public function customableByData(array $listData, array $fields)
+  {
+    if (count($fields) == 0) return null;
+    if (!Arr::isList($listData)) return null;
+
+    $tableName = null;
+
+    $results = [];
+    foreach ($listData as $item) {
+
+      foreach ($fields as $field) {
+        if (str_contains($item[$field], $this->escapedKeyprase)) {
+          $results[] = $item;
+          break;
+        }
+      }
+    }
+
+    foreach ($results as $key => $item) $listData[$key]['table'] = $tableName;
+
+    return collect($results);
+  }
 }
 
-enum CustomSearchEngineModelRequestMode {
+enum CustomSearchEngineModelRequestMode
+{
   case WITH_TRASHED;
   case ONLY_TRASHED;
   case WITHOUT_TRASHED;

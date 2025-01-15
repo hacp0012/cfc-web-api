@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\SanctumCustomMiddleware;
 use App\mobile_v1\admin\AdminMan;
+use App\mobile_v1\admin\AppAboutMan;
+use App\mobile_v1\admin\AvisMan;
 use App\mobile_v1\admin\CarousselMan;
 use App\mobile_v1\admin\ContactsMan;
 use App\mobile_v1\admin\DonationMan;
@@ -24,4 +26,6 @@ Quest::spawn(uri: 'admin', routes: [
   RecomandationsMan::class,
   ResponsablesMan::class,
   UsersMan::class,
+  AppAboutMan::class,
+  AvisMan::class,
 ])->middleware(SanctumCustomMiddleware::class);

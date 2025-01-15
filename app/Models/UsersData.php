@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sysdata extends Model
+class UsersData extends Model
 {
-  use HasFactory;
+  use HasFactory, HasUuids;
 
-  protected $fillable = ['label', 'key', 'data', 'type'];
+  protected $table = 'users_datas';
+
+  protected $fillable = ['data', 'owner', 'key'];
 
   protected function casts(): array
   {

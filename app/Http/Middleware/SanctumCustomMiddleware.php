@@ -29,12 +29,16 @@ class SanctumCustomMiddleware
 
     [$id, $token] = explode('|', $bearer, 2);
 
-    $instance = DB::table('personal_access_tokens')->find($id);
+    $item = DB::table('personal_access_tokens')->where('id', $id);// ->find($id);
+    $instance = $item->first();
 
     if ($instance != null && hash('sha256', $token) === $instance->token) {
 
       if ($user = \App\Models\User::find($instance->tokenable_id)) {
         Auth::login($user);
+
+        $item->update(['last_used_at' => now()]);
+
         return $next($request);
       }
     }

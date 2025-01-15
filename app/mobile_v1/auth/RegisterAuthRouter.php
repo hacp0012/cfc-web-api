@@ -96,7 +96,6 @@ class RegisterAuthRouter
   {
     $reg = new RegisterAuth;
     $user = $request->user();
-    dd($user);
 
     $state = $reg->unregister(userId: $user->id);
 

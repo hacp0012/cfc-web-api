@@ -32,6 +32,7 @@ class LoginAuth
    */
   public function login(string $phoneCode, string $phoneNumber, string $infos = null): ?array
   {
+    /** @var \App\Models\User */
     $user = User::whereJsonContains('telephone', [$phoneCode, $phoneNumber])->first();
 
     if ($user) {
@@ -88,5 +89,14 @@ class LoginAuth
 
     return false;
     // return true;
+  }
+
+  public function logoutByPersonalTokenId(int $id): bool
+  {
+    $user = request()->user();
+
+    $state = $user->tokens()->where('id', $id)->delete();
+
+    return $state;
   }
 }

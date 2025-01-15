@@ -75,29 +75,35 @@ class RegisterAuth
       'telephone'   => [$phoneCode, $phoneNumber],
 
       // TODO: This role, pool, ..., is juste for debug. {#f00, 4}
+      'role' => [
+        'state' => "ACTIVE",
+        'name' => "Utilisaterur",
+        'level' => ($na != null) ? 'noyau_af' : null,
+        'role' => "STANDARD_USER",
+        'can' => [],
+      ],
       // 'role' => ['state' => "ACTIVE", 'name' => "Chargé de communication", 'level' => 'pool', 'role' => null /* "COMMUNICATION_MANAGER" */,  'can' => []],
       // 'pool' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
       // 'com_loc' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
       // 'noyau_af' => '58X9z9YnOJTKeuBWr4I6KNCmjDN6FRLFAIda',
     ];
 
-    if ($alreadyMember) $data['pcn_in_waiting_validation'] = Json::encode([
+    if ($alreadyMember) $data['pcn_in_waiting_validation'] = [
       'pool' => $pool,
       'cl' => $cl,
       'na' => $na,
-    ]);
+      'created_at' => now(),
+    ];
 
     // REGISTER : -------------------------------------------- >
     $newUser = User::create($data);
 
     // CREATE OR SEND VALIDABLE FOR FAMILY HANDLER ----------- >
-    $this->familialHandler($newUser->id, $isParent, $familyName, $familyId);
-
-    { // Send notification to him.
+    $this->familialHandler($newUser->id, $isParent, $familyName, $familyId); { // Send notification to him.
       $user = User::find($newUser->id);
 
       if ($user) {
-        NotificationHandler::send(title: $user->fullname, body: "Amen ". $user->name .", nous sommes ravis de vous compter parmi nous. Nous vous accueillons sur la plate-forme Famille Chrétienne avec tout l'amour du Christ. \n\Bienvenu parmi nous.")
+        NotificationHandler::send(title: $user->fullname, body: "Amen " . $user->name . ", nous sommes ravis de vous compter parmi nous. Nous vous accueillons sur la plate-forme Famille Chrétienne avec tout l'amour du Christ. \n\Bienvenu parmi nous.")
           ->flash(Wellcome::class)
           ->to($user);
       }
@@ -107,7 +113,7 @@ class RegisterAuth
     $expireAt = time() + (60 * 3); // expire in 3Munites.
     $otpHandler = new OtpHandler;
     // SMS OTP MESSAGE :
-    $otpMessageText = "La Communauté Famille Chrétienne vous souhaite le bienvenue. Voici votre code: CFC-[OTP-CODE]";
+    $otpMessageText = "Amen Frere/Soeur, utilisez le code suivant pour confirmer votre inscription sur notre plateforme: CFC-[OTP-CODE]";
 
     $generateOtp = $otpHandler->generate();
     $generateOtp->store(for: $phoneCode . $phoneNumber, expirAt: $expireAt);

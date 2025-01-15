@@ -66,7 +66,22 @@ class SearchEngine
     return $unrateds;
   }
 
-  public function customSearchFrom(array $data, mixed $tableModel, array $fields) {}
+  /**
+   * @param array<int, string> $fields
+   * @param array<int, array<string, mixed>>
+   */
+  public function customSearchFrom(array $data, array $fields): array
+  {
+    $results = $this->engine->customableByData(listData: $data, fields: $fields);
+
+    $rateds = $this->rater($results, Section::custom, $fields);
+
+    $sorteds = $this->descSort($rateds);
+
+    $unrateds = Rater::unrate($sorteds);
+
+    return $unrateds;
+  }
 
   # --------------------------------------------- /
 
