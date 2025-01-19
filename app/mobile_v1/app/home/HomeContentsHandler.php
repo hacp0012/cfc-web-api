@@ -10,6 +10,7 @@ use Hacp0012\Quest\Attributs\QuestSpaw;
 use Hacp0012\Quest\QuestResponse;
 use Hacp0012\Quest\SpawMethod;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use stdClass;
 
 class HomeContentsHandler
@@ -44,6 +45,7 @@ class HomeContentsHandler
     foreach ($teachs->teachs as $item) {
       $filledsTeachs[] = [
         'type' => 'TEACH',
+        'teached_at' => $item['teach']->data,
         'created_at' => $item['teach']->created_at,
         'item' => $item,
       ];
@@ -58,15 +60,23 @@ class HomeContentsHandler
     $mergeds = array_merge($filledsComs, $filledsTeachs);
 
     // Sort.
-    // $sorteds = [];
-
+    // $sorteds = []
     $comp = function ($a, $b) {
       // return $a <=> $b;
       /** @var \Illuminate\Support\Carbon */
       $atA = $a['created_at'];
 
+      if ($a['type'] == 'TEACH') {
+        $atA = Carbon::parse($a['teached_at']);
+      }
+
       /** @var \Illuminate\Support\Carbon */
       $atB = $b['created_at'];
+
+      if ($b['type'] == 'TEACH') {
+
+        $atB = Carbon::parse($b['teached_at']);
+      }
 
       // $atA->lessThan($atB);
       // $atA->equalTo($atB);

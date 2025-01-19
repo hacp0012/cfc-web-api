@@ -52,7 +52,7 @@ class ComHomeHandler
       // }
     }
 
-    $list = array_values($list->reverse()->toArray());
+    $list = array_values($list->toArray());
 
     $return->success = true;
     $return->coms = $list;

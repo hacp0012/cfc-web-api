@@ -25,7 +25,9 @@ class TeachingHomeHandler
         ->whereDate('date', '>=', $byDate[0])
         ->whereDate('date', '<=', $byDate[1])
         ->get();
-    } else $teachs = Enseignement::all();
+    } else {
+      $teachs = Enseignement::all();
+    }
 
     # Poster & Reactions
     $list = collect();
@@ -45,7 +47,7 @@ class TeachingHomeHandler
         ]);
       }
     }
-    $list = array_values($list->reverse()->toArray());
+    $list = array_values($list->toArray());
 
     $return->success = true;
     $return->teachs = $list;
