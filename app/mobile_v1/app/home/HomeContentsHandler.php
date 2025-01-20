@@ -45,7 +45,7 @@ class HomeContentsHandler
     foreach ($teachs->teachs as $item) {
       $filledsTeachs[] = [
         'type' => 'TEACH',
-        'teached_at' => $item['teach']->data,
+        'teached_at' => $item['teach']->date,
         'created_at' => $item['teach']->created_at,
         'item' => $item,
       ];
@@ -74,7 +74,6 @@ class HomeContentsHandler
       $atB = $b['created_at'];
 
       if ($b['type'] == 'TEACH') {
-
         $atB = Carbon::parse($b['teached_at']);
       }
 
